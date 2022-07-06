@@ -22,6 +22,7 @@ namespace WebApi
 {
     public class Startup
     {
+        readonly string CORS1 = "mycors";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -78,12 +79,20 @@ namespace WebApi
             });
 
             #endregion
+            services.AddCors(options =>
+            {
+                options.AddPolicy(CORS1,
+                builder => builder.AllowAnyOrigin()
+                .WithMethods("GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS")
+                );
+            });
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(CORS1);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -105,6 +114,7 @@ namespace WebApi
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }
