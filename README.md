@@ -15,3 +15,5 @@ conn /as sysdba   #登陆根用户
 conn shop/jy2051914  #切换到shop用户
 ```
 > 后续执行sql命令即可
+
+test-test-test
