@@ -17,3 +17,5 @@ conn shop/jy2051914  #切换到shop用户
 > 后续执行sql命令即可
 
 test-test-test
+
+Oracle® Data Provider for .NET 文档地址：https://docs.oracle.com/en/database/oracle/oracle-database/21/odpnt/index.html
