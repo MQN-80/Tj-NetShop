@@ -100,6 +100,12 @@ namespace WebApi.Controllers
             else
                 return "no";
         }
+        [HttpPost]
+        public string AddUser(string username, string password)
+        {
+            dataAcess.CreateConn();
+            return dataAcess.AddUser(username, password);
+        }
 
     }
 }
