@@ -17,5 +17,14 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\UserCenter\" />
+    <Folder Include="Controllers\ShopCenter\" />
+    <Folder Include="Controllers\UserForum\" />
+    <Folder Include="Controllers\MallPage\" />
+    <Folder Include="Controllers\ShopTransaction\" />
+    <Folder Include="Controllers\ManageForm\" />
+  </ItemGroup>
+
 
 </Project>
