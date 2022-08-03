@@ -23,6 +23,14 @@ namespace WebApi.Controllers.ManageForm
             else
                 return null;
         }
+        //获取用户列表，因用户可能过多，采用分批请求
+        [Route("/Manage/get_userList")]
+        [HttpGet]
+        public string GetUserlist(int sum)
+        {
+            Manage manage = new Manage();
+            return manage.get_user_list(sum);
+        }
 
     }
 }

@@ -16,5 +16,17 @@ namespace WebApi.Models.MallPage
             else
                 return false;
         }
+        public string get_user_list(int sum)
+        {
+            return Database.getUserList(sum);
+        }
     }
+    public class user_info
+    {
+        public string user_id { get; set; }
+        public string user_name { get; set; }
+        public string create_time { get; set; }
+
+    }
+
 }

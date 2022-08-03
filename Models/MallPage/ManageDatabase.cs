@@ -1,8 +1,10 @@
+using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi.Models.MallPage;
 
 namespace WebApi.Models
 {
@@ -47,7 +49,31 @@ namespace WebApi.Models
                 return true;
 
         }
+        //获取用户列表，每次返回20个
+        public static string getUserList(int num)
+        {
+            List<user_info> storage = new List<user_info>();
+            CreateConn();
+            user_info mid = new user_info();  //用于存储中间量
+            OracleCommand find = DB.CreateCommand();
+            int begin = 2001042 + 521 * num * 20;
+            int end = begin + 521 * 19;
+            find.CommandText="select user_id,user_name,create_time from user_info where user_id>=:begin and user_id <= :end";
+            find.Parameters.Add(new OracleParameter(":begin", begin));
+            find.Parameters.Add(new OracleParameter(":end", end));
+            OracleDataReader Ord = find.ExecuteReader();
+            while(Ord.Read())
+            {
+                mid.user_id = Ord.GetValue(0).ToString();
+                mid.user_name = Ord.GetValue(1).ToString();
+                mid.create_time = Ord.GetValue(2).ToString();
+                storage.Add(mid);
+            }
+            //以字符串形式返回
+            CloseConn();
+            return JsonConvert.SerializeObject(storage);
 
+        }
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
         public static string AddUser(string UserName, string UserPassword)
