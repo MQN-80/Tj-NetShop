@@ -1,4 +1,12 @@
-using Oracle.ManagedDataAccess.Client;using System;using System.Collections.Generic;using System.Linq;using System.Threading.Tasks;namespace WebApi.Models{    public class ManageDatabase
+using Oracle.ManagedDataAccess.Client;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace WebApi.Models
+{
+    public class ManageDatabase
     {
         public static OracleConnection DB;
 
@@ -47,10 +55,12 @@ using Oracle.ManagedDataAccess.Client;using System;using System.Collections.Ge
         public static string AddUser(string UserName, string UserPassword)
         {
             CreateConn();
+            string now = DateTime.Now.ToString();   //获取当前时间
             OracleCommand Insert = DB.CreateCommand();
-            Insert.CommandText = "insert into user_info (user_name,password) values(:UserName,:UserPassword)";
+            Insert.CommandText = "insert into user_info (user_name,password,create_time) values(:UserName,:UserPassword,:NowTime)";
             Insert.Parameters.Add(new OracleParameter(":UserName", UserName));
             Insert.Parameters.Add(new OracleParameter(":UserPassword", UserPassword));
+            Insert.Parameters.Add(new OracleParameter(":NowTime", now));
             Insert.ExecuteNonQuery();
 
       OracleCommand find = DB.CreateCommand();
@@ -84,4 +94,4 @@ using Oracle.ManagedDataAccess.Client;using System;using System.Collections.Ge
         }
     }
 
-}
+}

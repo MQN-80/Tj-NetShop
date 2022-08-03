@@ -24,13 +24,15 @@ namespace WebApi.Controllers
 
         public object JsonHelper { get; private set; }
 
-        
+
 
         /// <summary>
         /// 获取token
         /// </summary>
         /// <param name="user"></param>
-        public object Token()
+        [Route("get_token")]
+        [HttpGet]
+        public object Token(string userid)
         {
             //测试自己创建的对象
             var user = new app_mobile_user
@@ -45,7 +47,7 @@ namespace WebApi.Controllers
             claims.Add(new Claim(JwtClaimTypes.Issuer, "user"));
             claims.Add(new Claim(JwtClaimTypes.Name, user.phone.ToString()));
             claims.Add(new Claim(JwtClaimTypes.Name, user.phone.ToString()));
-            claims.Add(new Claim(JwtClaimTypes.Id, user.id.ToString()));
+            claims.Add(new Claim(JwtClaimTypes.Id, userid));
             claims.Add(new Claim(JwtClaimTypes.PhoneNumber, user.phone.ToString()));
               
                           
@@ -63,14 +65,7 @@ namespace WebApi.Controllers
 
             return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
-
-        [Route("get_token")]
-        [HttpGet]
-        public IActionResult GetToken()
-        {
-            return Ok(Token());
-        }
-
+       
         [Authorize]
         [Route("get_user_info")]
         [HttpPost]
