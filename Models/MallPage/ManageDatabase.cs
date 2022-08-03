@@ -49,7 +49,7 @@ namespace WebApi.Models
                 return true;
 
         }
-        //获取用户列表，每次返回20个
+        //获取用户列表，每次返回20个,num从0开始
         public static string getUserList(int num)
         {
             List<user_info> storage = new List<user_info>();
