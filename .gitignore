@@ -1,3 +1,4 @@
 /bin
 /.config
 /obj
+/WebApi.csproj.user

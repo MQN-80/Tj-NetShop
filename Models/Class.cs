@@ -1,7 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using IdentityModel;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace WebApi.Models
@@ -61,7 +66,52 @@ namespace WebApi.Models
             return ListJson;
         }
     }
-    
+    //用于用户认证鉴权
+    public class Jwt
+    {
+        public object JsonHelper { get; private set; }
+
+
+
+        /// <summary>
+        /// 获取token
+        /// </summary>
+        /// <param name="user"></param>
+        public object Token(int id,string password,string phone="123")
+        {
+            //测试自己创建的对象
+            
+
+            var claims = new List<Claim>();
+            claims.Add(new Claim(JwtClaimTypes.Audience, "aud"));
+            claims.Add(new Claim(JwtClaimTypes.Issuer, "user"));
+            claims.Add(new Claim(JwtClaimTypes.Name, phone));
+            claims.Add(new Claim(JwtClaimTypes.Name, phone));
+            claims.Add(new Claim(JwtClaimTypes.Id, id.ToString()));
+            claims.Add(new Claim(JwtClaimTypes.PhoneNumber,phone));
+
+
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("bc47a26eb9a59406057dddd62d0898f4"));
+            //指定数字签名需要使用的密钥和算法
+            SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            //生成token
+            JwtSecurityToken token = new JwtSecurityToken(issuer: "user",
+                                                          audience: "aud",
+                                                          claims: claims,
+                                                          notBefore: DateTime.Now, //token生效时间
+                                                          expires: DateTime.Now.AddMinutes(50), //token有效时间
+                                                          signingCredentials: credentials);
+
+            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+        }
+
+        public  object Ok(string v)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 
 
 }

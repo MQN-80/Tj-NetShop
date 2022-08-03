@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Models
 {
-    public class ManageDatabase
+    public class Database
     {
         public static OracleConnection DB;
 
@@ -29,16 +29,14 @@ namespace WebApi.Models
             DB.Close();
         }
 
-        //与功能点1：登录与注册相关的操作
-
-        //在MUser表中查询用户、密码是否错误(登录时使用)
-        //密码或用户名错误返回false；密码和用户名正确返回true
-        public static bool IsUserExist(string UserID, string Password)
+        //查询该管理员是否存在,管理员的role_rank为3
+        //测试账号jy,34567,id为2004168
+        public static bool IsUserExist(int UserID, string Password)
         {
             int Count;
             CreateConn();
             OracleCommand CMD = DB.CreateCommand();
-            CMD.CommandText = "select count(*) from user_info where user_id=:UserID and password=:Password";
+            CMD.CommandText = "select count(*) from user_info where user_id=:UserID and password=:Password and role_rank=3";
             CMD.Parameters.Add(new OracleParameter(":UserID", UserID));
             CMD.Parameters.Add(new OracleParameter(":Password", Password));
             Count = Convert.ToInt32(CMD.ExecuteScalar());
@@ -54,7 +52,6 @@ namespace WebApi.Models
         //添加成功返回UserID，添加失败返回“0”
         public static string AddUser(string UserName, string UserPassword)
         {
-            CreateConn();
             OracleCommand Insert = DB.CreateCommand();
             Insert.CommandText = "insert into user_info (user_name,password) values(:UserName,:UserPassword)";
             Insert.Parameters.Add(new OracleParameter(":UserName", UserName));

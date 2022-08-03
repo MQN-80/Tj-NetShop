@@ -23,8 +23,6 @@
     <Folder Include="Controllers\UserForum\" />
     <Folder Include="Controllers\MallPage\" />
     <Folder Include="Controllers\ShopTransaction\" />
-    <Folder Include="Controllers\ManageForm\" />
-    <Folder Include="Models\MallPage\" />
     <Folder Include="Models\ManageForm\" />
     <Folder Include="Models\ShopCenter\" />
     <Folder Include="Models\ShopTransaction\" />

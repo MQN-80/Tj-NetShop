@@ -24,16 +24,13 @@ namespace WebApi.Controllers
 
         public object JsonHelper { get; private set; }
 
-        public userController(IOptions<JwtSettings> _jwtSettingsAccesser)
-        {
-            _jwtSettings = _jwtSettingsAccesser.Value;
-        }
+        
 
         /// <summary>
         /// 获取token
         /// </summary>
         /// <param name="user"></param>
-        private object Token()
+        public object Token()
         {
             //测试自己创建的对象
             var user = new app_mobile_user
@@ -93,9 +90,9 @@ namespace WebApi.Controllers
         [HttpGet]
         public string GetUser(string userid,string password)
         {
-            dataAcess.CreateConn();
+            
 
-            if (dataAcess.IsUserExist(userid, password))
+            if (ManageDatabase.IsUserExist(userid, password))
                 return userid + password;
             else
                 return "no";
@@ -103,8 +100,7 @@ namespace WebApi.Controllers
         [HttpPost]
         public string AddUser(string username, string password)
         {
-            dataAcess.CreateConn();
-            return dataAcess.AddUser(username, password);
+            return ManageDatabase.AddUser(username, password);
         }
 
     }
