@@ -31,6 +31,14 @@ namespace WebApi.Controllers.ManageForm
             Manage manage = new Manage();
             return manage.get_user_list(sum);
         }
+        //获取待处理商品,同样采取分批请求
+        [Route("/Manage/get_product")]
+        [HttpGet]
+        public string GetProductist(int sum)
+        {
+            Manage manage = new Manage();
+            return manage.get_user_list(sum);
+        }
 
     }
 }

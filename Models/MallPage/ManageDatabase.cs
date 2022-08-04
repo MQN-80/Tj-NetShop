@@ -51,6 +51,7 @@ namespace WebApi.Models
         }
         //获取用户列表，每次返回20个,num从0开始
         public static string getUserList(int num)
+        
         {
             List<user_info> storage = new List<user_info>();
             CreateConn();
@@ -73,6 +74,14 @@ namespace WebApi.Models
             CloseConn();
             return JsonConvert.SerializeObject(storage);
 
+        }
+        //获取等待审核的商品,同样采取分批请求的方式
+        public static string getProduct(int sum)
+        {
+            OracleCommand find = DB.CreateCommand();
+            CreateConn();
+            //find.CommandText=
+            return "dsa";
         }
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
