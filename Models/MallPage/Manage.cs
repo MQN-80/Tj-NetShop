@@ -28,5 +28,9 @@ namespace WebApi.Models.MallPage
         public string create_time { get; set; }
 
     }
+    public class product_info
+    {
+
+    }
 
 }

@@ -75,12 +75,30 @@ namespace WebApi.Models
             return JsonConvert.SerializeObject(storage);
 
         }
-        //获取等待审核的商品,同样采取分批请求的方式
+        //获取等待审核的商品,同样采取分批请求的方式,sum从0开始
         public static string getProduct(int sum)
         {
+            int count = 0;
             OracleCommand find = DB.CreateCommand();
             CreateConn();
-            //find.CommandText=
+            //首先获取待处理的总数
+            find.CommandText = "select count(*) from manage_product";
+            count = Convert.ToInt32(find.ExecuteScalar());
+            OracleCommand get_list = DB.CreateCommand();
+            //获取当前请求范围
+            int begin = sum* 20+1;
+            int end = (sum + 1) * 20;
+            if (begin > count)
+                return JsonConvert.SerializeObject("请求过大");
+            //防止请求超过范围
+            if (end > count)
+                end = count;
+            get_list.CommandText = "select * from product_information a join manage_product  b" +
+                "on a.product_id=b.product_id order by a.product_id where rownum>=:begin and rownum<=:end";
+            get_list.Parameters.Add(new OracleParameter(":begin", begin));
+            get_list.Parameters.Add(new OracleParameter(":end", end));
+            OracleDataReader Ord = get_list.ExecuteReader();
+            
             return "dsa";
         }
         //向MUser表中增加一个新用户(注册)
