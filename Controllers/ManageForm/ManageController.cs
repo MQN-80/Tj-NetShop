@@ -37,7 +37,7 @@ namespace WebApi.Controllers.ManageForm
         public string GetProductist(int sum)
         {
             Manage manage = new Manage();
-            return manage.get_user_list(sum);
+            return manage.get_Unproduct(sum);
         }
 
     }

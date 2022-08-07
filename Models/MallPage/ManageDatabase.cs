@@ -78,12 +78,12 @@ namespace WebApi.Models
         //获取等待审核的商品,同样采取分批请求的方式,sum从0开始
         public static string getProduct(int sum)
         {
-            int count = 0;
-            OracleCommand find = DB.CreateCommand();
+            List<product_info> storage = new List<product_info>();
             CreateConn();
+            OracleCommand find = DB.CreateCommand();
             //首先获取待处理的总数
             find.CommandText = "select count(*) from manage_product";
-            count = Convert.ToInt32(find.ExecuteScalar());
+            int count = Convert.ToInt32(find.ExecuteScalar());
             OracleCommand get_list = DB.CreateCommand();
             //获取当前请求范围
             int begin = sum* 20+1;
@@ -93,13 +93,24 @@ namespace WebApi.Models
             //防止请求超过范围
             if (end > count)
                 end = count;
-            get_list.CommandText = "select * from product_information a join manage_product  b" +
-                "on a.product_id=b.product_id order by a.product_id where rownum>=:begin and rownum<=:end";
-            get_list.Parameters.Add(new OracleParameter(":begin", begin));
+            get_list.CommandText = "select a.name,a.img,a.type_id,a.product_id,a.des,a.price,a.create_time from product_information a join manage_product  b on a.product_id=b.product_id  where rownum>=:begin and rownum<=:end order by a.product_id";
+            get_list.Parameters.Add(new OracleParameter(":begin", begin)); 
             get_list.Parameters.Add(new OracleParameter(":end", end));
             OracleDataReader Ord = get_list.ExecuteReader();
-            
-            return "dsa";
+            product_info mid = new product_info();
+            while (Ord.Read())
+            {
+                mid.name = Ord.GetValue(0).ToString();
+                mid.img = Ord.GetValue(1).ToString();
+                mid.type_id = Ord.GetValue(2).ToString();
+                mid.product_id = Ord.GetValue(3).ToString();
+                mid.des = Ord.GetValue(4).ToString();
+                mid.price = (long)Ord.GetValue(5);
+                mid.create_time= Ord.GetValue(6).ToString();
+                storage.Add(mid);
+            }
+            CloseConn();
+            return JsonConvert.SerializeObject(storage);
         }
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”

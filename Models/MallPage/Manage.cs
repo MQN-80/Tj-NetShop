@@ -20,6 +20,11 @@ namespace WebApi.Models.MallPage
         {
             return Database.getUserList(sum);
         }
+        //获取待处理的商品
+        public string get_Unproduct(int sum)
+        {
+            return Database.getProduct(sum);
+        }
     }
     public class user_info
     {
@@ -30,7 +35,13 @@ namespace WebApi.Models.MallPage
     }
     public class product_info
     {
-
+        public string name { get; set; }
+        public string img{ get; set; }
+        public string type_id { get; set; }
+        public string product_id { get; set; }
+        public string des { get; set; }
+        public long price { get; set; }
+        public string create_time { get; set; }
     }
 
 }
