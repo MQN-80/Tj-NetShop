@@ -117,14 +117,29 @@ namespace WebApi.Models
         {
             CreateConn();
             //先修改status的状态,将其改为1
+            
             OracleCommand edit = DB.CreateCommand();
             edit.CommandText = "update shop_product set status=1 where product_id=:product_id";
             edit.Parameters.Add(new OracleParameter(":product_id", product_id));
+            //commit();
             edit.ExecuteNonQuery();
+            OracleCommand insert = DB.CreateCommand();
+            insert.CommandText = "insert into manage_product (product_id,explain,manage_id,manage_name) values (:product_id,:explain,:manage_id,:manage_name)";
+            insert.Parameters.Add(new OracleParameter(":product_id", product_id));
+            insert.Parameters.Add(new OracleParameter(":explain", explain));
+            insert.Parameters.Add(new OracleParameter(":manage_id", manage_id));
+            insert.Parameters.Add(new OracleParameter(":manage_name", manage_name));
+            insert.ExecuteNonQuery();
             CloseConn();
             return "ok";
         }   
-
+        //提交前执行一下commit,防止update上锁,目前已设置自动提交
+        public static void commit()
+        {
+            OracleCommand commit = DB.CreateCommand();
+            commit.CommandText = "commit";
+            commit.ExecuteNonQuery();
+        }
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
         public static string AddUser(string UserName, string UserPassword)
