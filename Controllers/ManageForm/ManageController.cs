@@ -39,6 +39,15 @@ namespace WebApi.Controllers.ManageForm
             Manage manage = new Manage();
             return manage.get_Unproduct(sum);
         }
-
+        /*
+         * 审核通过,修改该商品状态,处理完成后,将其加入审核表mange_product
+         */
+        [Route("/Manage/agree_product")]
+        [HttpPut]
+        public string agree_product(int manage_id,int product_id,string explain,string manage_name)
+        {
+            Manage manage = new Manage();
+            return manage.agree_product(manage_id,product_id,explain,manage_name);
+        }
     }
 }

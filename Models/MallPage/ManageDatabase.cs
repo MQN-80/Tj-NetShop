@@ -112,6 +112,19 @@ namespace WebApi.Models
             CloseConn();
             return JsonConvert.SerializeObject(storage);
         }
+        //商品审核通过
+        public static string agreeProduct(int manage_id, int product_id, string explain, string manage_name)
+        {
+            CreateConn();
+            //先修改status的状态,将其改为1
+            OracleCommand edit = DB.CreateCommand();
+            edit.CommandText = "update shop_product set status=1 where product_id=:product_id";
+            edit.Parameters.Add(new OracleParameter(":product_id", product_id));
+            edit.ExecuteNonQuery();
+            CloseConn();
+            return "ok";
+        }   
+
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
         public static string AddUser(string UserName, string UserPassword)

@@ -25,6 +25,10 @@ namespace WebApi.Models.MallPage
         {
             return Database.getProduct(sum);
         }
+        public string agree_product(int manage_id, int product_id, string explain, string manage_name)
+        {
+            return Database.agreeProduct(manage_id, product_id, explain, manage_name);
+        }
     }
     public class user_info
     {
