@@ -55,7 +55,6 @@ namespace WebApi.Models
         {
             List<user_info> storage = new List<user_info>();
             CreateConn();
-            user_info mid = new user_info();  //用于存储中间量
             OracleCommand find = DB.CreateCommand();
             int begin = 2001042 + 521 * num * 20;
             int end = begin + 521 * 19;
@@ -63,12 +62,13 @@ namespace WebApi.Models
             find.Parameters.Add(new OracleParameter(":begin", begin));
             find.Parameters.Add(new OracleParameter(":end", end));
             OracleDataReader Ord = find.ExecuteReader();
-            while(Ord.Read())
+            while (Ord.Read())
             {
+                user_info mid = new user_info();
                 mid.user_id = Ord.GetValue(0).ToString();
                 mid.user_name = Ord.GetValue(1).ToString();
                 mid.create_time = Ord.GetValue(2).ToString();
-                storage.Add(mid);
+                storage.Add(mid);           
             }
             //以字符串形式返回
             CloseConn();
@@ -97,9 +97,9 @@ namespace WebApi.Models
             get_list.Parameters.Add(new OracleParameter(":begin", begin)); 
             get_list.Parameters.Add(new OracleParameter(":end", end));
             OracleDataReader Ord = get_list.ExecuteReader();
-            product_info mid = new product_info();
             while (Ord.Read())
             {
+                product_info mid = new product_info();
                 mid.name = Ord.GetValue(0).ToString();
                 mid.img = Ord.GetValue(1).ToString();
                 mid.type_id = Ord.GetValue(2).ToString();
