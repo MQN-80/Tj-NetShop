@@ -55,7 +55,15 @@ namespace WebApi.Controllers.ManageForm
         public string get_article(int num)
         {
             Manage manage = new Manage();
-            return manage.agree_product(manage_id, product_id, explain, manage_name, status);
+            return manage.get_article(num);
+        }
+        //对待审核文章进行处理,1代表审核通过,0代表审核失败
+        [Route("/Manage/manage_article")]
+        [HttpPut]
+        public string manage_article(string id,int option)
+        {
+            Manage manage = new Manage();
+            return manage.manage_article(id,option);
         }
     }
 }

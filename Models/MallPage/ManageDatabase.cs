@@ -141,7 +141,63 @@ namespace WebApi.Models
             commit.CommandText = "commit";
             commit.ExecuteNonQuery();
         }
+        //请求待审核文章,每次返回20个
+        public static string get_article(int sum)
+        {
+            
+            List<article> storage = new List<article>();
+            CreateConn();
+            
+            OracleCommand find = DB.CreateCommand();
+            //首先获取待处理的总数
+            find.CommandText = "select count(*) from article where status=0";
+            int count = Convert.ToInt32(find.ExecuteScalar());
+            OracleCommand get_list = DB.CreateCommand();
+            //获取当前请求范围
+            int begin = sum * 20 + 1;
+            int end = (sum + 1) * 20;
+            if (begin > count)
+                return JsonConvert.SerializeObject("请求过大");
+            //防止请求超过范围
+            if (end > count)
+                end = count;
+            get_list.CommandText = "select article_title,article_context,user_id,create_time from article where rownum>=:begin and rownum<=:end";
+            get_list.Parameters.Add(new OracleParameter(":begin", begin));
+            get_list.Parameters.Add(new OracleParameter(":end", end));
+            OracleDataReader Ord = get_list.ExecuteReader();
+            while (Ord.Read())
+            {
+                article mid = new article();
+                mid.article_title = Ord.GetValue(0).ToString();
+                mid.article_context = Ord.GetValue(1).ToString();
+                mid.user_id = Ord.GetValue(2).ToString();
+                mid.create_time = Ord.GetValue(3).ToString();
+                storage.Add(mid);
+            }
+            CloseConn();
+            return JsonConvert.SerializeObject(storage);
+        }
 
+        //审核文章通过
+        public static string agree_article(string id,int option)
+        {
+            CreateConn();
+            //先修改status的状态,将其改为1
+            OracleCommand edit = DB.CreateCommand();
+            if (option == 1)  //表示审核通过
+            {
+                edit.CommandText = "update article set status=1 where id=:id";
+                edit.Parameters.Add(new OracleParameter(":id", id));
+            }
+            else
+            {
+                edit.CommandText = "delete from article where id=:id";
+                edit.Parameters.Add(new OracleParameter(":id", id));
+            }
+            //commit();
+            int m=edit.ExecuteNonQuery();
+            return m.ToString();
+        }
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
         public static string AddUser(string UserName, string UserPassword)

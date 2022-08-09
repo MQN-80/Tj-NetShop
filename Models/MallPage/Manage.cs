@@ -32,23 +32,22 @@ namespace WebApi.Models.MallPage
             else
                 return "参数违法";
         }
-    }
-    public class user_info
-    {
-        public string user_id { get; set; }
-        public string user_name { get; set; }
-        public string create_time { get; set; }
-
-    }
-    public class product_info
-    {
-        public string name { get; set; }
-        public string img{ get; set; }
-        public string type_id { get; set; }
-        public string product_id { get; set; }
-        public string des { get; set; }
-        public long price { get; set; }
-        public string create_time { get; set; }
+        public string get_article(int sum)
+        {
+            if (sum < 0)
+                return "参数违法";
+            else
+                return Database.get_article(sum);
+        }
+        public string manage_article(string id,int option)
+        {
+            if (option!=1&&option!=0)
+            {
+                return "参数非法";
+            }
+            else
+                return Database.agree_article(id,option);
+        }
     }
 
 }
