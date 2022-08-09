@@ -25,9 +25,12 @@ namespace WebApi.Models.MallPage
         {
             return Database.getProduct(sum);
         }
-        public string agree_product(int manage_id, int product_id, string explain, string manage_name)
+        public string agree_product(int manage_id, int product_id, string explain, string manage_name,int status)
         {
-            return Database.agreeProduct(manage_id, product_id, explain, manage_name);
+            if (status == 1 || status == 0)
+                return Database.agreeProduct(manage_id, product_id, explain, manage_name, status);
+            else
+                return "参数违法";
         }
     }
     public class user_info

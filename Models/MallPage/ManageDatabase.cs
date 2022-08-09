@@ -113,14 +113,14 @@ namespace WebApi.Models
             return JsonConvert.SerializeObject(storage);
         }
         //商品审核通过
-        public static string agreeProduct(int manage_id, int product_id, string explain, string manage_name)
+        public static string agreeProduct(int manage_id, int product_id, string explain, string manage_name,int status)
         {
             CreateConn();
             //先修改status的状态,将其改为1
-            
             OracleCommand edit = DB.CreateCommand();
-            edit.CommandText = "update shop_product set status=1 where product_id=:product_id";
+            edit.CommandText = "update shop_product set status=:status where product_id=:product_id";
             edit.Parameters.Add(new OracleParameter(":product_id", product_id));
+            edit.Parameters.Add(new OracleParameter(":status", status));
             //commit();
             edit.ExecuteNonQuery();
             OracleCommand insert = DB.CreateCommand();
@@ -133,6 +133,7 @@ namespace WebApi.Models
             CloseConn();
             return "ok";
         }   
+
         //提交前执行一下commit,防止update上锁,目前已设置自动提交
         public static void commit()
         {
@@ -140,6 +141,7 @@ namespace WebApi.Models
             commit.CommandText = "commit";
             commit.ExecuteNonQuery();
         }
+
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
         public static string AddUser(string UserName, string UserPassword)
