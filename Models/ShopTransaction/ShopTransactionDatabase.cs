@@ -57,5 +57,36 @@ namespace WebApi.Models.ShopTransaction
       return JsonConvert.SerializeObject(storage);
     }
 
+    //创建订单信息
+    //添加成功返回UserID，添加失败返回“0”
+    public static string AddDealRecord(string Trade_id, string Product_id, string Ord_price, string UserID, string Ord_payment)
+    {
+      CreateConn();
+      OracleCommand Insert = DB.CreateCommand();
+      string Ord_time = DateTime.Now.ToString();
+      Insert.CommandText = "insert into deal_record (Trade_id,Product_id,Ord_price,User_id,Ord_payment,Ord_time) " +
+        "values(:Trade_id,:Product_id,:Ord_price,:User_id,:Ord_payment,:Ord_time)";
+      Insert.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
+      Insert.Parameters.Add(new OracleParameter(":Product_id", Product_id));
+      Insert.Parameters.Add(new OracleParameter(":Ord_price", Ord_price));
+      Insert.Parameters.Add(new OracleParameter(":UserID", UserID));
+      Insert.Parameters.Add(new OracleParameter(":Ord_payment", Ord_payment));
+      Insert.Parameters.Add(new OracleParameter(":Ord_time", Ord_time));
+      Insert.ExecuteNonQuery();
+
+      OracleCommand find = DB.CreateCommand();
+
+      find.CommandText = "select User_id from deal_record where Ord_time=:Ord_time";
+      find.Parameters.Add(new OracleParameter(":Ord_time", Ord_time));
+      OracleDataReader Ord = find.ExecuteReader();
+      string result = "0";
+      while (Ord.Read())
+      {
+        result = Ord.GetValue(0).ToString();
+      }
+      CloseConn();
+      return result;
+    }
+
   }
 }
