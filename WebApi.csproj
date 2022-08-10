@@ -22,10 +22,8 @@
     <Folder Include="Controllers\ShopCenter\" />
     <Folder Include="Controllers\UserForum\" />
     <Folder Include="Controllers\MallPage\" />
-    <Folder Include="Controllers\ShopTransaction\" />
     <Folder Include="Models\ManageForm\" />
     <Folder Include="Models\ShopCenter\" />
-    <Folder Include="Models\ShopTransaction\" />
     <Folder Include="Models\UserCenter\" />
     <Folder Include="Models\UserForum\" />
   </ItemGroup>
