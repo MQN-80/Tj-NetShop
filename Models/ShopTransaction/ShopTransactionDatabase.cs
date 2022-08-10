@@ -31,13 +31,14 @@ namespace WebApi.Models.ShopTransaction
     }
 
     //返回收货地址
-    public static string GetDeliveryAddress()
+    public static string GetDeliveryAddress(string UserID)
     {
       List<Delivery_address> storage = new List<Delivery_address>();
       CreateConn();
       OracleCommand Search = DB.CreateCommand();
 
-      Search.CommandText = "select Id,User_id,Addr,Phone_number,Name,Add_default from delivery_address";
+      Search.CommandText = "select Id,User_id,Addr,Phone_number,Name,Add_default from delivery_address where User_id=:UserID";
+      Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
       {

@@ -13,12 +13,12 @@ namespace WebApi.Controllers.ShopTransaction
     /*
         * 返回全部的收货地址
         */
-    [Route("/ShopTransaction/get_delivery_address")]
+    [Route("/ShopTransaction/get_delivery_address/{UserID}")]
     [HttpGet]
-    public string get_delivery_address()
+    public string get_delivery_address(string UserID)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
-      return shopTransactionModel.Get_delivery_address();
+      return shopTransactionModel.Get_delivery_address(UserID);
     }
   }
 }
