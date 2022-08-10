@@ -7,9 +7,9 @@ namespace WebApi.Models.ShopTransaction
 {
   public class ShopTransactionModel
   {
-    public string Get_delivery_address()
+    public string Get_delivery_address(string UserID)
     {
-      return ShopTransactionDatabase.GetDeliveryAddress();
+      return ShopTransactionDatabase.GetDeliveryAddress(UserID);
     }
   }
  
