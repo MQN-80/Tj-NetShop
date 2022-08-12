@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApi.Models.MallPage;
+using WebApi.Models.ManageForm;
 
 namespace WebApi.Models
 {
@@ -150,7 +150,7 @@ namespace WebApi.Models
             
             OracleCommand find = DB.CreateCommand();
             //首先获取待处理的总数
-            find.CommandText = "select count(*) from article where status=0";
+            find.CommandText = "select count(*) from article_comment where status=0";
             int count = Convert.ToInt32(find.ExecuteScalar());
             OracleCommand get_list = DB.CreateCommand();
             //获取当前请求范围
@@ -161,7 +161,7 @@ namespace WebApi.Models
             //防止请求超过范围
             if (end > count)
                 end = count;
-            get_list.CommandText = "select article_title,article_context,user_id,create_time from article where rownum>=:begin and rownum<=:end";
+            get_list.CommandText = "select article_title,article_context,user_id,create_time from article where rownum>=:begin and rownum<=:end and status=0";
             get_list.Parameters.Add(new OracleParameter(":begin", begin));
             get_list.Parameters.Add(new OracleParameter(":end", end));
             OracleDataReader Ord = get_list.ExecuteReader();
@@ -197,6 +197,39 @@ namespace WebApi.Models
             //commit();
             int m=edit.ExecuteNonQuery();
             return m.ToString();
+        }
+        //获取评论
+        public static string getComment(int sum)
+        {
+            List<comment> storage = new List<comment>();
+            CreateConn();
+
+            OracleCommand find = DB.CreateCommand();
+            //首先获取待处理的总数
+            find.CommandText = "select count(*) from article_comment where status=0";
+            int count = Convert.ToInt32(find.ExecuteScalar());
+            OracleCommand get_list = DB.CreateCommand();
+            //获取当前请求范围
+            int begin = sum * 20 + 1;
+            int end = (sum + 1) * 20;
+            if (begin > count)
+                return JsonConvert.SerializeObject("请求过大");
+            //防止请求超过范围
+            if (end > count)
+                end = count;
+            get_list.CommandText = "select comment_context,create_time from article_comment where rownum>=:begin and rownum<=:end and status=0";
+            get_list.Parameters.Add(new OracleParameter(":begin", begin));
+            get_list.Parameters.Add(new OracleParameter(":end", end));
+            OracleDataReader Ord = get_list.ExecuteReader();
+            while (Ord.Read())
+            {
+                comment mid = new comment();
+                mid.comment_context = Ord.GetValue(0).ToString();
+                mid.create_time = Ord.GetValue(1).ToString();
+                storage.Add(mid);
+            }
+            CloseConn();
+            return JsonConvert.SerializeObject(storage);
         }
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”

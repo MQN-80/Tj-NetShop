@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Models;
-namespace WebApi.Models.MallPage
+namespace WebApi.Models.ManageForm
 {
     public class Manage
     {
@@ -47,6 +47,14 @@ namespace WebApi.Models.MallPage
             }
             else
                 return Database.agree_article(id,option);
+        }
+        public string get_comment(int sum)
+        {
+            if (sum < 0)
+                return "参数违法";
+            else
+                return Database.getComment(sum);
+
         }
     }
 

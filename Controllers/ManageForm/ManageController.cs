@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Models;
-using WebApi.Models.MallPage;
+using WebApi.Models.ManageForm;
 
 namespace WebApi.Controllers.ManageForm
 {
@@ -64,6 +64,14 @@ namespace WebApi.Controllers.ManageForm
         {
             Manage manage = new Manage();
             return manage.manage_article(id,option);
+        }
+        //获取待处理的评论,同样分批返回,1次20条
+        [Route("/Manage/get_comment")]
+        [HttpGet]
+        public string get_comment(int sum)
+        {
+            Manage manage = new Manage();
+            return manage.get_comment(sum);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApi.Models.MallPage
+namespace WebApi.Models.ManageForm
 {
     public class user_info
     {
@@ -29,4 +29,10 @@ namespace WebApi.Models.MallPage
         public string user_id { get; set; }
         public string create_time { get; set; }
     }
+    public class comment
+    {
+        public string comment_context { get; set; }
+        public string create_time { get; set; }
+    }
+
 }
