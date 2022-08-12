@@ -87,6 +87,30 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return result;
     }
+    //返回订单信息
+    public static string GetDealRecord(string UserID)
+    {
+      List<Deal_record> storage = new List<Deal_record>();
+      CreateConn();
+      OracleCommand Search = DB.CreateCommand();
 
+      Search.CommandText = "select Trade_id,Product_id,Ord_price,Ord_payment,Ord_time from deal_record where User_id=:UserID";
+      Search.Parameters.Add(new OracleParameter(":UserID", UserID));
+      OracleDataReader Ord = Search.ExecuteReader();
+      while (Ord.Read())
+      {
+        Deal_record deal_record = new Deal_record();
+        deal_record.Trade_id = Ord.GetValue(0).ToString();
+        deal_record.Product_id = Ord.GetValue(1).ToString();
+        deal_record.Ord_price = Ord.GetValue(2).ToString();
+        deal_record.Ord_payment = Ord.GetValue(3).ToString();
+        deal_record.Ord_time = Ord.GetValue(4).ToString();
+
+        storage.Add(deal_record);
+      }
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+    }
   }
 }

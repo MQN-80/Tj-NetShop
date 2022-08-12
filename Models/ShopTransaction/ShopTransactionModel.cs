@@ -16,6 +16,11 @@ namespace WebApi.Models.ShopTransaction
     {
       return ShopTransactionDatabase.AddDealRecord(Trade_id, Product_id, Ord_price, UserID, Ord_payment);
     }
+
+    public string Get_deal_record(string UserID)
+    {
+      return ShopTransactionDatabase.GetDealRecord(UserID);
+    }
   }
  
 }

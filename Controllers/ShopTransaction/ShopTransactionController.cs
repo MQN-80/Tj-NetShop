@@ -30,5 +30,15 @@ namespace WebApi.Controllers.ShopTransaction
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Add_deal_record(Trade_id, Product_id, Ord_price, UserID, Ord_payment);
     }
+    /*
+     * 返回用户订单
+     */
+    [Route("/ShopTransaction/get_deal_record/{UserID}")]
+    [HttpGet]
+    public string get_deal_record(string UserID)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.Get_deal_record(UserID);
+    }
   }
 }
