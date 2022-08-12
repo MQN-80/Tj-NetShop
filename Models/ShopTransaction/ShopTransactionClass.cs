@@ -28,7 +28,10 @@ namespace WebApi.Models.ShopTransaction
     public string Ord_price { get; set; }
     public string User_id { get; set; }
     public string Ord_payment { get; set; }
-    public string Ord_time { get; set; }
+    public string Start_time { get; set; }
+    public string End_time { get; set; }
+    public string Status { get; set; }
+
   }
 
 }

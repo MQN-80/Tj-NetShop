@@ -63,21 +63,23 @@ namespace WebApi.Models.ShopTransaction
     {
       CreateConn();
       OracleCommand Insert = DB.CreateCommand();
-      string Ord_time = DateTime.Now.ToString();
-      Insert.CommandText = "insert into deal_record (Trade_id,Product_id,Ord_price,User_id,Ord_payment,Ord_time) " +
-        "values(:Trade_id,:Product_id,:Ord_price,:User_id,:Ord_payment,:Ord_time)";
+      string start_time = DateTime.Now.ToString();
+      string status = "0";
+      Insert.CommandText = "insert into deal_record (Trade_id,Product_id,Ord_price,User_id,Ord_payment,start_time,status) " +
+        "values(:Trade_id,:Product_id,:Ord_price,:User_id,:Ord_payment,:start_time,:status)";
       Insert.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
       Insert.Parameters.Add(new OracleParameter(":Product_id", Product_id));
       Insert.Parameters.Add(new OracleParameter(":Ord_price", Ord_price));
       Insert.Parameters.Add(new OracleParameter(":UserID", UserID));
       Insert.Parameters.Add(new OracleParameter(":Ord_payment", Ord_payment));
-      Insert.Parameters.Add(new OracleParameter(":Ord_time", Ord_time));
+      Insert.Parameters.Add(new OracleParameter(":start_time", start_time));
+      Insert.Parameters.Add(new OracleParameter(":status", status));
       Insert.ExecuteNonQuery();
 
       OracleCommand find = DB.CreateCommand();
 
-      find.CommandText = "select User_id from deal_record where Ord_time=:Ord_time";
-      find.Parameters.Add(new OracleParameter(":Ord_time", Ord_time));
+      find.CommandText = "select User_id from deal_record where start_time=:start_time";
+      find.Parameters.Add(new OracleParameter(":start_time", start_time));
       OracleDataReader Ord = find.ExecuteReader();
       string result = "0";
       while (Ord.Read())
@@ -94,7 +96,7 @@ namespace WebApi.Models.ShopTransaction
       CreateConn();
       OracleCommand Search = DB.CreateCommand();
 
-      Search.CommandText = "select Trade_id,Product_id,Ord_price,Ord_payment,Ord_time from deal_record where User_id=:UserID";
+      Search.CommandText = "select Trade_id,Product_id,Ord_price,Ord_payment,Start_time,End_time,Status from deal_record where User_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
@@ -104,7 +106,9 @@ namespace WebApi.Models.ShopTransaction
         deal_record.Product_id = Ord.GetValue(1).ToString();
         deal_record.Ord_price = Ord.GetValue(2).ToString();
         deal_record.Ord_payment = Ord.GetValue(3).ToString();
-        deal_record.Ord_time = Ord.GetValue(4).ToString();
+        deal_record.Start_time = Ord.GetValue(4).ToString();
+        deal_record.End_time = Ord.GetValue(5).ToString();
+        deal_record.Status = Ord.GetValue(6).ToString();
 
         storage.Add(deal_record);
       }
