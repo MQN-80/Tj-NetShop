@@ -11,7 +11,9 @@ namespace WebApi.Models.ShopTransaction
   {
     public static OracleConnection DB;
 
-    //建立数据库连接
+    /*
+     * 建立数据库连接
+     */
     public static void CreateConn()  //更改此处数据库地址即可
     {
       //124.222.1.19
@@ -24,13 +26,16 @@ namespace WebApi.Models.ShopTransaction
       DB = new OracleConnection(connStr);
       DB.Open();
     }
-    //关闭数据库连接
+    /*
+     * 关闭数据库连接
+     */
     public static void CloseConn()
     {
       DB.Close();
     }
-
-    //返回收货地址
+    /*
+     * 返回收货地址
+     */
     public static string GetDeliveryAddress(string UserID)
     {
       List<Delivery_address> storage = new List<Delivery_address>();
@@ -57,21 +62,22 @@ namespace WebApi.Models.ShopTransaction
       return JsonConvert.SerializeObject(storage);
     }
 
-    //创建订单信息
-    //添加成功返回UserID，添加失败返回“0”
-    public static string AddDealRecord(string Trade_id, string Product_id, string Ord_price, string UserID, string Ord_payment)
+    /*
+     * 创建订单信息
+     * 添加成功返回UserID，添加失败返回“0”
+     */
+    public static string AddDealRecord(string Trade_id, string Product_id, string Ord_price, string UserID)
     {
       CreateConn();
       OracleCommand Insert = DB.CreateCommand();
       string start_time = DateTime.Now.ToString();
       string status = "0";
-      Insert.CommandText = "insert into deal_record (Trade_id,Product_id,Ord_price,User_id,Ord_payment,start_time,status) " +
-        "values(:Trade_id,:Product_id,:Ord_price,:User_id,:Ord_payment,:start_time,:status)";
+      Insert.CommandText = "insert into deal_record (Trade_id,Product_id,Ord_price,User_id,start_time,status) " +
+        "values(:Trade_id,:Product_id,:Ord_price,:User_id,:start_time,:status)";
       Insert.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
       Insert.Parameters.Add(new OracleParameter(":Product_id", Product_id));
       Insert.Parameters.Add(new OracleParameter(":Ord_price", Ord_price));
       Insert.Parameters.Add(new OracleParameter(":UserID", UserID));
-      Insert.Parameters.Add(new OracleParameter(":Ord_payment", Ord_payment));
       Insert.Parameters.Add(new OracleParameter(":start_time", start_time));
       Insert.Parameters.Add(new OracleParameter(":status", status));
       Insert.ExecuteNonQuery();
@@ -89,14 +95,17 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return result;
     }
-    //返回订单信息
+    /*
+     * 返回订单信息
+     */
     public static string GetDealRecord(string UserID)
     {
       List<Deal_record> storage = new List<Deal_record>();
       CreateConn();
       OracleCommand Search = DB.CreateCommand();
 
-      Search.CommandText = "select Trade_id,Product_id,Ord_price,Ord_payment,Start_time,End_time,Status from deal_record where User_id=:UserID";
+      Search.CommandText = "select Trade_id,Product_id,Ord_price,Ord_payment,Start_time,End_time,Status " +
+        "from deal_record where User_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
@@ -115,6 +124,26 @@ namespace WebApi.Models.ShopTransaction
       //以字符串形式返回
       CloseConn();
       return JsonConvert.SerializeObject(storage);
+    }
+    /*
+     * 修改订单信息
+     */
+    public static string ModifyDealRecord(string UserID,string Trade_id,string Ord_payment)
+    {
+      CreateConn();
+      //先修改status的状态,将其改为1
+      OracleCommand edit = DB.CreateCommand();
+      string Status = "1";
+      string End_time = DateTime.Now.ToString();
+      edit.CommandText = "update deal_record set Ord_payment=:Ord_payment,End_time=:End_time,Status=:Status where User_id=:UserID and Trade_id=:Trade_id";
+      edit.Parameters.Add(new OracleParameter(":Ord_payment", Ord_payment));
+      edit.Parameters.Add(new OracleParameter(":End_time", End_time));
+      edit.Parameters.Add(new OracleParameter(":Status", Status));
+      edit.Parameters.Add(new OracleParameter(":UserID", UserID));
+      edit.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
+      edit.ExecuteNonQuery();
+      CloseConn();
+      return "ok";
     }
   }
 }
