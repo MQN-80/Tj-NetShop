@@ -13,7 +13,7 @@ namespace WebApi.Controllers.ManageForm
         //管理员注册接口
         [Route("/Manage/login")]
         [HttpGet]
-        public object ManageLogin(int id,string password,string phone="122")
+        public string ManageLogin(int id,string password,string phone="122")
         {
             Manage manage = new Manage();
             userController user = new userController();

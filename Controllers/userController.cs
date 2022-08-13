@@ -32,7 +32,7 @@ namespace WebApi.Controllers
         /// <param name="user"></param>
         [Route("get_token")]
         [HttpGet]
-        public object Token(string userid)
+        public string Token(string userid)
         {
             //测试自己创建的对象
             var user = new app_mobile_user
@@ -63,7 +63,7 @@ namespace WebApi.Controllers
                                                           expires: DateTime.Now.AddMinutes(5), //token有效时间
                                                           signingCredentials: credentials);
 
-            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            return new JwtSecurityTokenHandler().WriteToken(token).ToString();
         }
        
         [Authorize]
@@ -83,12 +83,13 @@ namespace WebApi.Controllers
             return op.Get_user_temp(userid);
         }
         [HttpGet]
+        [Route("is_user")]
         public string GetUser(string userid,string password)
         {
             
 
             if (ManageDatabase.IsUserExist(userid, password))
-                return userid + password;
+                return Token(userid);
             else
                 return "no";
         }

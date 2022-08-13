@@ -82,9 +82,7 @@ namespace WebApi
             services.AddCors(options =>
             {
                 options.AddPolicy(CORS1,
-                builder => builder.AllowAnyOrigin()
-                .WithMethods("GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS")
-                );
+                builder => builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin());
             });
 
         }

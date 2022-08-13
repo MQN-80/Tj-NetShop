@@ -196,6 +196,7 @@ namespace WebApi.Models
             }
             //commit();
             int m=edit.ExecuteNonQuery();
+            CloseConn();
             return m.ToString();
         }
         //获取评论
@@ -259,6 +260,7 @@ namespace WebApi.Models
         public static User FindUserInfo(string UserID)
         {
             User U = new User();
+
             OracleCommand Search = DB.CreateCommand();
             Search.CommandText = "select * from user_info where user_id=:UserID";
             Search.Parameters.Add(new OracleParameter(":UserID", UserID));
