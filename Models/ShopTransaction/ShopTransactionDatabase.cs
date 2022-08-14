@@ -145,5 +145,29 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return "ok";
     }
+
+    /*
+     * 拉取用户积分
+     */
+    public static string GetUserCreadits(string UserID)
+    {
+      List<User_credits> storage = new List<User_credits>();
+      CreateConn();
+      OracleCommand Search = DB.CreateCommand();
+
+      Search.CommandText = "select Creadits from User_credits where User_id=:UserID";
+      Search.Parameters.Add(new OracleParameter(":UserID", UserID));
+      OracleDataReader Ord = Search.ExecuteReader();
+      while (Ord.Read())
+      {
+        User_credits user_Credits = new User_credits();
+        user_Credits.Creadits = Ord.GetValue(0).ToString();
+        user_Credits.User_id = UserID;
+        storage.Add(user_Credits);
+      }
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+    }
   }
 }
