@@ -39,7 +39,7 @@ namespace WebApi.Models.ShopTransaction
   public class User_credits
   {
     public string User_id { get; set; }
-    public string Creadits { get; set; }
+    public int Creadits { get; set; }
 
   }
   /*
@@ -49,7 +49,7 @@ namespace WebApi.Models.ShopTransaction
   {
     public string User_id { get; set; }
     public string Trade_id { get; set; }
-    public string Creadits_change { get; set; }
+    public int Creadits_change { get; set; }
     public string Status { get; set; }
     public string Create_time { get; set; }
   }

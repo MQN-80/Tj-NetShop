@@ -31,6 +31,11 @@ namespace WebApi.Models.ShopTransaction
     {
       return ShopTransactionDatabase.GetUserCreadits(UserID);
     }
+
+    public string Modify_Creadits_Record(string UserID, string Trade_id, int Creadits_change, string Status)
+    {
+      return ShopTransactionDatabase.ModifyCreaditsRecord(UserID, Trade_id, Creadits_change, Status);
+    }
   }
  
 }
