@@ -197,7 +197,15 @@ namespace WebApi.Models.ShopTransaction
       }
       else if (Status == "0")
       {
-        Creadits -= Creadits_change;
+        //判断积分是否为负
+        if ((Creadits - Creadits_change) < 0)
+        {
+          return "error";
+        }
+        else
+        {
+          Creadits -= Creadits_change;
+        }
       }
       else
       { 
