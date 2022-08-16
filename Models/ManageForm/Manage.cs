@@ -56,6 +56,10 @@ namespace WebApi.Models.ManageForm
                 return Database.getComment(sum);
 
         }
+        public string agree_comment(string comment_id,int option)
+        {
+            return Database.agreeComment(comment_id,option);
+        }
     }
 
 }

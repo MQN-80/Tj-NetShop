@@ -232,6 +232,27 @@ namespace WebApi.Models
             CloseConn();
             return JsonConvert.SerializeObject(storage);
         }
+        //审核评论是否通过
+        public static string agreeComment(string comment_id,int option)
+        {
+            CreateConn();
+            //先修改status的状态,将其改为1
+            OracleCommand edit = DB.CreateCommand();
+            if (option == 1)  //表示审核通过
+            {
+                edit.CommandText = "update article_comment set status=1 where id=:id";
+                edit.Parameters.Add(new OracleParameter(":id", comment_id));
+            }
+            else
+            {
+                edit.CommandText = "delete from article_comment where id=:id";
+                edit.Parameters.Add(new OracleParameter(":id", comment_id));
+            }
+            //commit();
+            int m = edit.ExecuteNonQuery();
+            CloseConn();
+            return m.ToString();
+        }
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
         public static string AddUser(string UserName, string UserPassword)

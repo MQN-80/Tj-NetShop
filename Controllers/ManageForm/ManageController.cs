@@ -73,5 +73,13 @@ namespace WebApi.Controllers.ManageForm
             Manage manage = new Manage();
             return manage.get_comment(sum);
         }
+        //审核评论通过
+        [Route("/Manage/agree_comment")]
+        [HttpGet]
+        public string agree_comment(string id,int option)
+        {
+            Manage manage = new Manage();
+            return manage.agree_comment(id,option);
+        }
     }
 }
