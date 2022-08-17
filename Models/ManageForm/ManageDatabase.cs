@@ -150,7 +150,7 @@ namespace WebApi.Models
             
             OracleCommand find = DB.CreateCommand();
             //首先获取待处理的总数
-            find.CommandText = "select count(*) from article_comment where status=0";
+            find.CommandText = "select count(*) from article where status=0";
             int count = Convert.ToInt32(find.ExecuteScalar());
             OracleCommand get_list = DB.CreateCommand();
             //获取当前请求范围
