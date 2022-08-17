@@ -145,5 +145,94 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return "ok";
     }
+
+    /*
+     * 拉取用户积分
+     */
+    public static string GetUserCreadits(string UserID)
+    {
+      List<User_credits> storage = new List<User_credits>();
+      CreateConn();
+      OracleCommand Search = DB.CreateCommand();
+
+      Search.CommandText = "select Creadits from User_credits where User_id=:UserID";
+      Search.Parameters.Add(new OracleParameter(":UserID", UserID));
+      OracleDataReader Ord = Search.ExecuteReader();
+      while (Ord.Read())
+      {
+        User_credits user_Credits = new User_credits();
+        user_Credits.Creadits = Convert.ToInt32(Ord.GetValue(0));
+        user_Credits.User_id = UserID;
+        storage.Add(user_Credits);
+      }
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+    }
+
+    /*
+     *修改用户积分
+     */
+    public static string ModifyCreaditsRecord(string UserID, string Trade_id, int Creadits_change, string Status)
+    {
+      CreateConn();
+      //先查用户积分数量
+      OracleCommand Search = DB.CreateCommand();
+      Search.CommandText = "select Creadits from User_credits where User_id=:UserID";
+      Search.Parameters.Add(new OracleParameter(":UserID", UserID));
+      OracleDataReader Ord = Search.ExecuteReader();
+      int Creadits = 0;
+      while (Ord.Read())
+      {
+        Creadits = Convert.ToInt32(Ord.GetValue(0));
+      }
+
+      //然后修改用户积分数量
+      OracleCommand edit = DB.CreateCommand();
+      string Create_time = DateTime.Now.ToString();
+      
+      if (Status == "1")
+      {
+        Creadits += Creadits_change;
+      }
+      else if (Status == "0")
+      {
+        //判断积分是否为负
+        if ((Creadits - Creadits_change) < 0)
+        {
+          return "error";
+        }
+        else
+        {
+          Creadits -= Creadits_change;
+        }
+      }
+      else
+      { 
+        return "error"; 
+      }
+      //修改用户积分表
+      edit.CommandText = "update User_credits set Creadits=:Creadits where User_id=:UserID";
+      edit.Parameters.Add(new OracleParameter(":Creadits", Creadits));
+      edit.Parameters.Add(new OracleParameter(":UserID", UserID));
+      edit.ExecuteNonQuery();
+
+      //然后插入积分记录表
+
+
+
+
+
+
+
+
+
+
+
+
+
+      CloseConn();
+      return "ok";
+    }
   }
 }

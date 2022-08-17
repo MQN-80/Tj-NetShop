@@ -50,5 +50,25 @@ namespace WebApi.Controllers.ShopTransaction
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Modify_deal_record(UserID, Trade_id, Ord_payment);
     }
+    /*
+     * 返回用户积分
+     */
+    [Route("/ShopTransaction/get_User_Creadits/{UserID}")]
+    [HttpGet]
+    public string get_User_Creadits(string UserID)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.Get_User_Creadits(UserID);
+    }
+    /*
+     *修改用户积分
+     */
+    [Route("/ShopTransaction/modify_Creadits_Record/{UserID}")]
+    [HttpPut]
+    public string modify_Creadits_Record(string UserID, string Trade_id, int Creadits_change, string Status)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.Modify_Creadits_Record(UserID, Trade_id, Creadits_change, Status);
+    }
   }
 }
