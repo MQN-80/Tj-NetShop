@@ -23,11 +23,27 @@ namespace WebApi.Controllers.UserForum
         }
         //增加新文章
         [Route("/userCenter/push_article")]
-        [HttpGet]
+        [HttpPost]
         public string push_article(string title, string context, int user_id, int product_id)
         {
             userForum forum = new userForum();
             return forum.push_article(title, context, user_id, product_id);
+        }
+        //获取对应文章的评论
+        [Route("/userCenter/get_comment")]
+        [HttpGet]
+        public string get_comment(string article_id)
+        {
+            userForum forum = new userForum();
+            return forum.get_comment(article_id);
+        }
+        //在对应文章底部增加评论
+        [Route("/userCenter/push_comment")]
+        [HttpPost]
+        public string push_comment(string context, int user_id, int article_id)
+        {
+            userForum forum = new userForum();
+            return forum.push_comment(context,user_id,article_id);
         }
     }
 }

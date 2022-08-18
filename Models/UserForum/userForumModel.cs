@@ -17,5 +17,13 @@ namespace WebApi.Models.UserForum
         {
             return userForumDatabase.push_article(title, context, user_id, product_id);
         }
+        public string get_comment(string article_id)
+        {
+            return userForumDatabase.get_comment(article_id);
+        }
+        public string push_comment(string context, int user_id, int article_id)
+        {
+            return userForumDatabase.push_comment(context, user_id, article_id);
+        }
     }
 }

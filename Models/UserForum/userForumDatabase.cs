@@ -85,6 +85,44 @@ namespace WebApi.Models.UserForum
             CloseConn();
             return m.ToString();
         }
+        public static string get_comment(string article_id)
+        {
+            List<article_comment> storage = new List<article_comment>();
+            CreateConn();
+            OracleCommand get_list = DB.CreateCommand();
+            //获取当前请求范围
+            get_list.CommandText = "select a.comment_context,a.create_time,(select user_name from user_info where user_id=a.user_id ) " +
+                "from article_comment a where a.article_id=:article_id and a.status=1";
+            get_list.Parameters.Add(new OracleParameter(":article_id", article_id));
+            OracleDataReader Ord = get_list.ExecuteReader();
+            while (Ord.Read())
+            {
+                article_comment mid = new article_comment();
+                mid.comment_context = Ord.GetValue(0).ToString();
+                mid.create_time = Ord.GetValue(1).ToString();
+                mid.user_name= Ord.GetValue(2).ToString();
+                storage.Add(mid);
+            }
+            CloseConn();
+            return JsonConvert.SerializeObject(storage);
+        }
+        public static string push_comment(string context,int user_id,int article_id)
+        {
+            CreateConn();
+            //先修改status的状态,将其改为1
+            OracleCommand edit = DB.CreateCommand();
+            string timenow=DateTime.Now.ToString();
+            edit.CommandText = "insert into article_comment " +
+                "(user_id,comment_context,create_time,status,article_id)"+
+                "values (:user_id,:context,:timeNow,0,:article_id)";
+            edit.Parameters.Add(new OracleParameter(":context", context));
+            edit.Parameters.Add(new OracleParameter(":timeNow", timenow));
+            edit.Parameters.Add(new OracleParameter(":user_id", user_id));
+            edit.Parameters.Add(new OracleParameter(":article_id", article_id));
+            int m = edit.ExecuteNonQuery();
+            CloseConn();
+            return m.ToString();
+        }
 
     }
 }
