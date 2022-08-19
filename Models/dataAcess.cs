@@ -1,9 +1,9 @@
+using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 namespace WebApi.Models
 {
     public class ManageDatabase
@@ -52,7 +52,7 @@ namespace WebApi.Models
 
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
-        public static string AddUser(string UserName, string UserPassword)
+        public static user_result AddUser(string UserName, string UserPassword)
         {
             CreateConn();
             string now = DateTime.Now.ToString();   //获取当前时间
@@ -63,19 +63,20 @@ namespace WebApi.Models
             Insert.Parameters.Add(new OracleParameter(":NowTime", now));
             Insert.ExecuteNonQuery();
 
-      OracleCommand find = DB.CreateCommand();
+            OracleCommand find = DB.CreateCommand();
 
-      find.CommandText = "select user_id from user_info where user_name=:UserName";
-      find.Parameters.Add(new OracleParameter(":UserName", UserName));
-      OracleDataReader Ord = find.ExecuteReader();
-      string result = "0";
-      while (Ord.Read())
-      {
-        result = Ord.GetValue(0).ToString();
-      }
-      CloseConn();
-      return result;
-    }
+             find.CommandText = "select id,user_id from user_info where user_name=:UserName";
+            find.Parameters.Add(new OracleParameter(":UserName", UserName));
+            OracleDataReader Ord = find.ExecuteReader();
+            user_result result = new user_result();
+            while (Ord.Read())
+            {
+                result.id = Ord.GetValue(0).ToString();
+                result.user_id = Ord.GetValue(1).ToString();
+            }
+            CloseConn();
+            return result;
+        }
 
         //查找个人信息
         public static User FindUserInfo(string UserID)

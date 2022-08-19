@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 namespace WebApi.Models.UserForum
 {
     public class userForumDatabase
@@ -47,8 +46,8 @@ namespace WebApi.Models.UserForum
             //防止请求超过范围
             if (end > count)
                 end = count;
-            get_list.CommandText = "select id,article_title,article_context,user_id,create_time,product_id,article_id from article " +
-                "where rownum>=:begin and rownum<=:end and status=1 order by article_id desc";
+            get_list.CommandText = "select a.id,a.article_title,a.article_context,(select user_name from user_info where user_id=a.user_id),a.create_time,a.product_id,a.article_id from article a " +
+                "where rownum>=:begin and rownum<=:end and a.status=1 order by a.article_id desc";
             get_list.Parameters.Add(new OracleParameter(":begin", begin));
             get_list.Parameters.Add(new OracleParameter(":end", end));
             OracleDataReader Ord = get_list.ExecuteReader();
@@ -58,7 +57,7 @@ namespace WebApi.Models.UserForum
                 mid.id = Ord.GetValue(0).ToString();
                 mid.article_title= Ord.GetValue(1).ToString();
                 mid.article_context = Ord.GetValue(2).ToString();
-                mid.user_id= Ord.GetValue(3).ToString();
+                mid.user_name= Ord.GetValue(3).ToString();
                 mid.create_time = Ord.GetValue(4).ToString();
                 mid.product_id = Ord.GetValue(5).ToString();
                 mid.article_id= Ord.GetValue(6).ToString();
@@ -74,14 +73,15 @@ namespace WebApi.Models.UserForum
             OracleCommand edit = DB.CreateCommand();
             string timenow=DateTime.Now.ToString();
             edit.CommandText = "insert into article " +
-                "(article_title,article_context,user_id,create_time,product_id,status,article_id)"+
-                "values (:title,:context,:user_id,:timeNow,:product_id,0,article_seq.nextval)";
+                "(user_id,article_title,article_context,create_time,product_id,status,article_id) " +
+                "values (:user_id,:title,:context,:timeNow,:product_id,0,article_seq.nextval)";
+            edit.Parameters.Add(new OracleParameter(":user_id", user_id));
             edit.Parameters.Add(new OracleParameter(":title", title));
             edit.Parameters.Add(new OracleParameter(":context", context));
             edit.Parameters.Add(new OracleParameter(":timeNow", timenow));
-            edit.Parameters.Add(new OracleParameter(":user_id", user_id));
             edit.Parameters.Add(new OracleParameter(":product_id", product_id));
             int m = edit.ExecuteNonQuery();
+            
             CloseConn();
             return m.ToString();
         }
@@ -113,11 +113,11 @@ namespace WebApi.Models.UserForum
             OracleCommand edit = DB.CreateCommand();
             string timenow=DateTime.Now.ToString();
             edit.CommandText = "insert into article_comment " +
-                "(user_id,comment_context,create_time,status,article_id)"+
+                "(user_id,comment_context,create_time,status,article_id) " +
                 "values (:user_id,:context,:timeNow,0,:article_id)";
+            edit.Parameters.Add(new OracleParameter(":user_id", user_id));
             edit.Parameters.Add(new OracleParameter(":context", context));
             edit.Parameters.Add(new OracleParameter(":timeNow", timenow));
-            edit.Parameters.Add(new OracleParameter(":user_id", user_id));
             edit.Parameters.Add(new OracleParameter(":article_id", article_id));
             int m = edit.ExecuteNonQuery();
             CloseConn();

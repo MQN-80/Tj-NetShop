@@ -33,6 +33,11 @@ namespace WebApi.Models
         /// </summary>
         public string SecretKey { get; set; }
     }
+    public class token
+    {
+        public string user_token { set; get; }
+    }
+
     public class app_mobile_user
     {
         public long id { get; set; }
@@ -46,8 +51,8 @@ namespace WebApi.Models
         public string password { get; set; }
 
     }
-    
-        public class user_health
+
+    public class user_health
     {
         public string date;        //对应时间
         public string temperature; //用户体温
@@ -77,10 +82,10 @@ namespace WebApi.Models
         /// 获取token
         /// </summary>
         /// <param name="user"></param>
-        public object Token(int id,string password,string phone="123")
+        public string Token(int id, string password, string phone = "123")
         {
             //测试自己创建的对象
-            
+
 
             var claims = new List<Claim>();
             claims.Add(new Claim(JwtClaimTypes.Audience, "aud"));
@@ -88,7 +93,7 @@ namespace WebApi.Models
             claims.Add(new Claim(JwtClaimTypes.Name, phone));
             claims.Add(new Claim(JwtClaimTypes.Name, phone));
             claims.Add(new Claim(JwtClaimTypes.Id, id.ToString()));
-            claims.Add(new Claim(JwtClaimTypes.PhoneNumber,phone));
+            claims.Add(new Claim(JwtClaimTypes.PhoneNumber, phone));
 
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("bc47a26eb9a59406057dddd62d0898f4"));
@@ -103,14 +108,21 @@ namespace WebApi.Models
                                                           expires: DateTime.Now.AddMinutes(50), //token有效时间
                                                           signingCredentials: credentials);
 
-            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public  object Ok(string v)
+        public object Ok(string v)
         {
             throw new NotImplementedException();
         }
     }
+    public class user_result
+    {
+        public string token { get; set; }
+        public string user_id { get; set; }
+        public string id { get; set; }
+    }
+
 
 
 

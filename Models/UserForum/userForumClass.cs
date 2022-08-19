@@ -10,7 +10,7 @@ namespace WebApi.Models.UserForum
         public string id { get; set; }
         public string article_title{ get; set; }
         public string article_context { get; set; }
-        public string user_id { get; set; }
+        public string user_name { get; set; }
         public string create_time { get; set; }
         public string product_id { get; set; }
         public string article_id { get; set; }

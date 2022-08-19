@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -96,7 +97,9 @@ namespace WebApi.Controllers
         [HttpPost]
         public string AddUser(string username, string password)
         {
-            return ManageDatabase.AddUser(username, password);
+           user_result mid= ManageDatabase.AddUser(username, password);
+            mid.token = Token(username);
+            return JsonConvert.SerializeObject(mid);
         }
 
     }
