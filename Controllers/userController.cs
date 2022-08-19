@@ -85,19 +85,23 @@ namespace WebApi.Controllers
         }
         [HttpGet]
         [Route("is_user")]
-        public string GetUser(string userid,string password)
+        public string GetUser(int userid,string password)
         {
-            
 
             if (ManageDatabase.IsUserExist(userid, password))
-                return Token(userid);
+            {
+                user_result mid = ManageDatabase.get_user(userid);
+                mid.token = Token(password);
+                return JsonConvert.SerializeObject(mid);
+            }
             else
                 return "no";
         }
         [HttpPost]
+        [Route("user/login")]
         public string AddUser(string username, string password)
         {
-           user_result mid= ManageDatabase.AddUser(username, password);
+            user_result mid= ManageDatabase.AddUser(username, password);
             mid.token = Token(username);
             return JsonConvert.SerializeObject(mid);
         }

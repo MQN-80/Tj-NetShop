@@ -33,7 +33,7 @@ namespace WebApi.Models
 
         //在MUser表中查询用户、密码是否错误(登录时使用)
         //密码或用户名错误返回false；密码和用户名正确返回true
-        public static bool IsUserExist(string UserID, string Password)
+        public static bool IsUserExist(int UserID, string Password)
         {
             int Count;
             CreateConn();
@@ -56,7 +56,11 @@ namespace WebApi.Models
         {
             CreateConn();
             string now = DateTime.Now.ToString();   //获取当前时间
+            //假如存在该用户名,返回空
+            if (FindUserInfo(UserName))
+                return null;
             OracleCommand Insert = DB.CreateCommand();
+
             Insert.CommandText = "insert into user_info (user_name,password,create_time) values(:UserName,:UserPassword,:NowTime)";
             Insert.Parameters.Add(new OracleParameter(":UserName", UserName));
             Insert.Parameters.Add(new OracleParameter(":UserPassword", UserPassword));
@@ -77,21 +81,36 @@ namespace WebApi.Models
             CloseConn();
             return result;
         }
-
-        //查找个人信息
-        public static User FindUserInfo(string UserID)
+        public static user_result get_user(int user_id)
         {
-            User U = new User();
-            OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select * from user_info where user_id=:UserID";
-            Search.Parameters.Add(new OracleParameter(":UserID", UserID));
-            OracleDataReader Ord = Search.ExecuteReader();
+            CreateConn();
+            OracleCommand find = DB.CreateCommand();
+
+            find.CommandText = "select id,user_id from user_info where user_id=:user_id";
+            find.Parameters.Add(new OracleParameter(":user_id", user_id));
+            OracleDataReader Ord = find.ExecuteReader();
+            user_result result = new user_result();
             while (Ord.Read())
             {
-                U.UserID = UserID;
-                U.UserPassword = Ord.GetValue(1).ToString();
+                result.id = Ord.GetValue(0).ToString();
+                result.user_id = Ord.GetValue(1).ToString();
             }
-            return U;
+            CloseConn();
+            return result;
+        }
+        //查找该用户名是否存在
+        public static bool FindUserInfo(string user_name)
+        {
+            CreateConn();
+            OracleCommand Search = DB.CreateCommand();
+            Search.CommandText = "select count(*) from user_info where user_name=:user_name";
+            Search.Parameters.Add(new OracleParameter(":user_name", user_name));
+            int count = Convert.ToInt32(Search.ExecuteScalar());
+            CloseConn();
+            if (count > 0)
+                return true;
+            else
+                return false;
         }
     }
 
