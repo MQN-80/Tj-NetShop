@@ -161,17 +161,19 @@ namespace WebApi.Models
             //防止请求超过范围
             if (end > count)
                 end = count;
-            get_list.CommandText = "select article_title,article_context,user_id,create_time from article where rownum>=:begin and rownum<=:end and status=0";
+            get_list.CommandText = "select article_title,article_context,user_id,create_time,id from article where rownum>=:begin and rownum<=:end and status=0";
             get_list.Parameters.Add(new OracleParameter(":begin", begin));
             get_list.Parameters.Add(new OracleParameter(":end", end));
             OracleDataReader Ord = get_list.ExecuteReader();
             while (Ord.Read())
             {
                 article mid = new article();
+                
                 mid.article_title = Ord.GetValue(0).ToString();
                 mid.article_context = Ord.GetValue(1).ToString();
                 mid.user_id = Ord.GetValue(2).ToString();
                 mid.create_time = Ord.GetValue(3).ToString();
+                mid.id = Ord.GetValue(4).ToString();
                 storage.Add(mid);
             }
             CloseConn();

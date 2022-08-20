@@ -13,7 +13,7 @@ namespace WebApi.Controllers.ShopTransaction
     /*
      * 返回全部的收货地址
      */
-    [Route("/ShopTransaction/get_delivery_address/{UserID}")]
+    [Route("/ShopTransaction/get_delivery_address")]
     [HttpGet]
     public string get_delivery_address(string UserID)
     {
@@ -33,7 +33,7 @@ namespace WebApi.Controllers.ShopTransaction
     /*
      * 返回用户订单
      */
-    [Route("/ShopTransaction/get_deal_record/{UserID}")]
+    [Route("/ShopTransaction/get_deal_record")]
     [HttpGet]
     public string get_deal_record(string UserID)
     {
@@ -43,7 +43,7 @@ namespace WebApi.Controllers.ShopTransaction
     /*
      * 修改订单信息
      */
-    [Route("/ShopTransaction/modify_deal_record/{UserID}")]
+    [Route("/ShopTransaction/modify_deal_record")]
     [HttpPut]
     public string modify_deal_record(string UserID,string Trade_id,string Ord_payment)
     {
@@ -53,7 +53,7 @@ namespace WebApi.Controllers.ShopTransaction
     /*
      * 返回用户积分
      */
-    [Route("/ShopTransaction/get_User_Creadits/{UserID}")]
+    [Route("/ShopTransaction/get_User_Creadits")]
     [HttpGet]
     public string get_User_Creadits(string UserID)
     {
@@ -63,7 +63,7 @@ namespace WebApi.Controllers.ShopTransaction
     /*
      *修改用户积分
      */
-    [Route("/ShopTransaction/modify_Creadits_Record/{UserID}")]
+    [Route("/ShopTransaction/modify_Creadits_Record")]
     [HttpPut]
     public string modify_Creadits_Record(string UserID, string Trade_id, int Creadits_change, string Status)
     {

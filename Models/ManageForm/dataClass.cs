@@ -28,6 +28,7 @@ namespace WebApi.Models.ManageForm
         public string article_context { get; set; }
         public string user_id { get; set; }
         public string create_time { get; set; }
+        public string id { get; set; }
     }
     public class comment
     {

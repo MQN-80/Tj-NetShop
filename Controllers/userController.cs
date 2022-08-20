@@ -98,10 +98,12 @@ namespace WebApi.Controllers
                 return "no";
         }
         [HttpPost]
-        [Route("user/login")]
+        [Route("login")]
         public string AddUser(string username, string password)
         {
             user_result mid= ManageDatabase.AddUser(username, password);
+            if (mid == null)
+                return "no";
             mid.token = Token(username);
             return JsonConvert.SerializeObject(mid);
         }

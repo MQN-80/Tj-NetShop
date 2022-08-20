@@ -54,22 +54,20 @@ namespace WebApi.Models
         //添加成功返回UserID，添加失败返回“0”
         public static user_result AddUser(string UserName, string UserPassword)
         {
-            CreateConn();
             string now = DateTime.Now.ToString();   //获取当前时间
             //假如存在该用户名,返回空
             if (FindUserInfo(UserName))
                 return null;
+            CreateConn();
             OracleCommand Insert = DB.CreateCommand();
 
             Insert.CommandText = "insert into user_info (user_name,password,create_time) values(:UserName,:UserPassword,:NowTime)";
             Insert.Parameters.Add(new OracleParameter(":UserName", UserName));
             Insert.Parameters.Add(new OracleParameter(":UserPassword", UserPassword));
             Insert.Parameters.Add(new OracleParameter(":NowTime", now));
-            Insert.ExecuteNonQuery();
-
+            Insert.ExecuteNonQuery();        
             OracleCommand find = DB.CreateCommand();
-
-             find.CommandText = "select id,user_id from user_info where user_name=:UserName";
+            find.CommandText = "select id,user_id from user_info where user_name=:UserName";
             find.Parameters.Add(new OracleParameter(":UserName", UserName));
             OracleDataReader Ord = find.ExecuteReader();
             user_result result = new user_result();
