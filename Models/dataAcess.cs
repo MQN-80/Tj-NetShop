@@ -89,7 +89,7 @@ namespace WebApi.Models
             CreateConn();
             OracleCommand find = DB.CreateCommand();
 
-            find.CommandText = "select id,user_id from user_info where user_id=:user_id";
+            find.CommandText = "select id,user_id,user_name from user_info where user_id=:user_id";
             find.Parameters.Add(new OracleParameter(":user_id", user_id));
             OracleDataReader Ord = find.ExecuteReader();
             user_result result = new user_result();
@@ -97,6 +97,7 @@ namespace WebApi.Models
             {
                 result.id = Ord.GetValue(0).ToString();
                 result.user_id = Ord.GetValue(1).ToString();
+                result.user_name = Ord.GetValue(2).ToString();
             }
             CloseConn();
             return result;

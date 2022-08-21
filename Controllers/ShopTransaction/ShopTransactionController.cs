@@ -25,7 +25,7 @@ namespace WebApi.Controllers.ShopTransaction
      */
     [Route("/ShopTransaction/add_deal_record")]
     [HttpPost]
-    public string add_deal_record(string Product_id, string Ord_price, string UserID)
+    public string add_deal_record(string Product_id, string Ord_price, int UserID)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Add_deal_record(Product_id, Ord_price, UserID);

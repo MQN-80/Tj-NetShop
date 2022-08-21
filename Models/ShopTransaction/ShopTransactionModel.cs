@@ -12,7 +12,7 @@ namespace WebApi.Models.ShopTransaction
       return ShopTransactionDatabase.GetDeliveryAddress(UserID);
     }
 
-    public string Add_deal_record(string Product_id, string Ord_price, string UserID)
+    public string Add_deal_record(string Product_id, string Ord_price, int UserID)
     {
       return ShopTransactionDatabase.AddDealRecord(Product_id, Ord_price, UserID);
     }

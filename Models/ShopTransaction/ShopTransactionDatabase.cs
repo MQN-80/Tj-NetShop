@@ -17,14 +17,14 @@ namespace WebApi.Models.ShopTransaction
     public static void CreateConn()  //更改此处数据库地址即可
     {
       //124.222.1.19
-      /*string user = "system";
-      string pwd = "030215Zhan";
-      string db = "localhost/orcl";
+      string user = "shop";
+      string pwd = "jy2051914";
+      string db = "124.222.1.19/helowin";
       string conStringUser = "User ID=" + user + ";password=" + pwd + ";Data Source=" + db + ";";
-      */
+      
       //string connString = "Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = orcl))); Persist Security Info=True;User ID=c##shop;Password=jinyi123mx427;";
-      var connStr = $"DATA SOURCE=localhost/orcl; PASSWORD=030215Zhan; PERSIST SECURITY INFO=True; USER ID=system";
-      DB = new OracleConnection(connStr);
+      //var connStr = $"DATA SOURCE=localhost/orcl; PASSWORD=030215Zhan; PERSIST SECURITY INFO=True; USER ID=system";
+      DB = new OracleConnection(conStringUser);
       DB.Open();
     }
     /*
@@ -65,7 +65,7 @@ namespace WebApi.Models.ShopTransaction
      * 创建订单信息
      * 添加成功返回订单id，添加失败返回“0”
      */
-    public static string AddDealRecord(string Product_id, string Ord_price, string UserID)
+    public static string AddDealRecord(string Product_id, string Ord_price, int UserID)
     {
       CreateConn();
       OracleCommand Insert = DB.CreateCommand();
@@ -144,7 +144,7 @@ namespace WebApi.Models.ShopTransaction
       CreateConn();
       OracleCommand Search = DB.CreateCommand();
 
-      Search.CommandText = "select Creadits from User_credits where User_id=:UserID";
+      Search.CommandText = "select Credits from User_credits where User_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
@@ -167,7 +167,7 @@ namespace WebApi.Models.ShopTransaction
       CreateConn();
       //先查用户积分数量
       OracleCommand Search = DB.CreateCommand();
-      Search.CommandText = "select Creadits from User_credits where User_id=:UserID";
+      Search.CommandText = "select Credits from User_credits where User_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       int Creadits = 0;
@@ -201,7 +201,7 @@ namespace WebApi.Models.ShopTransaction
         return "error"; 
       }
       //修改用户积分表
-      edit.CommandText = "update User_credits set Creadits=:Creadits where User_id=:UserID";
+      edit.CommandText = "update User_credits set Credits=:Creadits where User_id=:UserID";
       edit.Parameters.Add(new OracleParameter(":Creadits", Creadits));
       edit.Parameters.Add(new OracleParameter(":UserID", UserID));
       edit.ExecuteNonQuery();
