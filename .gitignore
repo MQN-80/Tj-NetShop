@@ -2,3 +2,4 @@
 /.config
 /obj
 /WebApi.csproj.user
+.idea
