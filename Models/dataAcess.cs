@@ -76,6 +76,11 @@ namespace WebApi.Models
                 result.id = Ord.GetValue(0).ToString();
                 result.user_id = Ord.GetValue(1).ToString();
             }
+            OracleCommand credit = DB.CreateCommand();
+            credit.CommandText = "insert into user_credits (user_id,credits)" +
+                "values ((select id from user_info where user_name=:username),0)";
+            credit.Parameters.Add(new OracleParameter(":username", UserName));
+            credit.ExecuteNonQuery();
             CloseConn();
             return result;
         }

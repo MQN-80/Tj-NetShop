@@ -10,8 +10,6 @@ namespace WebApi.Models.ShopTransaction
    */
   public class Delivery_address
   {
-    public string Id { get; set; }
-    public string User_id { get; set; }
     public string Addr { get; set; }
     public string Phone_number { get; set; }
     public string Name { get; set; }
@@ -27,9 +25,7 @@ namespace WebApi.Models.ShopTransaction
     public string Product_id { get; set; }
     public string Ord_price { get; set; }
     public string User_id { get; set; }
-    public string Ord_payment { get; set; }
     public string Start_time { get; set; }
-    public string End_time { get; set; }
     public string Status { get; set; }
 
   }
