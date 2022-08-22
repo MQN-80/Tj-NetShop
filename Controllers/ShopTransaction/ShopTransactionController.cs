@@ -53,22 +53,22 @@ namespace WebApi.Controllers.ShopTransaction
     /*
      * 返回用户积分
      */
-    [Route("/ShopTransaction/get_User_Creadits")]
+    [Route("/ShopTransaction/get_User_Credits")]
     [HttpGet]
-    public string get_User_Creadits(string UserID)
+    public string get_User_Credits(string UserID)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
-      return shopTransactionModel.Get_User_Creadits(UserID);
+      return shopTransactionModel.Get_User_Credits(UserID);
     }
     /*
      *修改用户积分
      */
-    [Route("/ShopTransaction/modify_Creadits_Record")]
+    [Route("/ShopTransaction/modify_Credits_Record")]
     [HttpPut]
-    public string modify_Creadits_Record(string UserID, string Trade_id, int Creadits_change, string Status)
+    public string modify_Credits_Record(string UserID, string Trade_id, int Credits_change, string Status)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
-      return shopTransactionModel.Modify_Creadits_Record(UserID, Trade_id, Creadits_change, Status);
+      return shopTransactionModel.Modify_Credits_Record(UserID, Trade_id, Credits_change, Status);
     }
   }
 }

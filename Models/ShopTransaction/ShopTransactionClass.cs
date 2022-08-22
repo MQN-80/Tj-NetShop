@@ -33,17 +33,17 @@ namespace WebApi.Models.ShopTransaction
   public class User_credits
   {
     public string User_id { get; set; }
-    public int Creadits { get; set; }
+    public int Credits { get; set; }
 
   }
   /*
    * 3.1.31积分记录表
    */
-  public class Creadits_record
+  public class Credits_record
   {
     public string User_id { get; set; }
     public string Trade_id { get; set; }
-    public int Creadits_change { get; set; }
+    public int Credits_change { get; set; }
     public string Status { get; set; }
     public string Create_time { get; set; }
   }
