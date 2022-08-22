@@ -41,6 +41,7 @@ namespace WebApi.Models.ShopTransaction
    */
   public class Credits_record
   {
+    public string id { get; set; }
     public string User_id { get; set; }
     public string Trade_id { get; set; }
     public int Credits_change { get; set; }
