@@ -36,6 +36,11 @@ namespace WebApi.Models.ShopTransaction
     {
       return ShopTransactionDatabase.ModifyCreditsRecord(UserID, Trade_id, Credits_change, Status);
     }
+
+    public string Goods_Transaction(string Consumer_UserID, string Business_UserID, string Trade_id, int Credits_change, string Status)
+    {
+      return ShopTransactionDatabase.GoodsTransaction(Consumer_UserID, Business_UserID, Trade_id, Credits_change, Status);
+    }
   }
  
 }
