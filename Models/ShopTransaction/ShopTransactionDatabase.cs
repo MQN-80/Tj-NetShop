@@ -230,7 +230,6 @@ namespace WebApi.Models.ShopTransaction
 
 
 
-
       CloseConn();
       return "ok";
     }
