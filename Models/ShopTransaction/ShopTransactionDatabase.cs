@@ -138,7 +138,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 拉取用户积分
      */
-    public static string GetUserCreadits(string UserID)
+    public static string GetUserCredits(string UserID)
     {
       List<User_credits> storage = new List<User_credits>();
       CreateConn();
@@ -150,7 +150,7 @@ namespace WebApi.Models.ShopTransaction
       while (Ord.Read())
       {
         User_credits user_Credits = new User_credits();
-        user_Credits.Creadits = Convert.ToInt32(Ord.GetValue(0));
+        user_Credits.Credits = Convert.ToInt32(Ord.GetValue(0));
         user_Credits.User_id = UserID;
         storage.Add(user_Credits);
       }
@@ -162,7 +162,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *修改用户积分
      */
-    public static string ModifyCreaditsRecord(string UserID, string Trade_id, int Creadits_change, string Status)
+    public static string ModifyCreditsRecord(string UserID, string Trade_id, int Credits_change, string Status)
     {
       CreateConn();
       //先查用户积分数量
@@ -170,10 +170,10 @@ namespace WebApi.Models.ShopTransaction
       Search.CommandText = "select Credits from User_credits where User_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
-      int Creadits = 0;
+      int Credits = 0;
       while (Ord.Read())
       {
-        Creadits = Convert.ToInt32(Ord.GetValue(0));
+        Credits = Convert.ToInt32(Ord.GetValue(0));
       }
 
       //然后修改用户积分数量
@@ -182,18 +182,18 @@ namespace WebApi.Models.ShopTransaction
       
       if (Status == "1")
       {
-        Creadits += Creadits_change;
+        Credits += Credits_change;
       }
       else if (Status == "0")
       {
         //判断积分是否为负
-        if ((Creadits - Creadits_change) < 0)
+        if ((Credits - Credits_change) < 0)
         {
           return "error";
         }
         else
         {
-          Creadits -= Creadits_change;
+          Credits -= Credits_change;
         }
       }
       else
@@ -201,11 +201,22 @@ namespace WebApi.Models.ShopTransaction
         return "error"; 
       }
       //修改用户积分表
-      edit.CommandText = "update User_credits set Credits=:Creadits where User_id=:UserID";
-      edit.Parameters.Add(new OracleParameter(":Creadits", Creadits));
+      edit.CommandText = "update User_credits set Credits=:Credits where User_id=:UserID";
+      edit.Parameters.Add(new OracleParameter(":Credits", Credits));
       edit.Parameters.Add(new OracleParameter(":UserID", UserID));
       edit.ExecuteNonQuery();
       //然后插入积分记录表
+      OracleCommand Insert = DB.CreateCommand();
+      Insert.CommandText = "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
+        "values(:User_id,:Trade_id,:Credits_change,:Status,:Create_time)";
+      Insert.Parameters.Add(new OracleParameter(":User_id", UserID));
+      Insert.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
+      Insert.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
+      Insert.Parameters.Add(new OracleParameter(":Status", Status));
+      Insert.Parameters.Add(new OracleParameter(":Create_time", Create_time));
+      Insert.ExecuteNonQuery();
+
+
       CloseConn();
       return "ok";
     }
