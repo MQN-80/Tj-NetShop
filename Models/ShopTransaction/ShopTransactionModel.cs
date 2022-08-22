@@ -7,24 +7,24 @@ namespace WebApi.Models.ShopTransaction
 {
   public class ShopTransactionModel
   {
-    public string Get_delivery_address(string UserID)
+    public string Get_delivery_address(int UserID)
     {
       return ShopTransactionDatabase.GetDeliveryAddress(UserID);
     }
 
-    public string Add_deal_record(string Trade_id, string Product_id, string Ord_price, string UserID)
+    public string Add_deal_record(string Product_id, string Ord_price, int UserID)
     {
-      return ShopTransactionDatabase.AddDealRecord(Trade_id, Product_id, Ord_price, UserID);
+      return ShopTransactionDatabase.AddDealRecord(Product_id, Ord_price, UserID);
     }
 
-    public string Get_deal_record(string UserID)
+    public string Get_deal_record(int UserID)
     {
       return ShopTransactionDatabase.GetDealRecord(UserID);
     }
 
-    public string Modify_deal_record(string UserID,string Trade_id,string Ord_payment)
+    public string Modify_deal_record(string Trade_id)
     {
-      return ShopTransactionDatabase.ModifyDealRecord(UserID, Trade_id, Ord_payment);
+      return ShopTransactionDatabase.ModifyDealRecord(Trade_id);
     }
 
     public string Get_User_Creadits(string UserID)

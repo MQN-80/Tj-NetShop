@@ -76,6 +76,11 @@ namespace WebApi.Models
                 result.id = Ord.GetValue(0).ToString();
                 result.user_id = Ord.GetValue(1).ToString();
             }
+            OracleCommand credit = DB.CreateCommand();
+            credit.CommandText = "insert into user_credits (user_id,credits)" +
+                "values ((select id from user_info where user_name=:username),0)";
+            credit.Parameters.Add(new OracleParameter(":username", UserName));
+            credit.ExecuteNonQuery();
             CloseConn();
             return result;
         }
@@ -84,7 +89,7 @@ namespace WebApi.Models
             CreateConn();
             OracleCommand find = DB.CreateCommand();
 
-            find.CommandText = "select id,user_id from user_info where user_id=:user_id";
+            find.CommandText = "select id,user_id,user_name from user_info where user_id=:user_id";
             find.Parameters.Add(new OracleParameter(":user_id", user_id));
             OracleDataReader Ord = find.ExecuteReader();
             user_result result = new user_result();
@@ -92,6 +97,7 @@ namespace WebApi.Models
             {
                 result.id = Ord.GetValue(0).ToString();
                 result.user_id = Ord.GetValue(1).ToString();
+                result.user_name = Ord.GetValue(2).ToString();
             }
             CloseConn();
             return result;

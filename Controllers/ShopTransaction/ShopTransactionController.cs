@@ -15,7 +15,7 @@ namespace WebApi.Controllers.ShopTransaction
      */
     [Route("/ShopTransaction/get_delivery_address")]
     [HttpGet]
-    public string get_delivery_address(string UserID)
+    public string get_delivery_address(int UserID)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Get_delivery_address(UserID);
@@ -25,17 +25,17 @@ namespace WebApi.Controllers.ShopTransaction
      */
     [Route("/ShopTransaction/add_deal_record")]
     [HttpPost]
-    public string add_deal_record(string Trade_id, string Product_id, string Ord_price, string UserID)
+    public string add_deal_record(string Product_id, string Ord_price, int UserID)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
-      return shopTransactionModel.Add_deal_record(Trade_id, Product_id, Ord_price, UserID);
+      return shopTransactionModel.Add_deal_record(Product_id, Ord_price, UserID);
     }
     /*
      * 返回用户订单
      */
     [Route("/ShopTransaction/get_deal_record")]
     [HttpGet]
-    public string get_deal_record(string UserID)
+    public string get_deal_record(int UserID)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Get_deal_record(UserID);
@@ -45,10 +45,10 @@ namespace WebApi.Controllers.ShopTransaction
      */
     [Route("/ShopTransaction/modify_deal_record")]
     [HttpPut]
-    public string modify_deal_record(string UserID,string Trade_id,string Ord_payment)
+    public string modify_deal_record(string Trade_id)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
-      return shopTransactionModel.Modify_deal_record(UserID, Trade_id, Ord_payment);
+      return shopTransactionModel.Modify_deal_record(Trade_id);
     }
     /*
      * 返回用户积分
