@@ -15,19 +15,20 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 建立数据库连接
      */
-    public static void CreateConn()  //更改此处数据库地址即可
+    public static void CreateConn() //更改此处数据库地址即可
     {
       //124.222.1.19
       string user = "shop";
       string pwd = "jy2051914";
       string db = "124.222.1.19/helowin";
       string conStringUser = "User ID=" + user + ";password=" + pwd + ";Data Source=" + db + ";";
-      
-      //string connStr = "Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = orcl)));
+
+      //string connString = "Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = orcl))); Persist Security Info=True;User ID=c##shop;Password=jinyi123mx427;";
       //var connStr = $"DATA SOURCE=localhost/orcl; PASSWORD=030215Zhan; PERSIST SECURITY INFO=True; USER ID=system";
       DB = new OracleConnection(conStringUser);
       DB.Open();
     }
+
     /*
      * 关闭数据库连接
      */
@@ -35,6 +36,7 @@ namespace WebApi.Models.ShopTransaction
     {
       DB.Close();
     }
+
     /*
      * 返回收货地址
      */
@@ -57,6 +59,7 @@ namespace WebApi.Models.ShopTransaction
 
         storage.Add(delivery_address);
       }
+
       //以字符串形式返回
       CloseConn();
       return JsonConvert.SerializeObject(storage);
@@ -72,7 +75,7 @@ namespace WebApi.Models.ShopTransaction
       OracleCommand Insert = DB.CreateCommand();
       string start_time = DateTime.Now.ToString();
       Insert.CommandText = "insert into deal_record (Trade_id,Product_id,Ord_price,User_id,start_time,status) " +
-        "values(deal_seq.nextval,:Product_id,:Ord_price,:User_id,:start_time,1)";   
+                           "values(deal_seq.nextval,:Product_id,:Ord_price,:User_id,:start_time,1)";
       Insert.Parameters.Add(new OracleParameter(":Product_id", Product_id));
       Insert.Parameters.Add(new OracleParameter(":Ord_price", Ord_price));
       Insert.Parameters.Add(new OracleParameter(":UserID", UserID));
@@ -89,9 +92,11 @@ namespace WebApi.Models.ShopTransaction
       {
         result = Ord.GetValue(0).ToString();
       }
+
       CloseConn();
       return result;
     }
+
     /*
      * 返回订单信息
      */
@@ -102,7 +107,7 @@ namespace WebApi.Models.ShopTransaction
       OracleCommand Search = DB.CreateCommand();
 
       Search.CommandText = "select Trade_id,Product_id,Ord_price,Start_time,Status " +
-        "from deal_record where User_id=:UserID";
+                           "from deal_record where User_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
@@ -116,10 +121,12 @@ namespace WebApi.Models.ShopTransaction
 
         storage.Add(deal_record);
       }
+
       //以字符串形式返回
       CloseConn();
       return JsonConvert.SerializeObject(storage);
     }
+
     /*
      * 修改订单信息
      */
@@ -155,6 +162,7 @@ namespace WebApi.Models.ShopTransaction
         user_Credits.User_id = UserID;
         storage.Add(user_Credits);
       }
+
       //以字符串形式返回
       CloseConn();
       return JsonConvert.SerializeObject(storage);
@@ -180,7 +188,7 @@ namespace WebApi.Models.ShopTransaction
       //然后修改用户积分数量
       OracleCommand edit = DB.CreateCommand();
       string Create_time = DateTime.Now.ToString();
-      
+
       if (Status == "1")
       {
         Credits += Credits_change;
@@ -198,9 +206,10 @@ namespace WebApi.Models.ShopTransaction
         }
       }
       else
-      { 
-        return "error"; 
+      {
+        return "error";
       }
+
       //修改用户积分表
       edit.CommandText = "update User_credits set Credits=:Credits where User_id=:UserID";
       edit.Parameters.Add(new OracleParameter(":Credits", Credits));
@@ -209,7 +218,7 @@ namespace WebApi.Models.ShopTransaction
       //然后插入积分记录表
       OracleCommand Insert = DB.CreateCommand();
       Insert.CommandText = "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
-        "values(:User_id,:Trade_id,:Credits_change,:Status,:Create_time)";
+                           "values(:User_id,:Trade_id,:Credits_change,:Status,:Create_time)";
       Insert.Parameters.Add(new OracleParameter(":User_id", UserID));
       Insert.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
       Insert.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
@@ -226,7 +235,8 @@ namespace WebApi.Models.ShopTransaction
     /*
      *交易
      */
-    public static string GoodsTransaction(string Consumer_UserID, string Business_UserID, string Trade_id, int Credits_change, string Status)
+    public static string GoodsTransaction(string Consumer_UserID, string Business_UserID, string Trade_id,
+      int Credits_change, string Status)
     {
       CreateConn();
       //先查用户积分数量
@@ -239,6 +249,7 @@ namespace WebApi.Models.ShopTransaction
       {
         Consumer_Credits = Convert.ToInt32(OrdConsumer.GetValue(0));
       }
+
       //然后查商家积分数量
       OracleCommand SearchBusiness = DB.CreateCommand();
       SearchBusiness.CommandText = "select Credits from User_credits where User_id=:Business_UserID";
@@ -249,12 +260,13 @@ namespace WebApi.Models.ShopTransaction
       {
         Business_Credits = Convert.ToInt32(OrdBusiness.GetValue(0));
       }
+
       string Consumer_Status = "";
       string Business_Status = "";
 
       OracleCommand editConsumer = DB.CreateCommand();
       OracleCommand editBusiness = DB.CreateCommand();
-      if (Status == "1")//“1”为商品正常交易，用户扣除积分，商家增加积分
+      if (Status == "1") //“1”为商品正常交易，用户扣除积分，商家增加积分
       {
         Consumer_Status = "0";
         Business_Status = "1";
@@ -263,13 +275,13 @@ namespace WebApi.Models.ShopTransaction
         {
           return "error";
         }
-        else 
+        else
         {
           Consumer_Credits -= Credits_change;
           Business_Credits += Credits_change;
         }
       }
-      else if (Status == "0")//“0”为商品退款，用户增加积分，商家扣除积分
+      else if (Status == "0") //“0”为商品退款，用户增加积分，商家扣除积分
       {
         Consumer_Status = "1";
         Business_Status = "0";
@@ -290,7 +302,6 @@ namespace WebApi.Models.ShopTransaction
       }
 
       string Create_time = DateTime.Now.ToString();
-      //bool noRollback = false;
       OracleCommand InsertConsumer = DB.CreateCommand();
       OracleCommand InsertBusiness = DB.CreateCommand();
       //开始一个事务
@@ -306,15 +317,17 @@ namespace WebApi.Models.ShopTransaction
         editBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID));
 
         //插入credits_record表
-        InsertConsumer.CommandText = "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
-       "values(:Consumer_UserID,:Trade_id,:Credits_change,:Consumer_Status,:Create_time)";
+        InsertConsumer.CommandText =
+          "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
+          "values(:Consumer_UserID,:Trade_id,:Credits_change,:Consumer_Status,:Create_time)";
         InsertConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID", Consumer_UserID));
         InsertConsumer.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
         InsertConsumer.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
         InsertConsumer.Parameters.Add(new OracleParameter(":Consumer_Status", Consumer_Status));
         InsertConsumer.Parameters.Add(new OracleParameter(":Create_time", Create_time));
-        InsertBusiness.CommandText = "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
-        "values(:Business_UserID,:Trade_id,:Credits_change,:Business_Status,:Create_time)";
+        InsertBusiness.CommandText =
+          "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
+          "values(:Business_UserID,:Trade_id,:Credits_change,:Business_Status,:Create_time)";
         InsertBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID));
         InsertBusiness.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
         InsertBusiness.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
@@ -335,11 +348,104 @@ namespace WebApi.Models.ShopTransaction
         // 回滚事务
         txn.Rollback();
       }
+
       //释放事务的资源
       txn.Dispose();
 
       CloseConn();
       return "ok";
     }
+
+    /*
+     *返回积分记录
+     *From lyp, 前端说要一个返回积分记录的接口，我就直接在里面写了
+     */
+    public static string GetCreditRecord(int userID)
+    {
+      var storage = new List<Credits_record>();
+      CreateConn();
+      var find = DB.CreateCommand();
+
+      try
+      {
+        find.CommandText = "select user_id,trade_id,credits_change,status,create_time"
+                           + "from credits_record"
+                           + "where user_id=:userID";
+        find.Parameters.Add(new OracleParameter(":UserID", userID));
+        var ord = find.ExecuteReader();
+
+        while (ord.Read())
+        {
+          var creditRecord = new Credits_record();
+
+          creditRecord.User_id = ord.GetValue(0).ToString();
+          creditRecord.Trade_id = ord.GetValue(1).ToString();
+          try
+          {
+            creditRecord.Credits_change = int.Parse(ord.GetValue(2).ToString());
+          }
+          catch (Exception e)
+          {
+            Console.WriteLine("Error: " + e.Message + "\n in reading credit recod");
+            throw e;
+          }
+
+          creditRecord.Status = ord.GetValue(3).ToString();
+          creditRecord.Create_time = ord.GetValue(4).ToString();
+
+          storage.Add(creditRecord);
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine("Error: " + e.Message + "\n in reading credit recod");
+        throw e;
+      }
+
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+    }
+
+    /*
+     *查找商品
+     */
+    public static string SearchProductInfo(string product_name)
+    {
+      List<Product_information> storage = new List<Product_information>();
+      CreateConn();
+      var Search = DB.CreateCommand();
+      try
+      {
+        Search.CommandText = "select id,name,img,type_id,product_id,des,surplus,status,price,create_time " +
+          "from product_information " +
+          "where name like CONCAT(CONCAT('%', :product_name),'%') ";
+        Search.Parameters.Add(new OracleParameter(":product_name", product_name));
+        OracleDataReader Ord = Search.ExecuteReader();
+        while (Ord.Read())
+        {
+          Product_information product_information = new Product_information();
+          product_information.id = Ord.GetValue(0).ToString();
+          product_information.name = Ord.GetValue(1).ToString();
+          product_information.img = Ord.GetValue(2).ToString();
+          product_information.type_id = Ord.GetValue(3).ToString();
+          product_information.product_id = Convert.ToInt32(Ord.GetValue(4).ToString());
+          product_information.des = Ord.GetValue(5).ToString();
+          product_information.surplus = Convert.ToInt32(Ord.GetValue(6).ToString());
+          product_information.status = Convert.ToInt32(Ord.GetValue(7).ToString());
+          product_information.price = Convert.ToInt32(Ord.GetValue(8).ToString());
+          product_information.create_time = Ord.GetValue(9).ToString();
+          storage.Add(product_information);
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine("Error: " + e.Message + "\n in SearchProductInfo");
+        throw e;
+      }
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+    }
+
   }
 }

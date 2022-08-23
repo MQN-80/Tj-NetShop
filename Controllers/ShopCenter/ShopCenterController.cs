@@ -13,7 +13,7 @@ namespace WebApi.Controllers.ShopCenter
         /*
          * 返回四个随机商品
          */
-        [Route("/ShopCenter/get_delivery_address")]
+        [Route("/ShopCenter/get_4_random_product")]
         [HttpGet]
         public string get_4_random_product()
         {

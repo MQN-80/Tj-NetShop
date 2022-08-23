@@ -48,4 +48,22 @@ namespace WebApi.Models.ShopTransaction
     public string Status { get; set; }
     public string Create_time { get; set; }
   }
+
+  /*
+   * 3.1.2商品信息表
+   */
+  public class Product_information
+  {
+    public string id { get; set; }
+    public string name { get; set; }
+    public string img { get; set; }
+    public string type_id { get; set; }
+    public int product_id { get; set; }
+    public string des { get; set; }
+    public int surplus { get; set; }
+    public int status { get; set; }
+    public int price { get; set; }
+    public string create_time { get; set; }
+  }
+
 }

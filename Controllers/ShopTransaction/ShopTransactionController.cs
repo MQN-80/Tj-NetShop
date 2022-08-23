@@ -78,5 +78,22 @@ namespace WebApi.Controllers.ShopTransaction
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Goods_Transaction(Consumer_UserID, Business_UserID, Trade_id, Credits_change, Status);
     }
+
+    // from lyp
+    [Route("/ShopTransaction/get_credit_record")]
+    [HttpGet]
+    public string get_credit_record(int userID)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.Get_Credits_Record(userID);
+    }
+
+    [Route("/ShopTransaction/search_productInfo")]
+    [HttpGet]
+    public string search_productInfo(string product_name)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.Search_ProductInfo(product_name);
+    }
   }
 }
