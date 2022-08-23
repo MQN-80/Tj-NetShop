@@ -18,14 +18,14 @@ namespace WebApi.Models.ShopTransaction
     public static void CreateConn() //更改此处数据库地址即可
     {
       //124.222.1.19
-      /*string user = "shop";
+      string user = "shop";
       string pwd = "jy2051914";
       string db = "124.222.1.19/helowin";
-      string conStringUser = "User ID=" + user + ";password=" + pwd + ";Data Source=" + db + ";";*/
+      string conStringUser = "User ID=" + user + ";password=" + pwd + ";Data Source=" + db + ";";
 
       //string connString = "Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = orcl))); Persist Security Info=True;User ID=c##shop;Password=jinyi123mx427;";
-      var connStr = $"DATA SOURCE=localhost/orcl; PASSWORD=030215Zhan; PERSIST SECURITY INFO=True; USER ID=system";
-      DB = new OracleConnection(connStr);
+      //var connStr = $"DATA SOURCE=localhost/orcl; PASSWORD=030215Zhan; PERSIST SECURITY INFO=True; USER ID=system";
+      DB = new OracleConnection(conStringUser);
       DB.Open();
     }
 
@@ -302,7 +302,6 @@ namespace WebApi.Models.ShopTransaction
       }
 
       string Create_time = DateTime.Now.ToString();
-      //bool noRollback = false;
       OracleCommand InsertConsumer = DB.CreateCommand();
       OracleCommand InsertBusiness = DB.CreateCommand();
       //开始一个事务
@@ -357,7 +356,10 @@ namespace WebApi.Models.ShopTransaction
       return "ok";
     }
 
-    // From lyp, 前端说要一个返回积分记录的接口，我就直接在里面写了
+    /*
+     *返回积分记录
+     *From lyp, 前端说要一个返回积分记录的接口，我就直接在里面写了
+     */
     public static string GetCreditRecord(int userID)
     {
       var storage = new List<Credits_record>();
@@ -403,5 +405,47 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return JsonConvert.SerializeObject(storage);
     }
+
+    /*
+     *查找商品
+     */
+    public static string SearchProductInfo(string product_name)
+    {
+      List<Product_information> storage = new List<Product_information>();
+      CreateConn();
+      var Search = DB.CreateCommand();
+      try
+      {
+        Search.CommandText = "select id,name,img,type_id,product_id,des,surplus,status,price,create_time " +
+          "from product_information " +
+          "where name like CONCAT(CONCAT('%', :product_name),'%') ";
+        Search.Parameters.Add(new OracleParameter(":product_name", product_name));
+        OracleDataReader Ord = Search.ExecuteReader();
+        while (Ord.Read())
+        {
+          Product_information product_information = new Product_information();
+          product_information.id = Ord.GetValue(0).ToString();
+          product_information.name = Ord.GetValue(1).ToString();
+          product_information.img = Ord.GetValue(2).ToString();
+          product_information.type_id = Ord.GetValue(3).ToString();
+          product_information.product_id = Convert.ToInt32(Ord.GetValue(4).ToString());
+          product_information.des = Ord.GetValue(5).ToString();
+          product_information.surplus = Convert.ToInt32(Ord.GetValue(6).ToString());
+          product_information.status = Convert.ToInt32(Ord.GetValue(7).ToString());
+          product_information.price = Convert.ToInt32(Ord.GetValue(8).ToString());
+          product_information.create_time = Ord.GetValue(9).ToString();
+          storage.Add(product_information);
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine("Error: " + e.Message + "\n in SearchProductInfo");
+        throw e;
+      }
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+    }
+
   }
 }
