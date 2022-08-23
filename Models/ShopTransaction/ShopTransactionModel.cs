@@ -41,6 +41,12 @@ namespace WebApi.Models.ShopTransaction
     {
       return ShopTransactionDatabase.GoodsTransaction(Consumer_UserID, Business_UserID, Trade_id, Credits_change, Status);
     }
+
+    // from lyp
+    public string Get_Credits_Record(int UserID)
+    {
+      return ShopTransactionDatabase.GetCreditRecord(UserID);
+    }
   }
  
 }
