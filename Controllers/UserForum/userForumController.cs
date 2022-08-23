@@ -14,7 +14,7 @@ namespace WebApi.Controllers.UserForum
             return View();
         }
         //获取发布的文章，每次返回sum个
-        [Route("/userCenter/get_article")]
+        [Route("/userForum/get_article")]
         [HttpGet]
         public string get_article(int sum)
         {
@@ -22,7 +22,7 @@ namespace WebApi.Controllers.UserForum
             return forum.get_article(sum);
         }
         //增加新文章
-        [Route("/userCenter/push_article")]
+        [Route("/userForum/push_article")]
         [HttpPost]
         public string push_article(string title, string context, int user_id, int product_id)
         {
@@ -30,7 +30,7 @@ namespace WebApi.Controllers.UserForum
             return forum.push_article(title, context, user_id, product_id);
         }
         //获取对应文章的评论
-        [Route("/userCenter/get_comment")]
+        [Route("/userForum/get_comment")]
         [HttpGet]
         public string get_comment(string article_id)
         {
@@ -38,7 +38,7 @@ namespace WebApi.Controllers.UserForum
             return forum.get_comment(article_id);
         }
         //在对应文章底部增加评论
-        [Route("/userCenter/push_comment")]
+        [Route("/userForum/push_comment")]
         [HttpPost]
         public string push_comment(string context, int user_id, int article_id)
         {
