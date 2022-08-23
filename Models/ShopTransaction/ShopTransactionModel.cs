@@ -47,6 +47,11 @@ namespace WebApi.Models.ShopTransaction
     {
       return ShopTransactionDatabase.GetCreditRecord(UserID);
     }
+
+    public string Search_ProductInfo(string product_name)
+    {
+      return ShopTransactionDatabase.SearchProductInfo(product_name);
+    }
   }
  
 }
