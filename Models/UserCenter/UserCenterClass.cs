@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Models.UserCenter
 {
-    public class userInfo
+    public class UserInfo
     {
         public string UserId { get; set; }  // 用户ID作为主键
         public string UserName { get; set; }  // 用户昵称

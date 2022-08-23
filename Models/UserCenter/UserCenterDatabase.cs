@@ -32,27 +32,47 @@ namespace WebApi.Models.UserCenter
 
         public static string GetUserInfo(int userID)
         {
-            var storage = new List<userInfo>();
+            var storage = new List<UserInfo>();
             CreateConnection();
             var find = DB.CreateCommand();
-            
-            
-            // logics
-            
+
+            // Logics
+            find.CommandText = "select user_name, icon_addr, user_intro from user_info where user_id =: userID";
+            find.Parameters.Add(new OracleParameter(":userID", userID));
+            var ord = find.ExecuteReader();
+
+            while (ord.Read())
+            {
+                var userInfo = new UserInfo();
+                
+                userInfo.UserName = ord.GetValue(0).ToString();
+                userInfo.IconAddr = ord.GetValue(1).ToString();
+                userInfo.UserIntro = ord.GetValue(2).ToString();
+                
+                userInfo.UserId = userID.ToString();
+                
+                storage.Add(userInfo);
+            }
             CloseConnection();
             return JsonConvert.SerializeObject(storage);
         }
 
-        public static bool PushUserInfo(int UserID, string userName, string userIntro, string iconAddr)
+        public static string UpdateUserInfo(int userID, string userName, string userIntro, string iconAddr)
         {
             CreateConnection();
-            var find = DB.CreateCommand();
-            bool isPushSuccess = true;
+            var edit = DB.CreateCommand();
+            edit.CommandText = "update user_info"
+                               + "set user_name=:userName, user_intro=:userIntro, icon_addr=:iconAddr"
+                               + "where user_id=:userID";
+            edit.Parameters.Add(new OracleParameter("user_id", userID));
+            edit.Parameters.Add(new OracleParameter("user_name", userName));
+            edit.Parameters.Add(new OracleParameter("user_intro", userIntro));
+            edit.Parameters.Add(new OracleParameter("icon_addr", iconAddr));
 
-            // logics...
-            isPushSuccess = false;
-
-            return isPushSuccess;
+            var rowsAffected = edit.ExecuteNonQuery();
+            // if rowsAffected == 0, means update failed;
+            CloseConnection();
+            return rowsAffected.ToString();
         }
     }
 }
