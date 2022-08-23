@@ -18,14 +18,14 @@ namespace WebApi.Models.ShopTransaction
     public static void CreateConn()  //更改此处数据库地址即可
     {
       //124.222.1.19
-      /*string user = "shop";
+      string user = "shop";
       string pwd = "jy2051914";
       string db = "124.222.1.19/helowin";
-      string conStringUser = "User ID=" + user + ";password=" + pwd + ";Data Source=" + db + ";";*/
+      string conStringUser = "User ID=" + user + ";password=" + pwd + ";Data Source=" + db + ";";
       
-      //string connString = "Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = orcl))); Persist Security Info=True;User ID=c##shop;Password=jinyi123mx427;";
-      var connStr = $"DATA SOURCE=localhost/orcl; PASSWORD=030215Zhan; PERSIST SECURITY INFO=True; USER ID=system";
-      DB = new OracleConnection(connStr);
+      //string connStr = "Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = orcl)));
+      //var connStr = $"DATA SOURCE=localhost/orcl; PASSWORD=030215Zhan; PERSIST SECURITY INFO=True; USER ID=system";
+      DB = new OracleConnection(conStringUser);
       DB.Open();
     }
     /*
