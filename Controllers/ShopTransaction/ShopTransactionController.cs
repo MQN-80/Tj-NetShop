@@ -95,5 +95,13 @@ namespace WebApi.Controllers.ShopTransaction
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Search_ProductInfo(product_name);
     }
+
+    [Route("/ShopTransaction/search_user_collect")]
+    [HttpGet]
+    public string search_user_collect(int UserID)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.Search_User_Collect(UserID);
+    }
   }
 }
