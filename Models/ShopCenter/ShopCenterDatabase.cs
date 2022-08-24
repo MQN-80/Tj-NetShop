@@ -45,7 +45,7 @@ namespace WebApi.Models.ShopCenter
                 Product_info product_info = new Product_info();
                 product_info.name = Ord.GetValue(0).ToString();
                 product_info.img = Ord.GetValue(1).ToString();
-                product_info.price = long.Parse(Ord.GetValue(2).ToString());
+                product_info.price = Ord.GetValue(2).ToString();
 
                 storage.Add(product_info);
             }

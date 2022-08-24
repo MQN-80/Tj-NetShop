@@ -66,4 +66,16 @@ namespace WebApi.Models.ShopTransaction
     public string create_time { get; set; }
   }
 
+  /*
+  * 用户收藏夹连表查询返回值
+  */
+  public class User_collect
+  {
+    public string Name { get; set; }//商品名称
+    public string Img { get; set; }//商品图片
+    public string Des { get; set; }//商品简介
+    public int Price { get; set; }//商品价格
+  }
+
+
 }

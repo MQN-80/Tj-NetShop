@@ -52,6 +52,11 @@ namespace WebApi.Models.ShopTransaction
     {
       return ShopTransactionDatabase.SearchProductInfo(product_name);
     }
+
+    public string Search_User_Collect(int UserID)
+    {
+      return ShopTransactionDatabase.SearchUserCollect(UserID);
+    }
   }
  
 }

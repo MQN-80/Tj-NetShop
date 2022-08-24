@@ -447,5 +447,33 @@ namespace WebApi.Models.ShopTransaction
       return JsonConvert.SerializeObject(storage);
     }
 
+    /*
+     *用户收藏夹连表查询
+     */
+    public static string SearchUserCollect(int UserID)
+    {
+      List<User_collect> Storage = new List<User_collect>();
+      CreateConn();
+      var Search = DB.CreateCommand();
+      Search.CommandText = "select name,img,des,price " +
+          "from product_information,product_collect " +
+          "where product_information.product_id=product_collect.product_id and user_id=:UserID";
+      Search.Parameters.Add(new OracleParameter(":UserID", UserID));
+      OracleDataReader Ord = Search.ExecuteReader();
+      while (Ord.Read())
+      {
+        User_collect user_collect = new User_collect();
+        user_collect.Name = Ord.GetValue(0).ToString();
+        user_collect.Img = Ord.GetValue(1).ToString();
+        user_collect.Des = Ord.GetValue(2).ToString();
+        user_collect.Price = int.Parse(Ord.GetValue(3).ToString());
+
+        Storage.Add(user_collect);
+      }
+
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(Storage);
+    }
   }
 }
