@@ -11,5 +11,10 @@ namespace WebApi.Models.ShopCenter
         {
             return ShopCenterDatabase.GetFourRandomProduct();
         }
+
+        public string get_shop_info()
+        {
+            return ShopCenterDatabase.getShopInfo();
+        }
     }
 }
