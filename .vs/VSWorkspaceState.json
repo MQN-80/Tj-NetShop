@@ -2,9 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\Controllers",
-    "\\Controllers\\MallPage",
-    "\\Controllers\\ManageForm"
+    "\\Models",
+    "\\Models\\MallPage",
+    "\\Models\\ManageForm",
+    "\\Models\\ShopCenter",
+    "\\Models\\ShopTransaction",
+    "\\Models\\UserCenter",
+    "\\Models\\UserForum"
   ],
-  "SelectedNode": "\\Controllers\\ManageForm\\ManageController.cs",
+  "SelectedNode": "\\Models\\ShopTransaction\\ShopTransactionClass.cs",
   "PreviewInSolutionExplorer": false
 }
