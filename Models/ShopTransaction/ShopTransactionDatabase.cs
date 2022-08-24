@@ -464,11 +464,11 @@ namespace WebApi.Models.ShopTransaction
       {
         User_collect user_collect = new User_collect();
         user_collect.Name = Ord.GetValue(0).ToString();
-        user_collect.Img = Ord.GetValue(1).ToString();
-        user_collect.Des = Ord.GetValue(2).ToString();
-        user_collect.Price = int.Parse(Ord.GetValue(3).ToString());
+                user_collect.Img = Ord.GetValue(1).ToString();
+                user_collect.Des = Ord.GetValue(2).ToString();
+                user_collect.Price = int.Parse(Ord.GetValue(3).ToString());
 
-        Storage.Add(user_collect);
+                Storage.Add(user_collect);
       }
 
       //以字符串形式返回
