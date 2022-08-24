@@ -37,7 +37,7 @@ namespace WebApi.Models.UserCenter
             var find = DB.CreateCommand();
 
             // Logics
-            find.CommandText = "select user_name, icon_addr, user_intro from user_info where user_id =: userID";
+            find.CommandText = "select user_name, avatar_id, user_detail from user_info where user_id =: userID";
             find.Parameters.Add(new OracleParameter(":userID", userID));
             var ord = find.ExecuteReader();
 
@@ -46,8 +46,8 @@ namespace WebApi.Models.UserCenter
                 var userInfo = new UserInfo();
                 
                 userInfo.UserName = ord.GetValue(0).ToString();
-                userInfo.IconAddr = ord.GetValue(1).ToString();
-                userInfo.UserIntro = ord.GetValue(2).ToString();
+                userInfo.AvatarID = ord.GetValue(1).ToString();
+                userInfo.UserDetail = ord.GetValue(2).ToString();
                 
                 userInfo.UserId = userID.ToString();
                 
@@ -57,17 +57,15 @@ namespace WebApi.Models.UserCenter
             return JsonConvert.SerializeObject(storage);
         }
 
-        public static string UpdateUserInfo(int userID, string userName, string userIntro, string iconAddr)
+        public static string UpdateUserInfo(int userID, string userName, string userDetail, string avatarID)
         {
             CreateConnection();
             var edit = DB.CreateCommand();
-            edit.CommandText = "update user_info"
-                               + "set user_name=:userName, user_intro=:userIntro, icon_addr=:iconAddr"
-                               + "where user_id=:userID";
+            edit.CommandText = "update user_info set user_name=:userName, user_detail=:userDetail, avatar_id=:avatarID where user_id=:userID";
             edit.Parameters.Add(new OracleParameter("user_id", userID));
             edit.Parameters.Add(new OracleParameter("user_name", userName));
-            edit.Parameters.Add(new OracleParameter("user_intro", userIntro));
-            edit.Parameters.Add(new OracleParameter("icon_addr", iconAddr));
+            edit.Parameters.Add(new OracleParameter("user_detail", userDetail));
+            edit.Parameters.Add(new OracleParameter("avatar_id", avatarID));
 
             var rowsAffected = edit.ExecuteNonQuery();
             // if rowsAffected == 0, means update failed;

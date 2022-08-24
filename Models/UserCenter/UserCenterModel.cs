@@ -12,9 +12,9 @@ namespace WebApi.Models.UserCenter
             return UserCenterDatabase.GetUserInfo(user_id);
         }
 
-        public string update_user_info(int user_id, string user_name, string user_intro, string icon_addr)
+        public string update_user_info(int user_id, string user_name, string user_detail, string avatar_id)
         {
-            return UserCenterDatabase.UpdateUserInfo(user_id, user_name, user_intro, icon_addr);
+            return UserCenterDatabase.UpdateUserInfo(user_id, user_name, user_detail, avatar_id);
         }
     }
 }
