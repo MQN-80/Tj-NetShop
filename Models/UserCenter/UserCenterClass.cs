@@ -12,4 +12,10 @@ namespace WebApi.Models.UserCenter
         public string AvatarID { get; set; }  // 用户头像在资源服务器中的地址
         public string UserDetail { get; set; } // 用户的个人简介
     }
+
+    public class UserRoleRank
+    {
+        public string UserId { get; set; }
+        public int RoleRank { get; set; } // 用户的权限等级
+    }
 }

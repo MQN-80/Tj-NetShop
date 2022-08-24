@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Validations.Rules;
+using WebApi.Models.ShopTransaction;
 
 namespace WebApi.Models.UserCenter
 {
@@ -71,6 +72,36 @@ namespace WebApi.Models.UserCenter
             // if rowsAffected == 0, means update failed;
             CloseConnection();
             return rowsAffected.ToString();
+        }
+
+        public static string GetUserRoleRank(int userID)
+        {
+            var stroage = new List<UserRoleRank>();
+            CreateConnection();
+            var find = DB.CreateCommand();
+
+            find.CommandText = "select role_rank from user_info where user_id=:userID";
+            find.Parameters.Add(new OracleParameter(":userID", userID));
+            var ord = find.ExecuteReader();
+
+            try
+            {
+                while (ord.Read())
+                {
+                    var userRoleRank = new UserRoleRank();
+
+                    userRoleRank.RoleRank = int.Parse(ord.GetValue(0).ToString());
+                    userRoleRank.UserId = userID.ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw e;
+            }
+            
+            CloseConnection();
+            return JsonConvert.SerializeObject(stroage);
         }
     }
 }

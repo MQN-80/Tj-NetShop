@@ -16,5 +16,10 @@ namespace WebApi.Models.UserCenter
         {
             return UserCenterDatabase.UpdateUserInfo(user_id, user_name, user_detail, avatar_id);
         }
+
+        public string get_user_role_rank(int user_id)
+        {
+            return UserCenterDatabase.GetUserRoleRank(user_id);
+        }
     }
 }

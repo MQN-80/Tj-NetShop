@@ -29,5 +29,13 @@ namespace WebApi.Controllers.UserCenter
             Models.UserCenter.UserCenter center = new Models.UserCenter.UserCenter();
             return center.update_user_info(user_id, user_name, user_detail, avatar_id);
         }
+
+        [Route("userCenter/get_user_role_rank")]
+        [HttpGet]
+        public string get_user_role_rank(int user_id)
+        {
+            Models.UserCenter.UserCenter center = new Models.UserCenter.UserCenter();
+            return center.get_user_role_rank(user_id);
+        }
     }
 }
