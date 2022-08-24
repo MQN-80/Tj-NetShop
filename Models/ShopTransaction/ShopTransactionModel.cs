@@ -43,7 +43,7 @@ namespace WebApi.Models.ShopTransaction
     }
 
     // from lyp
-    public string Get_Credits_Record(int UserID)
+    public string Get_Credits_Record(string UserID)
     {
       return ShopTransactionDatabase.GetCreditRecord(UserID);
     }

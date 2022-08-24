@@ -14,7 +14,8 @@ namespace WebApi.Models.ShopCenter
 
         public string get_shop_info()
         {
-            return ShopCenterDatabase.getShopInfo();
+            return "";
+            //return ShopCenterDatabase.getShopInfo();
         }
     }
 }

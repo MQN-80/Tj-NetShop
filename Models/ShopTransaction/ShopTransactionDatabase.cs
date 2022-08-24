@@ -360,7 +360,7 @@ namespace WebApi.Models.ShopTransaction
      *返回积分记录
      *From lyp, 前端说要一个返回积分记录的接口，我就直接在里面写了
      */
-    public static string GetCreditRecord(int userID)
+    public static string GetCreditRecord(string userID)
     {
       var storage = new List<Credits_record>();
       CreateConn();
@@ -368,9 +368,7 @@ namespace WebApi.Models.ShopTransaction
 
       try
       {
-        find.CommandText = "select user_id,trade_id,credits_change,status,create_time"
-                           + "from credits_record"
-                           + "where user_id=:userID";
+        find.CommandText = "select user_id,trade_id,credits_change,status,create_time from credits_record where user_id=:userID";
         find.Parameters.Add(new OracleParameter(":UserID", userID));
         var ord = find.ExecuteReader();
 

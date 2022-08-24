@@ -82,7 +82,7 @@ namespace WebApi.Controllers.ShopTransaction
     // from lyp
     [Route("/ShopTransaction/get_credit_record")]
     [HttpGet]
-    public string get_credit_record(int userID)
+    public string get_credit_record(string userID)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Get_Credits_Record(userID);
