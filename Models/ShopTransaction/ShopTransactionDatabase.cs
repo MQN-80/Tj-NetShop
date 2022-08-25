@@ -473,5 +473,33 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return JsonConvert.SerializeObject(Storage);
     }
+
+    /*
+     *用户收藏店铺连表查询
+     */
+    public static string SearchUserCollectShop(int UserID)
+    {
+      List<User_collectShop> Storage = new List<User_collectShop>();
+      CreateConn();
+      var Search = DB.CreateCommand();
+      Search.CommandText = "select Store_name,Store_img,Collect_time " +
+          "from shop,subscribe_shop " +
+          "where shop.id=subscribe_shop.shop_id and user_id=:UserID";
+      Search.Parameters.Add(new OracleParameter(":UserID", UserID));
+      OracleDataReader Ord = Search.ExecuteReader();
+      while (Ord.Read())
+      {
+        User_collectShop user_collectShop = new User_collectShop();
+        user_collectShop.Store_name = Ord.GetValue(0).ToString();
+        user_collectShop.Store_img = Ord.GetValue(1).ToString();
+        user_collectShop.Collet_time = Ord.GetValue(2).ToString();
+
+        Storage.Add(user_collectShop);
+      }
+
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(Storage);
+    }
   }
 }
