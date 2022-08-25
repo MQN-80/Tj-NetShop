@@ -13,15 +13,15 @@ namespace WebApi.Models.MallPage
         }
         public string  Get_4_Collected_Product(int userid)
         {
-            return GetFourCollectedProduct(userid);
+            return MallPageDatabase.GetFourCollectedProduct(userid);
         }
         public string Get_4_Discount_Product()
         {
-            return GetFourDiscountProduct();
+            return MallPageDatabase.GetFourDiscountProduct();
         }
         public string Get_Random_Shop_Product()
         {
-            return GetRandomShopProduct();
+            return MallPageDatabase.GetRandomShopProduct();
         }
      }
 }

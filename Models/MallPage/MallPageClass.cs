@@ -10,7 +10,7 @@ namespace WebApi.Models.MallPage
     {
         public string name { get; set; }
         public string img { get; set; }
-        public long price { get; set; }
+        public string price { get; set; }
     }
 
 }

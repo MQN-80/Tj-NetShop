@@ -53,7 +53,7 @@ namespace WebApi.Models.MallPage
             return JsonConvert.SerializeObject(storage);
         }
         //返回收藏夹里面的四个商品
-        public ststic string GetFourCollectedProduct(int userid)
+        public static string GetFourCollectedProduct(int userid)
         {
             List<Product_info> storage = new List<Product_info>();
 
@@ -76,20 +76,20 @@ namespace WebApi.Models.MallPage
             return JsonConvert.SerializeObject(storage);
         }
         //返回四个打折商品
-        public ststic string GetFourDiscountProduct()
+        public static string GetFourDiscountProduct()
         {
             List<Product_info> storage = new List<Product_info>();
             //找到随机的四个打折商品的product_id
-            string products[4];
+            //string products[4];
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
             Search.CommandText = "select product_id from (select * from activity_product_relationship oreder by sys_guid()) where rownum<=4";
             OracleDataReader Ord = Search.ExecuteReader();
-            string products[4];
+            //string products[4];
             int i = 0;
             while (Ord.Read())
             {
-                products[i]= Ord.GetValue(0).ToString();
+                //products[i]= Ord.GetValue(0).ToString();
                 i++;
             }
             //依次搜索四个商品
@@ -97,8 +97,8 @@ namespace WebApi.Models.MallPage
             {
                 OracleCommand Search2 = DB.CreateCommand();
                 Search2.CommandText = "select name,img,price from product_infomation where product_id =:productid";
-                Search2.Parameters.Add(new OracleParameter(":productid", products[k]));
-                OracleDataReader Ord = Search2.ExecuteReader();
+                //Search2.Parameters.Add(new OracleParameter(":productid", products[k]));
+                //OracleDataReader Ord = Search2.ExecuteReader();
                 while (Ord.Read())
                 {
                     Product_info product_info = new Product_info();
@@ -114,7 +114,7 @@ namespace WebApi.Models.MallPage
             return JsonConvert.SerializeObject(storage);
         }
         //返回随机一家店铺的四个商品
-        public ststic string GetRandomShopProduct()
+        public static string GetRandomShopProduct()
         {
             List<Product_info> storage = new List<Product_info>();
             CreateConn();
@@ -128,25 +128,25 @@ namespace WebApi.Models.MallPage
                shopid=Ord.GetValue(0).ToString();
             }
             //搜索四个商品
-            string products[4];
+            //string products[4];
             OracleCommand Search2 = DB.CreateCommand();
             Search2.CommandText = "select product_id from(select * form(select * from shop_product where shop_id=:shopid)oreder by sys_guid())where rownum<=4";
-            Search2.Parameters.Add(new OracleParameter(":shopid", shopid));
+            //Search2.Parameters.Add(new OracleParameter(":shopid", shopid));
             OracleDataReader Ord2 = Search2.ExecuteReader();
-            string products[4];
+            //string products[4];
             int i = 0;
             while (Ord.Read())
             {
-                products[i] = Ord.GetValue(0).ToString();
+                //products[i] = Ord.GetValue(0).ToString();
                 i++;
             }
             //依次搜索四个商品
             for (int k = 0; k < 4; k++)
             {
-                OracleCommand Search2 = DB.CreateCommand();
+               //OracleCommand Search2 = DB.CreateCommand();
                 Search2.CommandText = "select name,img,price from product_infomation where product_id =:productid";
-                Search2.Parameters.Add(new OracleParameter(":productid", products[k]));
-                OracleDataReader Ord = Search2.ExecuteReader();
+                //Search2.Parameters.Add(new OracleParameter(":productid", products[k]));
+                //OracleDataReader Ord = Search2.ExecuteReader();
                 while (Ord.Read())
                 {
                     Product_info product_info = new Product_info();
