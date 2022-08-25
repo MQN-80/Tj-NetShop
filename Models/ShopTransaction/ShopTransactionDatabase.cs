@@ -3,6 +3,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Data;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -501,5 +502,25 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return JsonConvert.SerializeObject(Storage);
     }
+
+    /*
+     * 添加收货地址
+     */
+    public static string AddDeliveryAddress(int user_id, string addr, string phone_number, string name, int add_default)
+    {
+      CreateConn();
+      var Insert = DB.CreateCommand();
+      Insert.CommandText = "insert into delivery_address (user_id,addr,phone_number,name,add_default) " +
+                           "values(:user_id,:addr,:phone_number,:name,:add_default)";
+      Insert.Parameters.Add(new OracleParameter(":user_id", user_id));
+      Insert.Parameters.Add(new OracleParameter(":addr", addr));
+      Insert.Parameters.Add(new OracleParameter(":phone_number", phone_number));
+      Insert.Parameters.Add(new OracleParameter(":name", name));
+      Insert.Parameters.Add(new OracleParameter(":add_default", add_default));
+      Insert.ExecuteNonQuery();
+
+      return "OK";
+    }
+
   }
 }
