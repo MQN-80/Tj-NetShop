@@ -11,9 +11,9 @@ namespace WebApi.Models.MallPage
         {
             return MallPageDatabase.GetFourRandomProduct();
         }
-        public string  Get_4_Collected_Product(int userid)
+        public string  Get_4_Collected_Product()
         {
-            return MallPageDatabase.GetFourCollectedProduct(userid);
+            return MallPageDatabase.GetFourCollectedProduct();
         }
         public string Get_4_Discount_Product()
         {

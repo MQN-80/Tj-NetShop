@@ -8,8 +8,9 @@ namespace WebApi.Models.MallPage
 
     public class Product_info
     {
+        public string id { get; set; }
         public string name { get; set; }
-        public string img { get; set; }
+        public string des{ get; set; }
         public string price { get; set; }
     }
 

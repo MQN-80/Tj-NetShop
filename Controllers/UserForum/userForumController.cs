@@ -32,7 +32,7 @@ namespace WebApi.Controllers.UserForum
         //获取对应文章的评论
         [Route("/userForum/get_comment")]
         [HttpGet]
-        public string get_comment(string article_id)
+        public string get_comment(int article_id)
         {
             userForum forum = new userForum();
             return forum.get_comment(article_id);

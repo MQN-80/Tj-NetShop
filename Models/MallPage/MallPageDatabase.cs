@@ -31,44 +31,43 @@ namespace WebApi.Models.MallPage
         {
             DB.Close();
         }
-        // 随机返回四个商品
+        // 随机返回四个商品,好像没什么问题,新增数据之后再试一下
         public static string GetFourRandomProduct()
         {
             List<Product_info> storage = new List<Product_info>();
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select product_id from (select * from product_collect oreder by sys_guid()) where rownum<=4";
+            Search.CommandText = "select id,name,des,price from (select * from product_information order by sys_guid()) where rownum<=4";
             OracleDataReader Ord = Search.ExecuteReader();
             while (Ord.Read())
             {
                 Product_info product_info = new Product_info();
-                product_info.name = Ord.GetValue(0).ToString();
-                product_info.img = Ord.GetValue(1).ToString();
-                product_info.price = Ord.GetValue(2).ToString();
-
+                product_info.id = Ord.GetValue(0).ToString();
+                product_info.name = Ord.GetValue(1).ToString();
+                product_info.des = Ord.GetValue(2).ToString();
+                product_info.price = Ord.GetValue(3).ToString();
                 storage.Add(product_info);
             }
             //以字符串形式返回
             CloseConn();
             return JsonConvert.SerializeObject(storage);
         }
-        //返回收藏夹里面的四个商品
-        public static string GetFourCollectedProduct(int userid)
+        //返回最近的四个商品
+        public static string GetFourCollectedProduct()
         {
             List<Product_info> storage = new List<Product_info>();
 
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select name,img,price from (select * from (select * from product_infomation where user_id =:userid) oreder by sys_guid()) where rownum<=4";
-            Search.Parameters.Add(new OracleParameter(":userid", userid));
+            Search.CommandText = "select id,name,des,price,product_id from product_information where rownum<=4 order by product_id desc";
             OracleDataReader Ord = Search.ExecuteReader();
             while (Ord.Read())
             {
                 Product_info product_info = new Product_info();
-                product_info.name = Ord.GetValue(0).ToString();
-                product_info.img = Ord.GetValue(1).ToString();
-                product_info.price = Ord.GetValue(2).ToString();
-
+                product_info.id = Ord.GetValue(0).ToString();
+                product_info.name = Ord.GetValue(1).ToString();
+                product_info.des = Ord.GetValue(2).ToString();
+                product_info.price = Ord.GetValue(3).ToString();
                 storage.Add(product_info);
             }
             //以字符串形式返回
@@ -80,82 +79,46 @@ namespace WebApi.Models.MallPage
         {
             List<Product_info> storage = new List<Product_info>();
             //找到随机的四个打折商品的product_id
-            //string products[4];
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select product_id from (select * from activity_product_relationship oreder by sys_guid()) where rownum<=4";
+            Search.CommandText = "select id,name,des,price,product_id,discount from product_information where rownum<=4 and discount<1";
             OracleDataReader Ord = Search.ExecuteReader();
-            //string products[4];
-            int i = 0;
             while (Ord.Read())
             {
-                //products[i]= Ord.GetValue(0).ToString();
-                i++;
-            }
-            //依次搜索四个商品
-            for(int k=0;k<4;k++)
-            {
-                OracleCommand Search2 = DB.CreateCommand();
-                Search2.CommandText = "select name,img,price from product_infomation where product_id =:productid";
-                //Search2.Parameters.Add(new OracleParameter(":productid", products[k]));
-                //OracleDataReader Ord = Search2.ExecuteReader();
-                while (Ord.Read())
-                {
-                    Product_info product_info = new Product_info();
-                    product_info.name = Ord.GetValue(0).ToString();
-                    product_info.img = Ord.GetValue(1).ToString();
-                    product_info.price = Ord.GetValue(2).ToString();
-
-                    storage.Add(product_info);
-                }
+                Product_info product_info = new Product_info();
+                product_info.id = Ord.GetValue(0).ToString();
+                product_info.name = Ord.GetValue(1).ToString();
+                product_info.des = Ord.GetValue(2).ToString();
+                product_info.price = Ord.GetValue(3).ToString();
+                storage.Add(product_info);
             }
             //以字符串形式返回
             CloseConn();
             return JsonConvert.SerializeObject(storage);
         }
-        //返回随机一家店铺的四个商品
+        //返回随机一家店铺的多个商品
         public static string GetRandomShopProduct()
         {
             List<Product_info> storage = new List<Product_info>();
             CreateConn();
             //找到随机商店
+            OracleCommand findShop = DB.CreateCommand();
+            findShop.CommandText = "select * from ( select a.shop_id from shop_product a join product_information b on a.product_id=b.product_id group by a.shop_id having count(*)>=1 ) where rownum=1";
+            string shop_id = findShop.ExecuteScalar().ToString();
+            //return shop_id;
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select shop_id from (select * from shop_product oreder by sys_guid()) where rownum<=1";
+            Search.CommandText = "select a.id,a.name,a.des,a.price,a.product_id from shop_product b join product_information a on a.product_id=b.product_id "
+                + "where a.product_id=b.product_id and b.shop_id=:shop_id";
+            Search.Parameters.Add(new OracleParameter(":shop_id", shop_id));
             OracleDataReader Ord = Search.ExecuteReader();
-            string shopid;
             while (Ord.Read())
             {
-               shopid=Ord.GetValue(0).ToString();
-            }
-            //搜索四个商品
-            //string products[4];
-            OracleCommand Search2 = DB.CreateCommand();
-            Search2.CommandText = "select product_id from(select * form(select * from shop_product where shop_id=:shopid)oreder by sys_guid())where rownum<=4";
-            //Search2.Parameters.Add(new OracleParameter(":shopid", shopid));
-            OracleDataReader Ord2 = Search2.ExecuteReader();
-            //string products[4];
-            int i = 0;
-            while (Ord.Read())
-            {
-                //products[i] = Ord.GetValue(0).ToString();
-                i++;
-            }
-            //依次搜索四个商品
-            for (int k = 0; k < 4; k++)
-            {
-               //OracleCommand Search2 = DB.CreateCommand();
-                Search2.CommandText = "select name,img,price from product_infomation where product_id =:productid";
-                //Search2.Parameters.Add(new OracleParameter(":productid", products[k]));
-                //OracleDataReader Ord = Search2.ExecuteReader();
-                while (Ord.Read())
-                {
-                    Product_info product_info = new Product_info();
-                    product_info.name = Ord.GetValue(0).ToString();
-                    product_info.img = Ord.GetValue(1).ToString();
-                    product_info.price = Ord.GetValue(2).ToString();
-
-                    storage.Add(product_info);
-                }
+                Product_info product_info = new Product_info();
+                product_info.id = Ord.GetValue(0).ToString();
+                product_info.name = Ord.GetValue(1).ToString();
+                product_info.des = Ord.GetValue(2).ToString();
+                product_info.price = Ord.GetValue(3).ToString();
+                storage.Add(product_info);
             }
             //以字符串形式返回
             CloseConn();

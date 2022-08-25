@@ -220,7 +220,7 @@ namespace WebApi.Models
             //防止请求超过范围
             if (end > count)
                 end = count;
-            get_list.CommandText = "select comment_context,create_time from article_comment where rownum>=:begin and rownum<=:end and status=0";
+            get_list.CommandText = "select comment_context,create_time,id from article_comment where rownum>=:begin and rownum<=:end and status=0";
             get_list.Parameters.Add(new OracleParameter(":begin", begin));
             get_list.Parameters.Add(new OracleParameter(":end", end));
             OracleDataReader Ord = get_list.ExecuteReader();
@@ -229,6 +229,7 @@ namespace WebApi.Models
                 comment mid = new comment();
                 mid.comment_context = Ord.GetValue(0).ToString();
                 mid.create_time = Ord.GetValue(1).ToString();
+                mid.id = Ord.GetValue(2).ToString();
                 storage.Add(mid);
             }
             CloseConn();

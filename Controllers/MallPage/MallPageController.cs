@@ -13,7 +13,7 @@ namespace WebApi.Controllers.MallPage
         /*
          * 返回四个随机商品
          */
-        [Route("/MallPage/get4randomproduct")]
+        [Route("/MallPage/get4randomProduct")]
         [HttpGet]
         public string get_4_random_product()
         {
@@ -21,15 +21,15 @@ namespace WebApi.Controllers.MallPage
             return mallPageModel.Get_4_Random_Product();
         }
 
-        //返回四个购物车商品
-        [Route("/MallPage/get4collectedproduct")]
+        //返回四个最近上架商品,基本没问题了
+        [Route("/MallPage/get4recentProduct")]
         [HttpGet]
-        public string get_4_collected_product(int userid)
+        public string get_4_collected_product()
         {
             MallPageModel mallPageModel = new MallPageModel();
-            return mallPageModel.Get_4_Collected_Product(userid);
+            return mallPageModel.Get_4_Collected_Product();
         }
-        //返回四个打折商品
+        //返回四个活动商品
         [Route("/MallPage/get4discountproduct")]
         [HttpGet]
         public string get_4_discount_product()
@@ -37,8 +37,8 @@ namespace WebApi.Controllers.MallPage
             MallPageModel mallPageModel = new MallPageModel();
             return mallPageModel.Get_4_Discount_Product();
         }
-        //返回一家商店的四个商品
-        [Route("/MallPage/getrandomshopproduct")]
+        //返回一家商店的多个商品
+        [Route("/MallPage/get4shopProduct")]
         [HttpGet]
         public string get_random_shop_product()
         {

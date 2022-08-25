@@ -34,6 +34,8 @@ namespace WebApi.Models.ManageForm
     {
         public string comment_context { get; set; }
         public string create_time { get; set; }
+
+        public string id { get; set; }
     }
 
 }

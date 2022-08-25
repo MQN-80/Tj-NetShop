@@ -86,7 +86,7 @@ namespace WebApi.Models.UserForum
             CloseConn();
             return m.ToString();
         }
-        public static string get_comment(string article_id)
+        public static string get_comment(int article_id)
         {
             List<article_comment> storage = new List<article_comment>();
             CreateConn();
