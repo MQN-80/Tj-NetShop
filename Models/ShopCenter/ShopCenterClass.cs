@@ -11,15 +11,17 @@ namespace WebApi.Models.ShopCenter
         public string name { get; set; }
         public string img { get; set; }
         public string price { get; set; }
-    }   
+    }
 
-    public class shop
+    public class user
     {
-        public string shopId { get; set; }
-        public string storeName { get; set; }
-        public string storeImg { get; set; }
-        public string storeTypeId { get; set; }
-        public string storeDesc { get; set; }
-        public string createTime { get; set; }
+        public string userName { get; set; }
+        public string userDetail { get; set; }
+    }
+
+    public class product
+    {
+        public string name { get; set; }
+        public string price { get; set; }
     }
 }
