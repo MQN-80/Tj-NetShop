@@ -111,5 +111,13 @@ namespace WebApi.Controllers.ShopTransaction
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Search_User_CollectShop(UserID);
     }
+
+    [Route("/ShopTransaction/add_delivery_address")]
+    [HttpPost]
+    public string add_delivery_address(int user_id, string addr, string phone_number, string name, int add_default)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.Add_Delivery_Address(user_id, addr, phone_number, name, add_default);
+    }
   }
 }
