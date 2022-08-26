@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Validations.Rules;
-using WebApi.Models.ShopTransaction;
+using WebApi.Models.UserCenter;
 
 namespace WebApi.Models.UserCenter
 {
@@ -38,7 +38,7 @@ namespace WebApi.Models.UserCenter
             var find = DB.CreateCommand();
 
             // Logics
-            find.CommandText = "select user_name, avatar_id, user_detail from user_info where user_id =: userID";
+            find.CommandText = "select user_name,user_detail from user_info where user_id =: userID";
             find.Parameters.Add(new OracleParameter(":userID", userID));
             var ord = find.ExecuteReader();
 
@@ -47,52 +47,56 @@ namespace WebApi.Models.UserCenter
                 var userInfo = new UserInfo();
                 
                 userInfo.UserName = ord.GetValue(0).ToString();
-                userInfo.AvatarID = ord.GetValue(1).ToString();
-                userInfo.UserDetail = ord.GetValue(2).ToString();
-                
-                userInfo.UserId = userID.ToString();
-                
+                userInfo.UserDetail = ord.GetValue(1).ToString();               
                 storage.Add(userInfo);
             }
             CloseConnection();
             return JsonConvert.SerializeObject(storage);
         }
 
-        public static string UpdateUserInfo(int userID, string userName, string userDetail, string avatarID)
+        public static string UpdateUserInfo(int userID, string userName, string userDetail)
         {
+            if (is_user(userID, userName)) 
+                return "no";
             CreateConnection();
             var edit = DB.CreateCommand();
-            edit.CommandText = "update user_info set user_name=:userName, user_detail=:userDetail, avatar_id=:avatarID where user_id=:userID";
-            edit.Parameters.Add(new OracleParameter("user_id", userID));
+            edit.CommandText = "update user_info set user_name=:userName, user_detail=:userDetail where user_id=:userID";       
             edit.Parameters.Add(new OracleParameter("user_name", userName));
             edit.Parameters.Add(new OracleParameter("user_detail", userDetail));
-            edit.Parameters.Add(new OracleParameter("avatar_id", avatarID));
+            edit.Parameters.Add(new OracleParameter("user_id", userID));
 
             var rowsAffected = edit.ExecuteNonQuery();
-            // if rowsAffected == 0, means update failed;
             CloseConnection();
             return rowsAffected.ToString();
         }
-
+        public static bool is_user(int userid,string user_name)
+        {
+            CreateConnection();
+            var find = DB.CreateCommand();
+            find.CommandText = "select count(*) from user_info where user_name=:user_name and user_id!=:userid";
+            find.Parameters.Add(new OracleParameter(":user_name", user_name));
+            find.Parameters.Add(new OracleParameter(":userid", userid));
+            int count = Convert.ToInt32(find.ExecuteScalar());
+            CloseConnection();
+            if (count > 0)
+                return true;
+            else
+                return false;
+        }
         public static string GetUserRoleRank(int userID)
         {
-            var stroage = new List<UserRoleRank>();
             CreateConnection();
             var find = DB.CreateCommand();
 
             find.CommandText = "select role_rank from user_info where user_id=:userID";
             find.Parameters.Add(new OracleParameter(":userID", userID));
-            var ord = find.ExecuteReader();
-
+            int count = Convert.ToInt32(find.ExecuteScalar());
+            UserRoleRank user = new UserRoleRank();
             try
             {
-                while (ord.Read())
-                {
-                    var userRoleRank = new UserRoleRank();
-
-                    userRoleRank.RoleRank = int.Parse(ord.GetValue(0).ToString());
-                    userRoleRank.UserId = userID.ToString();
-                }
+                    user.RoleRank = count;
+                    user.UserId = userID.ToString();
+         
             }
             catch (Exception e)
             {
@@ -101,7 +105,7 @@ namespace WebApi.Models.UserCenter
             }
             
             CloseConnection();
-            return JsonConvert.SerializeObject(stroage);
+            return JsonConvert.SerializeObject(user);
         }
     }
 }
