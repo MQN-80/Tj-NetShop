@@ -139,8 +139,8 @@ namespace WebApi.Models.ShopCenter
 
             OracleCommand Insert1 = DB.CreateCommand();
             string createTime = DateTime.Now.ToString();
-            Insert1.CommandText = "insert into product_information (name, type_id, des, price, status, create_time)" +
-                                  "values(:productName, :productType, :productDes, :price, 0, :createTime)";
+            Insert1.CommandText = "insert into product_information (name, product_id,type_id, des, price, status, create_time)" +
+                                  "values(:productName,product_seq.nextval, :productType, :productDes, :price, 0, :createTime)";
             Insert1.Parameters.Add(new OracleParameter(":productName", productName));
             Insert1.Parameters.Add(new OracleParameter(":productType", productType));
             Insert1.Parameters.Add(new OracleParameter(":productDes", productDes));
@@ -156,13 +156,16 @@ namespace WebApi.Models.ShopCenter
             }
 
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select product_id from product_information where create_time = :createTime";
+            Search.CommandText = "select product_id,id from product_information where create_time = :createTime and name=:productName";      
             Search.Parameters.Add(new OracleParameter(":createTime", createTime));
+            Search.Parameters.Add(new OracleParameter(":productName", productName));
             OracleDataReader Ord = Search.ExecuteReader();
             string result2 = "0";
+            string id = "";
             while (Ord.Read())
             {
                 result2 = Ord.GetValue(0).ToString();
+                id= Ord.GetValue(1).ToString();
             }
 
             if (result2 == "0")
@@ -181,7 +184,7 @@ namespace WebApi.Models.ShopCenter
 
             //失败返回0
             CloseConn();
-            return result3.ToString();
+            return id.ToString();
         }
 
         //删除发布商品

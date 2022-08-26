@@ -72,10 +72,11 @@ namespace WebApi.Models.ShopTransaction
   public class User_collect
   {
     public string Name { get; set; }//商品名称
-    public string Img { get; set; }//商品图片
-    public string Des { get; set; }//商品简介
-    public int Price { get; set; }//商品价格
-  }
+    public string id { get; set; }//商品id
+    public string create_time { get; set; }//商品收藏时间
+    public string collectPrice { get; set; }//商品收藏价格
+    public string nowPrice { get; set; }//商品现在价格
+    }
 
   /*
  * 用户收藏店铺连表查询返回值

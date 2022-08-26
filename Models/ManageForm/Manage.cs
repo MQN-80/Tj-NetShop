@@ -25,10 +25,10 @@ namespace WebApi.Models.ManageForm
         {
             return Database.getProduct(sum);
         }
-        public string agree_product(int manage_id, int product_id, string explain, string manage_name,int status)
+        public string agree_product(int product_id,int status)
         {
             if (status == 1 || status == 0)
-                return Database.agreeProduct(manage_id, product_id, explain, manage_name, status);
+                return Database.agreeProduct(product_id,status);
             else
                 return "参数违法";
         }

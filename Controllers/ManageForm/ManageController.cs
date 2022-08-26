@@ -44,10 +44,10 @@ namespace WebApi.Controllers.ManageForm
          */
         [Route("/Manage/agree_product")]
         [HttpPut]
-        public string agree_product(int manage_id, int product_id, string explain, string manage_name,int status)
+        public string agree_product(int product_id,int status)
         {
             Manage manage = new Manage();
-            return manage.agree_product(manage_id, product_id, explain, manage_name,status);
+            return manage.agree_product(product_id, status);
         }
         //获取待审核的文章内容,同样分批返回
         [Route("/Manage/get_article")]

@@ -454,20 +454,20 @@ namespace WebApi.Models.ShopTransaction
       List<User_collect> Storage = new List<User_collect>();
       CreateConn();
       var Search = DB.CreateCommand();
-      Search.CommandText = "select name,img,des,price " +
-          "from product_information,product_collect " +
-          "where product_information.product_id=product_collect.product_id and user_id=:UserID";
+      Search.CommandText = "select a.name,a.id,b.create_time,a.price,b.product_price " +
+          "from product_information a,product_collect b " +
+          "where a.product_id=b.product_id and b.user_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
       {
         User_collect user_collect = new User_collect();
         user_collect.Name = Ord.GetValue(0).ToString();
-                user_collect.Img = Ord.GetValue(1).ToString();
-                user_collect.Des = Ord.GetValue(2).ToString();
-                user_collect.Price = int.Parse(Ord.GetValue(3).ToString());
-
-                Storage.Add(user_collect);
+        user_collect.id = Ord.GetValue(1).ToString();
+        user_collect.create_time = Ord.GetValue(2).ToString();
+        user_collect.nowPrice = Ord.GetValue(3).ToString();
+        user_collect.collectPrice = Ord.GetValue(4).ToString();
+        Storage.Add(user_collect);
       }
 
       //以字符串形式返回
@@ -484,7 +484,7 @@ namespace WebApi.Models.ShopTransaction
       CreateConn();
       var Search = DB.CreateCommand();
       Search.CommandText = "select Store_name,Store_img,Collect_time " +
-          "from shop,subscribe_shop " +
+          "from shop a,subscribe_shop b " +
           "where shop.id=subscribe_shop.shop_id and user_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();

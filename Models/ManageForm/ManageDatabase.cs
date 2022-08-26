@@ -82,7 +82,7 @@ namespace WebApi.Models
             CreateConn();
             OracleCommand find = DB.CreateCommand();
             //首先获取待处理的总数
-            find.CommandText = "select count(*) from manage_product";
+            find.CommandText = "select count(*) from product_information where status=0";
             int count = Convert.ToInt32(find.ExecuteScalar());
             OracleCommand get_list = DB.CreateCommand();
             //获取当前请求范围
@@ -93,43 +93,56 @@ namespace WebApi.Models
             //防止请求超过范围
             if (end > count)
                 end = count;
-            get_list.CommandText = "select a.name,a.img,a.type_id,a.product_id,a.des,a.price,a.create_time from product_information a join manage_product  b on a.product_id=b.product_id  where rownum>=:begin and rownum<=:end order by a.product_id";
+            get_list.CommandText = "select name,type_id,product_id,des,price,create_time  from product_information where status=1 and rownum>=:begin and rownum<=:end order by product_id";
             get_list.Parameters.Add(new OracleParameter(":begin", begin)); 
             get_list.Parameters.Add(new OracleParameter(":end", end));
             OracleDataReader Ord = get_list.ExecuteReader();
             while (Ord.Read())
             {
                 product_info mid = new product_info();
-                mid.name = Ord.GetValue(0).ToString();
-                mid.img = Ord.GetValue(1).ToString();
-                mid.type_id = Ord.GetValue(2).ToString();
-                mid.product_id = Ord.GetValue(3).ToString();
-                mid.des = Ord.GetValue(4).ToString();
-                mid.price = (long)Ord.GetValue(5);
-                mid.create_time= Ord.GetValue(6).ToString();
+                mid.name = Ord.GetValue(0).ToString();               
+                mid.type_id = Ord.GetValue(1).ToString();
+                mid.product_id = Ord.GetValue(2).ToString();
+                mid.des = Ord.GetValue(3).ToString();
+                mid.price = Ord.GetValue(4).ToString();
+                mid.create_time= Ord.GetValue(5).ToString();
                 storage.Add(mid);
             }
             CloseConn();
             return JsonConvert.SerializeObject(storage);
         }
         //商品审核通过
-        public static string agreeProduct(int manage_id, int product_id, string explain, string manage_name,int status)
+        public static string agreeProduct(int product_id,int status)
         {
             CreateConn();
-            //先修改status的状态,将其改为1
-            OracleCommand edit = DB.CreateCommand();
-            edit.CommandText = "update shop_product set status=:status where product_id=:product_id";
-            edit.Parameters.Add(new OracleParameter(":product_id", product_id));
-            edit.Parameters.Add(new OracleParameter(":status", status));
-            //commit();
-            edit.ExecuteNonQuery();
-            OracleCommand insert = DB.CreateCommand();
-            insert.CommandText = "insert into manage_product (product_id,explain,manage_id,manage_name) values (:product_id,:explain,:manage_id,:manage_name)";
-            insert.Parameters.Add(new OracleParameter(":product_id", product_id));
-            insert.Parameters.Add(new OracleParameter(":explain", explain));
-            insert.Parameters.Add(new OracleParameter(":manage_id", manage_id));
-            insert.Parameters.Add(new OracleParameter(":manage_name", manage_name));
-            insert.ExecuteNonQuery();
+            //0代表删除
+            if (status == 0)
+            {
+                OracleCommand delete1 = DB.CreateCommand();
+                delete1.CommandText = "delete from shop_product where product_id=:product_id";
+                delete1.Parameters.Add(new OracleParameter(":product_id", product_id));
+                delete1.ExecuteNonQuery();
+                OracleCommand delete2 = DB.CreateCommand();
+                delete2.CommandText = "delete from product_information where product_id=:product_id";
+                delete2.Parameters.Add(new OracleParameter(":product_id", product_id));
+                delete2.ExecuteNonQuery();
+            }
+            else
+            {
+
+                //先修改status的状态,将其改为1
+                OracleCommand edit = DB.CreateCommand();
+                edit.CommandText = "update shop_product set status=:status where product_id=:product_id";
+                edit.Parameters.Add(new OracleParameter(":product_id", product_id));
+                edit.Parameters.Add(new OracleParameter(":status", status));
+                //commit();
+                edit.ExecuteNonQuery();
+                OracleCommand update = DB.CreateCommand();
+                update.CommandText = "update product_information set status=:status where product_id=:product_id";
+                update.Parameters.Add(new OracleParameter(":product_id", product_id));
+                update.Parameters.Add(new OracleParameter(":status", status));
+                update.ExecuteNonQuery();
+            }
             CloseConn();
             return "ok";
         }   
