@@ -49,35 +49,167 @@ namespace WebApi.Models.ShopCenter
             //以字符串形式返回
             CloseConn();
             return JsonConvert.SerializeObject(storage);
-        } 
+        }
 
         //返回店铺信息
-        public static string getShopInfo(string shopId)
+        public static string getShopInfo(string shopUserId)
         {
-            List<shop> storage = new List<shop>();
+            List<user> storage = new List<user>();
             CreateConn();
+
             OracleCommand Search = DB.CreateCommand();
-
-            Search.CommandText = "select id, store_name, store_img, store_type_id, store_desc, create_time from shop where id =: shopId";
-            Search.Parameters.Add(new OracleParameter(":shopId", shopId));
+            Search.CommandText = "select user_name, user_detail from user_info where id = :shopUserId";
+            Search.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
             OracleDataReader Ord = Search.ExecuteReader();
-
             while (Ord.Read())
             {
-                shop Shop = new shop();
-                Shop.shopId = Ord.GetValue(0).ToString();
-                Shop.storeName = Ord.GetValue(1).ToString();
-                Shop.storeImg = Ord.GetValue(2).ToString();
-                Shop.storeTypeId = Ord.GetValue(3).ToString();
-                Shop.storeDesc = Ord.GetValue(4).ToString();
-                Shop.createTime = Ord.GetValue(5).ToString();
-
-                storage.Add(Shop);
+                user User = new user();
+                User.userName = Ord.GetValue(0).ToString();
+                User.userDetail = Ord.GetValue(1).ToString();
+                storage.Add(User);
             }
 
             //以字符串形式返回
             CloseConn();
             return JsonConvert.SerializeObject(storage);
+        }
+
+        //返回店铺商品
+        public static string getShopProduct(string shopUserId)
+        {
+            List<product> storage = new List<product>();
+            CreateConn();
+
+            OracleCommand Search = DB.CreateCommand();
+            Search.CommandText = "select name, price from product_information natural join shop_product where shop_id = :shopUserId";
+            Search.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
+            OracleDataReader Ord = Search.ExecuteReader();
+            while (Ord.Read())
+            {
+                product Product = new product();
+                Product.name = Ord.GetValue(0).ToString();
+                Product.price = Ord.GetValue(1).ToString();
+                storage.Add(Product);
+            }
+
+            //以字符串形式返回
+            CloseConn();
+            return JsonConvert.SerializeObject(storage);
+        }
+
+        //关注店铺
+        public static string followShop(int userId, string shopUserId)
+        {
+            CreateConn();
+
+            OracleCommand Insert = DB.CreateCommand();
+            string createTime = DateTime.Now.ToString();
+            Insert.CommandText = "insert into subscribe_shop (user_id, shop_id, collect_time)" +
+                                 "values(:userId, :shopUserId, :createTime)";
+            Insert.Parameters.Add(new OracleParameter(":userId", userId));
+            Insert.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
+            Insert.Parameters.Add(new OracleParameter(":createTime", createTime));
+            int result = Insert.ExecuteNonQuery();
+
+            //失败返回0
+            CloseConn();
+            return result.ToString();
+        }
+
+        //取消关注店铺
+        public static string cancelFollowShop(int userId, string shopUserId)
+        {
+            CreateConn();
+
+            OracleCommand Delete = DB.CreateCommand();
+            Delete.CommandText = "delete from subscribe_shop where user_id = :userId and shop_id = :shopUserId";
+            Delete.Parameters.Add(new OracleParameter(":userId", userId));
+            Delete.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
+            int result = Delete.ExecuteNonQuery();
+
+            //失败返回0
+            CloseConn();
+            return result.ToString();
+        }
+
+        //发布商品
+        public static string postProduct(string shopUserId, string productName, string productType, string productDes, int price)
+        {
+            CreateConn();
+
+            OracleCommand Insert1 = DB.CreateCommand();
+            string createTime = DateTime.Now.ToString();
+            Insert1.CommandText = "insert into product_information (name, type_id, des, price, status, create_time)" +
+                                  "values(:productName, :productType, :productDes, :price, 0, :createTime)";
+            Insert1.Parameters.Add(new OracleParameter(":productName", productName));
+            Insert1.Parameters.Add(new OracleParameter(":productType", productType));
+            Insert1.Parameters.Add(new OracleParameter(":productDes", productDes));
+            Insert1.Parameters.Add(new OracleParameter(":price", price));
+            Insert1.Parameters.Add(new OracleParameter(":createTime", createTime));
+            int result1 = Insert1.ExecuteNonQuery();
+
+            if (result1 == 0)
+            {
+                //失败返回0
+                CloseConn();
+                return result1.ToString();
+            }
+
+            OracleCommand Search = DB.CreateCommand();
+            Search.CommandText = "select product_id from product_information where create_time = :createTime";
+            Search.Parameters.Add(new OracleParameter(":createTime", createTime));
+            OracleDataReader Ord = Search.ExecuteReader();
+            string result2 = "0";
+            while (Ord.Read())
+            {
+                result2 = Ord.GetValue(0).ToString();
+            }
+
+            if (result2 == "0")
+            {
+                //失败返回0
+                CloseConn();
+                return result2.ToString();
+            }
+
+            OracleCommand Insert2 = DB.CreateCommand();
+            Insert2.CommandText = "insert into shop_product (shop_id, product_id, status)" +
+                                  "values(:shopUserId, :productId, 0)";
+            Insert2.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
+            Insert2.Parameters.Add(new OracleParameter(":productId", result2));
+            int result3 = Insert2.ExecuteNonQuery();
+
+            //失败返回0
+            CloseConn();
+            return result3.ToString();
+        }
+
+        //删除发布商品
+        public static string deleteProduct(int productId, string shopUserId)
+        {
+            CreateConn();
+
+            OracleCommand Delete1 = DB.CreateCommand();
+            Delete1.CommandText = "delete from product_information where product_id = :productId";
+            Delete1.Parameters.Add(new OracleParameter(":productId", productId));
+            int result1 = Delete1.ExecuteNonQuery();
+
+            if (result1 == 0)
+            {
+                //失败返回0
+                CloseConn();
+                return result1.ToString();
+            }
+
+            OracleCommand Delete2 = DB.CreateCommand();
+            Delete2.CommandText = "delete from shop_product where product_id = :productId and shop_id = :shopUserId";
+            Delete2.Parameters.Add(new OracleParameter(":productId", productId));
+            Delete2.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
+            int result2 = Delete2.ExecuteNonQuery();
+
+            //失败返回0
+            CloseConn();
+            return result2.ToString();
         }
     }
 }
