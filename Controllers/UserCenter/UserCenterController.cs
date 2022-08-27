@@ -37,5 +37,13 @@ namespace WebApi.Controllers.UserCenter
             Models.UserCenter.UserCenter center = new Models.UserCenter.UserCenter();
             return center.get_user_role_rank(user_id);
         }
+
+        [Route("userCenter/get_order_history")]
+        [HttpGet]
+        public string get_order_history(int user_id)
+        {
+            Models.UserCenter.UserCenter center = new Models.UserCenter.UserCenter();
+            return center.get_order_history(user_id);
+        }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi.Models.ShopCenter;
 
 namespace WebApi.Models.UserCenter
 {
@@ -20,6 +21,11 @@ namespace WebApi.Models.UserCenter
         public string get_user_role_rank(int user_id)
         {
             return UserCenterDatabase.GetUserRoleRank(user_id);
+        }
+
+        public string get_order_history(int user_id)
+        {
+            return UserCenterDatabase.GetOrderHistory(user_id);
         }
     }
 }
