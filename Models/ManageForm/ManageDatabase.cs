@@ -93,7 +93,7 @@ namespace WebApi.Models
             //防止请求超过范围
             if (end > count)
                 end = count;
-            get_list.CommandText = "select name,type_id,product_id,des,price,create_time  from product_information where status=1 and rownum>=:begin and rownum<=:end order by product_id";
+            get_list.CommandText = "select name,type_id,product_id,des,price,create_time  from product_information where status=0 and rownum>=:begin and rownum<=:end order by product_id";
             get_list.Parameters.Add(new OracleParameter(":begin", begin)); 
             get_list.Parameters.Add(new OracleParameter(":end", end));
             OracleDataReader Ord = get_list.ExecuteReader();
@@ -133,14 +133,15 @@ namespace WebApi.Models
                 //先修改status的状态,将其改为1
                 OracleCommand edit = DB.CreateCommand();
                 edit.CommandText = "update shop_product set status=:status where product_id=:product_id";
-                edit.Parameters.Add(new OracleParameter(":product_id", product_id));
                 edit.Parameters.Add(new OracleParameter(":status", status));
+                edit.Parameters.Add(new OracleParameter(":product_id", product_id));
                 //commit();
                 edit.ExecuteNonQuery();
                 OracleCommand update = DB.CreateCommand();
                 update.CommandText = "update product_information set status=:status where product_id=:product_id";
-                update.Parameters.Add(new OracleParameter(":product_id", product_id));
+                
                 update.Parameters.Add(new OracleParameter(":status", status));
+                update.Parameters.Add(new OracleParameter(":product_id", product_id));
                 update.ExecuteNonQuery();
             }
             CloseConn();

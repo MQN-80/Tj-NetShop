@@ -7,6 +7,10 @@ namespace WebApi.Models.ShopCenter
 {
     public class ShopCenterModel
     {
+        public string getProduct(string id)
+        {
+            return ShopCenterDatabase.getProduct(id);
+        }
         public string Get_4_Random_Product()
         {
             return ShopCenterDatabase.GetFourRandomProduct();

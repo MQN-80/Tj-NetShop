@@ -12,6 +12,8 @@ namespace WebApi.Models.MallPage
         public string name { get; set; }
         public string des{ get; set; }
         public string price { get; set; }
+
+        public string imgPath { get; set; }
     }
 
 }

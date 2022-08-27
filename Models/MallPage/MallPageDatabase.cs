@@ -37,7 +37,7 @@ namespace WebApi.Models.MallPage
             List<Product_info> storage = new List<Product_info>();
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select id,name,des,price from (select * from product_information order by sys_guid()) where rownum<=4";
+            Search.CommandText = "select id,name,des,price from (select * from product_information order by sys_guid()) where rownum<=4 and status=1";
             OracleDataReader Ord = Search.ExecuteReader();
             while (Ord.Read())
             {
@@ -46,6 +46,7 @@ namespace WebApi.Models.MallPage
                 product_info.name = Ord.GetValue(1).ToString();
                 product_info.des = Ord.GetValue(2).ToString();
                 product_info.price = Ord.GetValue(3).ToString();
+                product_info.imgPath = "http://106.12.131.109:8083/product/" + product_info.id + ".jpg";
                 storage.Add(product_info);
             }
             //以字符串形式返回
@@ -59,7 +60,7 @@ namespace WebApi.Models.MallPage
 
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select id,name,des,price,product_id from product_information where rownum<=4 order by product_id desc";
+            Search.CommandText = "select id,name,des,price,product_id from product_information where rownum<=4 and status=1 order by product_id desc ";
             OracleDataReader Ord = Search.ExecuteReader();
             while (Ord.Read())
             {
@@ -68,6 +69,7 @@ namespace WebApi.Models.MallPage
                 product_info.name = Ord.GetValue(1).ToString();
                 product_info.des = Ord.GetValue(2).ToString();
                 product_info.price = Ord.GetValue(3).ToString();
+                product_info.imgPath = "http://106.12.131.109:8083/product/" + product_info.id + ".jpg";
                 storage.Add(product_info);
             }
             //以字符串形式返回
@@ -81,7 +83,7 @@ namespace WebApi.Models.MallPage
             //找到随机的四个打折商品的product_id
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select id,name,des,price,product_id,discount from product_information where rownum<=4 and discount<1";
+            Search.CommandText = "select id,name,des,price,product_id,discount from product_information where rownum<=4 and discount<1 and status=1";
             OracleDataReader Ord = Search.ExecuteReader();
             while (Ord.Read())
             {
@@ -90,6 +92,7 @@ namespace WebApi.Models.MallPage
                 product_info.name = Ord.GetValue(1).ToString();
                 product_info.des = Ord.GetValue(2).ToString();
                 product_info.price = Ord.GetValue(3).ToString();
+                product_info.imgPath = "http://106.12.131.109:8083/product/" + product_info.id + ".jpg";
                 storage.Add(product_info);
             }
             //以字符串形式返回
@@ -108,7 +111,7 @@ namespace WebApi.Models.MallPage
             //return shop_id;
             OracleCommand Search = DB.CreateCommand();
             Search.CommandText = "select a.id,a.name,a.des,a.price,a.product_id from shop_product b join product_information a on a.product_id=b.product_id "
-                + "where a.product_id=b.product_id and b.shop_id=:shop_id";
+                + "where a.product_id=b.product_id and b.shop_id=:shop_id and b.status=1";
             Search.Parameters.Add(new OracleParameter(":shop_id", shop_id));
             OracleDataReader Ord = Search.ExecuteReader();
             while (Ord.Read())
@@ -118,6 +121,7 @@ namespace WebApi.Models.MallPage
                 product_info.name = Ord.GetValue(1).ToString();
                 product_info.des = Ord.GetValue(2).ToString();
                 product_info.price = Ord.GetValue(3).ToString();
+                product_info.imgPath = "http://106.12.131.109:8083/product/" + product_info.id + ".jpg";
                 storage.Add(product_info);
             }
             //以字符串形式返回

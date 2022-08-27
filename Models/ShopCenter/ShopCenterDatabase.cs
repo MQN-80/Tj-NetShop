@@ -28,6 +28,29 @@ namespace WebApi.Models.ShopCenter
         {
             DB.Close();
         }
+        public static string getProduct(string id)
+        {
+            CreateConn();
+            OracleCommand Search = DB.CreateCommand();
+            product_info product_info = new product_info();
+            Search.CommandText = "select name,type_id,product_id,des,price,create_time,discount " +
+                "from product_information where status=1 and id=:id";
+            Search.Parameters.Add(new OracleParameter(":id", id));
+            OracleDataReader Ord = Search.ExecuteReader();
+            while (Ord.Read())
+            {
+                product_info.name = Ord.GetValue(0).ToString();
+                product_info.type_id = Ord.GetValue(1).ToString();
+                product_info.product_id = Ord.GetValue(2).ToString();
+                product_info.des = Ord.GetValue(3).ToString();
+                product_info.price = Ord.GetValue(4).ToString();
+                product_info.create_time = Ord.GetValue(5).ToString();
+                product_info.discount = Ord.GetValue(6).ToString();
+            }
+            //以字符串形式返回
+            CloseConn();
+            return JsonConvert.SerializeObject(product_info);
+        }
         // 随机返回四个商品
         public static string GetFourRandomProduct()
         {

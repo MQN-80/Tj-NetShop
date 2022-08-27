@@ -42,7 +42,6 @@ namespace WebApi.Models.ShopTransaction
   public class Credits_record
   {
     public string id { get; set; }
-    public string User_id { get; set; }
     public string Trade_id { get; set; }
     public int Credits_change { get; set; }
     public string Status { get; set; }
@@ -83,9 +82,11 @@ namespace WebApi.Models.ShopTransaction
  */
   public class User_collectShop
   {
-    public string Store_name { get; set; }//店铺名称
-    public string Store_img { get; set; }//商品图片
-    public string Collet_time { get; set; }//商品简介
+    public string shop_id { get; set; }//店铺id
+    public string collect_time { get; set; }//店铺收藏时间
+    public string name { get; set; }//用户名称
+
+    public string img { get; set; }
   }
 
 }

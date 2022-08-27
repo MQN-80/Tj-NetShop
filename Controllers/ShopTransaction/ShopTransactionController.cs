@@ -73,10 +73,10 @@ namespace WebApi.Controllers.ShopTransaction
 
     [Route("/ShopTransaction/goods_Transaction")]
     [HttpPut]
-    public string goods_Transaction(string Consumer_UserID, string Business_UserID, string Trade_id, int Credits_change, string Status)
+    public string goods_Transaction(string Consumer_UserID, string Business_UserID,int Credits_change, string Status)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
-      return shopTransactionModel.Goods_Transaction(Consumer_UserID, Business_UserID, Trade_id, Credits_change, Status);
+      return shopTransactionModel.Goods_Transaction(Consumer_UserID, Business_UserID,Credits_change, Status);
     }
 
     // from lyp

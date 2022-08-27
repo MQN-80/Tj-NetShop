@@ -24,4 +24,16 @@ namespace WebApi.Models.ShopCenter
         public string name { get; set; }
         public string price { get; set; }
     }
+    public class product_info
+    {
+        public string name { get; set; }
+        public string type_id { get; set; }
+        public string product_id { get; set; }
+        public string des { get; set; }
+        public string price { get; set; }
+        public string create_time { get; set; }
+        public string discount { get; set; }
+
+    }
+
 }

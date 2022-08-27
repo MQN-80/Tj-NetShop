@@ -8,8 +8,16 @@ using WebApi.Models.ShopCenter;
 
 namespace WebApi.Controllers.ShopCenter
 {
-    public class ShopTransactionController
+    public class ShopCenterController
     {
+        [Route("/ShopCenter/getProduct")]
+        [HttpGet]
+        public string getProduct(string id)
+        {
+            ShopCenterModel shopCenterModel = new ShopCenterModel();
+            return shopCenterModel.getProduct(id);
+        }
+
         /*
          * 返回四个随机商品
          */

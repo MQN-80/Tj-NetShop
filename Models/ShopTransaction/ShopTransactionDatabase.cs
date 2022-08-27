@@ -236,7 +236,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *交易
      */
-    public static string GoodsTransaction(string Consumer_UserID, string Business_UserID, string Trade_id,
+    public static string GoodsTransaction(string Consumer_UserID, string Business_UserID,
       int Credits_change, string Status)
     {
       CreateConn();
@@ -320,17 +320,15 @@ namespace WebApi.Models.ShopTransaction
         //插入credits_record表
         InsertConsumer.CommandText =
           "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
-          "values(:Consumer_UserID,:Trade_id,:Credits_change,:Consumer_Status,:Create_time)";
+          "values(:Consumer_UserID,deal_seq.nextval,:Credits_change,:Consumer_Status,:Create_time)";
         InsertConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID", Consumer_UserID));
-        InsertConsumer.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
         InsertConsumer.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
         InsertConsumer.Parameters.Add(new OracleParameter(":Consumer_Status", Consumer_Status));
         InsertConsumer.Parameters.Add(new OracleParameter(":Create_time", Create_time));
         InsertBusiness.CommandText =
           "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
-          "values(:Business_UserID,:Trade_id,:Credits_change,:Business_Status,:Create_time)";
+          "values(:Business_UserID,deal_seq.nextval,:Credits_change,:Business_Status,:Create_time)";
         InsertBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID));
-        InsertBusiness.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
         InsertBusiness.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
         InsertBusiness.Parameters.Add(new OracleParameter(":Business_Status", Business_Status));
         InsertBusiness.Parameters.Add(new OracleParameter(":Create_time", Create_time));
@@ -369,7 +367,7 @@ namespace WebApi.Models.ShopTransaction
 
       try
       {
-        find.CommandText = "select user_id,trade_id,credits_change,status,create_time from credits_record where user_id=:userID";
+        find.CommandText = "select id,trade_id,credits_change,status,create_time from credits_record where user_id=:userID";
         find.Parameters.Add(new OracleParameter(":UserID", userID));
         var ord = find.ExecuteReader();
 
@@ -377,7 +375,7 @@ namespace WebApi.Models.ShopTransaction
         {
           var creditRecord = new Credits_record();
 
-          creditRecord.User_id = ord.GetValue(0).ToString();
+          creditRecord.id = ord.GetValue(0).ToString();
           creditRecord.Trade_id = ord.GetValue(1).ToString();
           try
           {
@@ -483,18 +481,19 @@ namespace WebApi.Models.ShopTransaction
       List<User_collectShop> Storage = new List<User_collectShop>();
       CreateConn();
       var Search = DB.CreateCommand();
-      Search.CommandText = "select Store_name,Store_img,Collect_time " +
-          "from shop a,subscribe_shop b " +
-          "where shop.id=subscribe_shop.shop_id and user_id=:UserID";
+      Search.CommandText = "select b.shop_id,b.collect_time," +
+                "(select user_name from user_info where id=b.shop_id)" +
+          "from user_info a,subscribe_shop b " +
+          "where a.user_id=:UserID and b.user_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
       {
         User_collectShop user_collectShop = new User_collectShop();
-        user_collectShop.Store_name = Ord.GetValue(0).ToString();
-        user_collectShop.Store_img = Ord.GetValue(1).ToString();
-        user_collectShop.Collet_time = Ord.GetValue(2).ToString();
-
+        user_collectShop.shop_id = Ord.GetValue(0).ToString();
+        user_collectShop.collect_time = Ord.GetValue(1).ToString();
+        user_collectShop.name = Ord.GetValue(2).ToString();
+        user_collectShop.img = "http://106.12.131.109:8083/avator/" + user_collectShop.shop_id + ".jpg";
         Storage.Add(user_collectShop);
       }
 
