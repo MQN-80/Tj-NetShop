@@ -24,10 +24,10 @@ namespace WebApi.Controllers.UserCenter
         
         [Route("userCenter/update_user_info")]
         [HttpPost]
-        public string update_user_info(int user_id, string user_name, string user_detail)
+        public string update_user_info(int user_id, string user_name, string user_detail, string gender)
         {
             Models.UserCenter.UserCenter center = new Models.UserCenter.UserCenter();
-            return center.update_user_info(user_id, user_name, user_detail);
+            return center.update_user_info(user_id, user_name, user_detail, gender);
         }
 
         [Route("userCenter/get_user_role_rank")]

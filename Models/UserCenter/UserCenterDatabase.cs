@@ -38,7 +38,7 @@ namespace WebApi.Models.UserCenter
             var find = DB.CreateCommand();
 
             // Logics
-            find.CommandText = "select user_name,user_detail from user_info where user_id =: userID";
+            find.CommandText = "select user_name,user_detail, gender from user_info where user_id =: userID";
             find.Parameters.Add(new OracleParameter(":userID", userID));
             var ord = find.ExecuteReader();
 
@@ -54,15 +54,16 @@ namespace WebApi.Models.UserCenter
             return JsonConvert.SerializeObject(storage);
         }
 
-        public static string UpdateUserInfo(int userID, string userName, string userDetail)
+        public static string UpdateUserInfo(int userID, string userName, string userDetail, string gender)
         {
             if (is_user(userID, userName)) 
                 return "no";
             CreateConnection();
             var edit = DB.CreateCommand();
-            edit.CommandText = "update user_info set user_name=:userName, user_detail=:userDetail where user_id=:userID";       
+            edit.CommandText = "update user_info set user_name=:userName, user_detail=:userDetail, gender=:gender where user_id=:userID";       
             edit.Parameters.Add(new OracleParameter("user_name", userName));
             edit.Parameters.Add(new OracleParameter("user_detail", userDetail));
+            edit.Parameters.Add(new OracleParameter("gender", gender));
             edit.Parameters.Add(new OracleParameter("user_id", userID));
 
             var rowsAffected = edit.ExecuteNonQuery();
