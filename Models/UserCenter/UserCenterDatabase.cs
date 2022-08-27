@@ -38,7 +38,7 @@ namespace WebApi.Models.UserCenter
             var find = DB.CreateCommand();
 
             // Logics
-            find.CommandText = "select user_name,user_detail from user_info where user_id =: userID";
+            find.CommandText = "select user_name,user_detail, gender from user_info where user_id =: userID";
             find.Parameters.Add(new OracleParameter(":userID", userID));
             var ord = find.ExecuteReader();
 
@@ -54,15 +54,16 @@ namespace WebApi.Models.UserCenter
             return JsonConvert.SerializeObject(storage);
         }
 
-        public static string UpdateUserInfo(int userID, string userName, string userDetail)
+        public static string UpdateUserInfo(int userID, string userName, string userDetail, string gender)
         {
             if (is_user(userID, userName)) 
                 return "no";
             CreateConnection();
             var edit = DB.CreateCommand();
-            edit.CommandText = "update user_info set user_name=:userName, user_detail=:userDetail where user_id=:userID";       
+            edit.CommandText = "update user_info set user_name=:userName,user_detail=:userDetail,gender=:gender where user_id=:userID";       
             edit.Parameters.Add(new OracleParameter("user_name", userName));
             edit.Parameters.Add(new OracleParameter("user_detail", userDetail));
+            edit.Parameters.Add(new OracleParameter("gender", gender));
             edit.Parameters.Add(new OracleParameter("user_id", userID));
 
             var rowsAffected = edit.ExecuteNonQuery();
@@ -96,7 +97,6 @@ namespace WebApi.Models.UserCenter
             {
                     user.RoleRank = count;
                     user.UserId = userID.ToString();
-         
             }
             catch (Exception e)
             {
@@ -106,6 +106,30 @@ namespace WebApi.Models.UserCenter
             
             CloseConnection();
             return JsonConvert.SerializeObject(user);
+        }
+
+        public static string GetOrderHistory(int userID)
+        {
+            var storage = new List<OrderHistory>();
+            CreateConnection();
+            var find = DB.CreateCommand();
+
+            find.CommandText = "select a.name,b.status,b.order_price "
+                               + "from product_information a,deal_record b "
+                               + "where a.product_id=b.product_id and b.user_id=:userID";
+            find.Parameters.Add(new OracleParameter(":userID", userID));
+            var ord = find.ExecuteReader();
+
+            while (ord.Read())
+            {
+                var orderHistory = new OrderHistory();
+
+                orderHistory.Name = ord.GetValue(0).ToString();
+                orderHistory.status = Convert.ToInt32(ord.GetValue(1).ToString());
+                orderHistory.order_price = Convert.ToInt32(ord.GetValue(2).ToString());
+            }
+            CloseConnection();
+            return JsonConvert.SerializeObject(storage);
         }
     }
 }

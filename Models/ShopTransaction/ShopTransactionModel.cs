@@ -67,6 +67,11 @@ namespace WebApi.Models.ShopTransaction
     {
       return ShopTransactionDatabase.AddDeliveryAddress(user_id, addr, phone_number, name, add_default);
     }
+
+    public string Delete_Delivery_Address(string id)
+    {
+      return ShopTransactionDatabase.DeleteDeliveryAddress(id);
+    }
   }
  
 }
