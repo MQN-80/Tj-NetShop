@@ -9,7 +9,7 @@ namespace WebApi.Models.UserCenter
     {
         public string UserName { get; set; }  // 用户昵称
         public string UserDetail { get; set; } // 用户的个人简介
-        public string Gender { get; set; }
+        public string Gender { get; set; } // 用户的性别
     }
 
     public class UserRoleRank
@@ -17,5 +17,11 @@ namespace WebApi.Models.UserCenter
         public string UserId { get; set; }
         public int RoleRank { get; set; } // 用户的权限等级
     }
-    
+
+    public class OrderHistory
+    {
+        public string Name { get; set; } // 商品名称
+        public int status { get; set; } // 订单状态
+        public int order_price { get; set; } // 成交价格
+    }
 }
