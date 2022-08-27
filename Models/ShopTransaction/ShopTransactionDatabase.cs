@@ -534,5 +534,24 @@ namespace WebApi.Models.ShopTransaction
 
       return "OK";
     }
+
+    /*
+    * 修改收货地址
+    */
+    public static string EditDeliveryAddress(string id, string addr, string phone_number, string name, int add_default)
+    {
+      CreateConn();
+      var edit = DB.CreateCommand();
+      //修改用户收货地址
+      edit.CommandText = "update delivery_address set addr=:addr,phone_number=:phone_number,name=:name,add_default=:add_default where id=:id";
+      edit.Parameters.Add(new OracleParameter(":addr", addr));
+      edit.Parameters.Add(new OracleParameter(":phone_number", phone_number));
+      edit.Parameters.Add(new OracleParameter(":name", name));
+      edit.Parameters.Add(new OracleParameter(":add_default", add_default));
+      edit.Parameters.Add(new OracleParameter(":id", id));
+      edit.ExecuteNonQuery();
+      return "OK";
+    }
+
   }
 }
