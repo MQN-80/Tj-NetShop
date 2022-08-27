@@ -522,5 +522,18 @@ namespace WebApi.Models.ShopTransaction
       return "OK";
     }
 
+    /*
+     * 删除收货地址
+     */
+    public static string DeleteDeliveryAddress(string id)
+    {
+      CreateConn();
+      var Delete = DB.CreateCommand();
+      Delete.CommandText = "delete from delivery_address where id = :id";
+      Delete.Parameters.Add(new OracleParameter(":id", id));
+      Delete.ExecuteNonQuery();
+
+      return "OK";
+    }
   }
 }

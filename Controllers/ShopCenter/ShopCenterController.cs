@@ -8,7 +8,7 @@ using WebApi.Models.ShopCenter;
 
 namespace WebApi.Controllers.ShopCenter
 {
-    public class ShopTransactionController
+    public class ShopCenterController
     {
         /*
          * 返回四个随机商品

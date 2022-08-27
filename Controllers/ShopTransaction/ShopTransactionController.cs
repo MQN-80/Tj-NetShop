@@ -119,5 +119,13 @@ namespace WebApi.Controllers.ShopTransaction
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Add_Delivery_Address(user_id, addr, phone_number, name, add_default);
     }
+
+    [Route("/ShopTransaction/delete_delivery_address")]
+    [HttpDelete]
+    public string delete_delivery_address(string id)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.Delete_Delivery_Address(id);
+    }
   }
 }
