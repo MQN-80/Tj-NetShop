@@ -135,5 +135,13 @@ namespace WebApi.Controllers.ShopTransaction
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.Edit_Delivery_Address(id, addr, phone_number, name, add_default);
     }
+
+    [Route("/ShopTransaction/goods_transaction_primer_plus")]
+    [HttpPut]
+    public string goods_transaction_primer_plus(string Trade_id)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.GoodsTransactionPrimerPlus(Trade_id);
+    }
   }
 }

@@ -77,6 +77,11 @@ namespace WebApi.Models.ShopTransaction
     {
       return ShopTransactionDatabase.EditDeliveryAddress(id, addr, phone_number, name, add_default);
     }
+
+    public string GoodsTransactionPrimerPlus(string Trade_id)
+    {
+      return ShopTransactionDatabase.GoodsTransactionPrimerPlus(Trade_id);
+    }
   }
  
 }

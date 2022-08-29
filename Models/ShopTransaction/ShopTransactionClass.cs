@@ -10,6 +10,7 @@ namespace WebApi.Models.ShopTransaction
    */
   public class Delivery_address
   {
+    public string Id { get; set; }
     public string Addr { get; set; }
     public string Phone_number { get; set; }
     public string Name { get; set; }
