@@ -417,8 +417,7 @@ namespace WebApi.Models.ShopTransaction
       try
       {
         Search.CommandText = "select id,name,type_id,product_id,des,surplus,status,price,create_time " +
-          "from product_information " +
-          "where name like CONCAT(CONCAT('%', :product_name),'%') ";
+          "from product_information where name like CONCAT(CONCAT('%',:product_name),'%')";
         Search.Parameters.Add(new OracleParameter(":product_name", product_name));
         OracleDataReader Ord = Search.ExecuteReader();
         while (Ord.Read())
