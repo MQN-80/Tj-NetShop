@@ -58,11 +58,11 @@ namespace WebApi.Models.ShopTransaction
     public string name { get; set; }
     public string img { get; set; }
     public string type_id { get; set; }
-    public int product_id { get; set; }
+    public string product_id { get; set; }
     public string des { get; set; }
-    public int surplus { get; set; }
-    public int status { get; set; }
-    public int price { get; set; }
+    public string surplus { get; set; }
+    public string status { get; set; }
+    public string price { get; set; }
     public string create_time { get; set; }
   }
 
