@@ -205,10 +205,18 @@ namespace WebApi.Models.ShopCenter
             Insert2.Parameters.Add(new OracleParameter(":productId", result2));
             int result3 = Insert2.ExecuteNonQuery();
 
-            //失败返回0
+            if (result3 == 0)
+            {
+                //失败返回0
+                CloseConn();
+                return result3.ToString();
+            }
+
+            //成功返回商品id
             CloseConn();
-            return id.ToString();
+            return result2.ToString();
         }
+    }
 
         //删除发布商品
         public static string deleteProduct(int productId, string shopUserId)
