@@ -13,9 +13,9 @@ namespace WebApi.Models.UserCenter
             return UserCenterDatabase.GetUserInfo(user_id);
         }
 
-        public string update_user_info(int user_id, string user_name, string user_detail, string gender)
+        public string update_user_info(int user_id, string user_name, string user_detail)
         {
-            return UserCenterDatabase.UpdateUserInfo(user_id, user_name, user_detail, gender);
+            return UserCenterDatabase.UpdateUserInfo(user_id, user_name, user_detail);
         }
 
         public string get_user_role_rank(int user_id)

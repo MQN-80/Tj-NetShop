@@ -38,7 +38,7 @@ namespace WebApi.Models.UserCenter
             var find = DB.CreateCommand();
 
             // Logics
-            find.CommandText = "select user_name,user_detail, gender from user_info where user_id =: userID";
+            find.CommandText = "select user_name,user_detail from user_info where user_id =: userID";
             find.Parameters.Add(new OracleParameter(":userID", userID));
             var ord = find.ExecuteReader();
 
@@ -54,16 +54,15 @@ namespace WebApi.Models.UserCenter
             return JsonConvert.SerializeObject(storage);
         }
 
-        public static string UpdateUserInfo(int userID, string userName, string userDetail, string gender)
+        public static string UpdateUserInfo(int userID, string userName, string userDetail)
         {
             if (is_user(userID, userName)) 
                 return "no";
             CreateConnection();
             var edit = DB.CreateCommand();
-            edit.CommandText = "update user_info set user_name=:userName,user_detail=:userDetail,gender=:gender where user_id=:userID";       
+            edit.CommandText = "update user_info set user_name=:userName,user_detail=:userDetail where user_id=:userID";       
             edit.Parameters.Add(new OracleParameter("user_name", userName));
             edit.Parameters.Add(new OracleParameter("user_detail", userDetail));
-            edit.Parameters.Add(new OracleParameter("gender", gender));
             edit.Parameters.Add(new OracleParameter("user_id", userID));
 
             var rowsAffected = edit.ExecuteNonQuery();
@@ -114,9 +113,9 @@ namespace WebApi.Models.UserCenter
             CreateConnection();
             var find = DB.CreateCommand();
 
-            find.CommandText = "select a.name,b.status,b.order_price "
+            find.CommandText = "select a.name,b.status,b.ord_price,b.id,b.start_time "
                                + "from product_information a,deal_record b "
-                               + "where a.product_id=b.product_id and b.user_id=:userID";
+                               + "where a.id=b.product_id and b.user_id=:userID";
             find.Parameters.Add(new OracleParameter(":userID", userID));
             var ord = find.ExecuteReader();
 
@@ -127,6 +126,8 @@ namespace WebApi.Models.UserCenter
                 orderHistory.Name = ord.GetValue(0).ToString();
                 orderHistory.status = Convert.ToInt32(ord.GetValue(1).ToString());
                 orderHistory.order_price = Convert.ToInt32(ord.GetValue(2).ToString());
+                orderHistory.id = ord.GetValue(3).ToString();
+                orderHistory.start_time = ord.GetValue(4).ToString();
             }
             CloseConnection();
             return JsonConvert.SerializeObject(storage);
