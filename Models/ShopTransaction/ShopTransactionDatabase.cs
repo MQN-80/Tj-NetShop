@@ -417,7 +417,8 @@ namespace WebApi.Models.ShopTransaction
       try
       {
         Search.CommandText = "select id,name,type_id,product_id,des,surplus,status,price,create_time " +
-          "from product_information where name like CONCAT(CONCAT('%',:product_name),'%')";
+          "from product_information " +
+          "where name like CONCAT(CONCAT('%',:product_name),'%') ";
         Search.Parameters.Add(new OracleParameter(":product_name", product_name));
         OracleDataReader Ord = Search.ExecuteReader();
         while (Ord.Read())
@@ -427,11 +428,11 @@ namespace WebApi.Models.ShopTransaction
           product_information.name = Ord.GetValue(1).ToString();
           product_information.img = "http://106.12.131.109:8083/product/" + product_information.id+".jpg";
           product_information.type_id = Ord.GetValue(2).ToString();
-          product_information.product_id = Convert.ToInt32(Ord.GetValue(3).ToString());
+          product_information.product_id = Ord.GetValue(3).ToString();
           product_information.des = Ord.GetValue(4).ToString();
-          product_information.surplus = Convert.ToInt32(Ord.GetValue(5).ToString());
-          product_information.status = Convert.ToInt32(Ord.GetValue(6).ToString());
-          product_information.price = Convert.ToInt32(Ord.GetValue(7).ToString());
+          product_information.surplus = Ord.GetValue(5).ToString();
+          product_information.status = Ord.GetValue(6).ToString();
+          product_information.price = Ord.GetValue(7).ToString();
           product_information.create_time = Ord.GetValue(8).ToString();
           storage.Add(product_information);
         }
