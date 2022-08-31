@@ -143,5 +143,13 @@ namespace WebApi.Controllers.ShopTransaction
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.GoodsTransactionPrimerPlus(Trade_id);
     }
+
+    [Route("/ShopTransaction/get_goods_userInfo")]
+    [HttpPut]
+    public string get_goods_userInfo(string id)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.GetGoodsUserInfo(id);
+    }
   }
 }

@@ -721,5 +721,55 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return "ok";
     }
+
+    /*
+   * 查询商户id和姓名
+   */
+    public static string GetGoodsUserInfo(string id)
+    {
+      CreateConn();
+
+      OracleCommand SearchProductId = DB.CreateCommand();
+      string Product_id = "";
+      SearchProductId.CommandText = "select product_id from product_information where id=:id";
+      SearchProductId.Parameters.Add(new OracleParameter(":id", id));
+      OracleDataReader OrdProductId = SearchProductId.ExecuteReader();
+      while (OrdProductId.Read())
+      {
+        Product_id = OrdProductId.GetValue(0).ToString();
+      }
+
+
+      OracleCommand SearchShopId = DB.CreateCommand();
+      string Bussiness_id = "";
+      SearchShopId.CommandText = "select shop_id from shop_product where Product_id=:Product_id";
+      SearchShopId.Parameters.Add(new OracleParameter(":Product_id", Product_id));
+      OracleDataReader OrdShopId = SearchShopId.ExecuteReader();
+      while (OrdShopId.Read())
+      {
+        Bussiness_id = OrdShopId.GetValue(0).ToString();
+      }
+
+
+      List<Goods_UserInfo> storage = new List<Goods_UserInfo>();
+      OracleCommand SearchUserInfo = DB.CreateCommand();
+      SearchUserInfo.CommandText = "select user_id,user_name from user_info where id=:id";
+      SearchUserInfo.Parameters.Add(new OracleParameter(":id", Bussiness_id));
+      OracleDataReader OrdUserInfo = SearchUserInfo.ExecuteReader();
+      while (OrdUserInfo.Read())
+      {
+        Goods_UserInfo goods_UserInfo = new Goods_UserInfo();
+        goods_UserInfo.User_id = OrdUserInfo.GetValue(0).ToString();
+        goods_UserInfo.User_name = OrdUserInfo.GetValue(1).ToString();
+        storage.Add(goods_UserInfo);
+      }
+
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+
+    }
+
+
   }
 }

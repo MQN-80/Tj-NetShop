@@ -216,34 +216,34 @@ namespace WebApi.Models.ShopCenter
             CloseConn();
             return result2.ToString();
         }
+
+    //删除发布商品
+    public static string deleteProduct(int productId, string shopUserId)
+    {
+      CreateConn();
+
+      OracleCommand Delete1 = DB.CreateCommand();
+      Delete1.CommandText = "delete from product_information where product_id = :productId";
+      Delete1.Parameters.Add(new OracleParameter(":productId", productId));
+      int result1 = Delete1.ExecuteNonQuery();
+
+      if (result1 == 0)
+      {
+        //失败返回0
+        CloseConn();
+        return result1.ToString();
+      }
+
+      OracleCommand Delete2 = DB.CreateCommand();
+      Delete2.CommandText = "delete from shop_product where product_id = :productId and shop_id = :shopUserId";
+      Delete2.Parameters.Add(new OracleParameter(":productId", productId));
+      Delete2.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
+      int result2 = Delete2.ExecuteNonQuery();
+
+      //失败返回0
+      CloseConn();
+      return result2.ToString();
     }
+  }
 
-        //删除发布商品
-        public static string deleteProduct(int productId, string shopUserId)
-        {
-            CreateConn();
-
-            OracleCommand Delete1 = DB.CreateCommand();
-            Delete1.CommandText = "delete from product_information where product_id = :productId";
-            Delete1.Parameters.Add(new OracleParameter(":productId", productId));
-            int result1 = Delete1.ExecuteNonQuery();
-
-            if (result1 == 0)
-            {
-                //失败返回0
-                CloseConn();
-                return result1.ToString();
-            }
-
-            OracleCommand Delete2 = DB.CreateCommand();
-            Delete2.CommandText = "delete from shop_product where product_id = :productId and shop_id = :shopUserId";
-            Delete2.Parameters.Add(new OracleParameter(":productId", productId));
-            Delete2.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
-            int result2 = Delete2.ExecuteNonQuery();
-
-            //失败返回0
-            CloseConn();
-            return result2.ToString();
-        }
-    }
 }
