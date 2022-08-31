@@ -138,18 +138,34 @@ namespace WebApi.Controllers.ShopTransaction
 
     [Route("/ShopTransaction/goods_transaction_primer_plus")]
     [HttpPut]
-    public string goods_transaction_primer_plus(string Trade_id)
+    public string goods_transaction_primer_plus(string Trade_id, string trolley_id)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
-      return shopTransactionModel.GoodsTransactionPrimerPlus(Trade_id);
+      return shopTransactionModel.GoodsTransactionPrimerPlus(Trade_id, trolley_id);
     }
 
     [Route("/ShopTransaction/get_goods_userInfo")]
-    [HttpPut]
+    [HttpGet]
     public string get_goods_userInfo(string id)
     {
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.GetGoodsUserInfo(id);
+    }
+
+    [Route("/ShopTransaction/add_trolley")]
+    [HttpPost]
+    public string add_trolley(int User_id, string Product_id, int Product_num)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.Addtrolley(User_id, Product_id, Product_num);
+    }
+
+    [Route("/ShopTransaction/get_trolley")]
+    [HttpGet]
+    public string get_trolley(string user_id)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.GetTrolley(user_id);
     }
   }
 }
