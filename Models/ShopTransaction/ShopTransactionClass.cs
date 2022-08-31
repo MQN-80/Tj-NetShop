@@ -86,8 +86,16 @@ namespace WebApi.Models.ShopTransaction
     public string shop_id { get; set; }//店铺id
     public string collect_time { get; set; }//店铺收藏时间
     public string name { get; set; }//用户名称
-
     public string img { get; set; }
+  }
+
+  /*
+   * 查询商户id和姓名返回值
+   */
+  public class Goods_UserInfo
+  {
+    public string User_id{ get; set; }
+    public string User_name { get; set; }
   }
 
 }

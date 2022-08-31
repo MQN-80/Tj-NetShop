@@ -82,6 +82,11 @@ namespace WebApi.Models.ShopTransaction
     {
       return ShopTransactionDatabase.GoodsTransactionPrimerPlus(Trade_id);
     }
+
+    public string GetGoodsUserInfo(string id)
+    {
+      return ShopTransactionDatabase.GetGoodsUserInfo(id);
+    }
   }
  
 }
