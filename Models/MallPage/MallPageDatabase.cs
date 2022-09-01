@@ -9,11 +9,11 @@ namespace WebApi.Models.MallPage
 {
     public class MallPageDatabase
     {
-        public static OracleConnection DB;
+        public  OracleConnection DB;
 
 
         //建立数据库连接
-        public static void CreateConn()  //更改此处数据库地址即可
+        public  void CreateConn()  //更改此处数据库地址即可
         {
             //124.222.1.19
             string user = "shop";
@@ -27,7 +27,7 @@ namespace WebApi.Models.MallPage
             DB.Open();
         }
         //关闭数据库连接
-        public static void CloseConn()
+        public void CloseConn()
         {
             DB.Close();
         }

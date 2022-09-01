@@ -9,10 +9,10 @@ namespace WebApi.Models.ShopCenter
 {
     public class ShopCenterDatabase
     {
-        public static OracleConnection DB;
+        public  OracleConnection DB;
 
          //建立数据库连接
-        public static void CreateConn()  //更改此处数据库地址即可
+        public  void CreateConn()  //更改此处数据库地址即可
         {
             //124.222.1.19
             string user = "shop";
@@ -24,11 +24,11 @@ namespace WebApi.Models.ShopCenter
             DB.Open();
         }
          //关闭数据库连接
-        public static void CloseConn()
+        public  void CloseConn()
         {
             DB.Close();
         }
-        public static string getProduct(string id)
+        public  string getProduct(string id)
         {
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
@@ -52,7 +52,7 @@ namespace WebApi.Models.ShopCenter
             return JsonConvert.SerializeObject(product_info);
         }
         // 随机返回四个商品
-        public static string GetFourRandomProduct()
+        public  string GetFourRandomProduct()
         {
             List<Product_info> storage = new List<Product_info>();
             CreateConn();
@@ -75,7 +75,7 @@ namespace WebApi.Models.ShopCenter
         }
 
         //返回店铺信息
-        public static string getShopInfo(string shopUserId)
+        public  string getShopInfo(string shopUserId)
         {
             List<user> storage = new List<user>();
             CreateConn();
@@ -98,7 +98,7 @@ namespace WebApi.Models.ShopCenter
         }
 
         //返回店铺商品
-        public static string getShopProduct(string shopUserId)
+        public  string getShopProduct(string shopUserId)
         {
             List<product> storage = new List<product>();
             CreateConn();
@@ -124,7 +124,7 @@ namespace WebApi.Models.ShopCenter
         }
 
         //关注店铺
-        public static string followShop(int userId, string shopUserId)
+        public  string followShop(int userId, string shopUserId)
         {
             CreateConn();
 
@@ -143,7 +143,7 @@ namespace WebApi.Models.ShopCenter
         }
 
         //取消关注店铺
-        public static string cancelFollowShop(int userId, string shopUserId)
+        public  string cancelFollowShop(int userId, string shopUserId)
         {
             CreateConn();
 
@@ -157,9 +157,21 @@ namespace WebApi.Models.ShopCenter
             CloseConn();
             return result.ToString();
         }
-
+        public  string is_follow(int userid,string shopid)
+        {
+            CreateConn();
+            OracleCommand find = DB.CreateCommand();
+            find.CommandText = "select count(*) from subscribe_shop where user_id=:userid and shop_id=:shopid";
+            find.Parameters.Add(new OracleParameter(":userid", userid));
+            find.Parameters.Add(new OracleParameter(":shopid", shopid));
+            int result = Convert.ToInt32(find.ExecuteScalar());
+            if (result == 1)
+                return "1";
+            else
+                return "0";
+        }
         //发布商品
-        public static string postProduct(string shopUserId, string productName, string productType, string productDes, int price)
+        public  string postProduct(string shopUserId, string productName, string productType, string productDes, int price)
         {
             CreateConn();
 
@@ -221,7 +233,7 @@ namespace WebApi.Models.ShopCenter
         }
 
     //删除发布商品
-    public static string deleteProduct(int productId, string shopUserId)
+    public  string deleteProduct(int productId, string shopUserId)
     {
       CreateConn();
 

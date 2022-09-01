@@ -64,7 +64,13 @@ namespace WebApi.Controllers.ShopCenter
             ShopCenterModel shopCenterModel = new ShopCenterModel();
             return shopCenterModel.cancel_follow_shop(userId, shopUserId);
         }
-
+        [Route("/ShopCenter/is_follow")]
+        [HttpGet]
+        public string is_follow(int userid,string shopid)
+        {
+            ShopCenterModel shopCenterModel = new ShopCenterModel();
+            return shopCenterModel.is_follow(userid, shopid);
+        }
         //发布商品
         [Route("/ShopCenter/post_product")]
         [HttpPost]
@@ -82,5 +88,6 @@ namespace WebApi.Controllers.ShopCenter
             ShopCenterModel shopCenterModel = new ShopCenterModel();
             return shopCenterModel.delete_product(productId, shopUserId);
         }
+       
     }
 }

@@ -10,10 +10,10 @@ namespace WebApi.Models
 {
     public class Database
     {
-        public static OracleConnection DB;
+        public  OracleConnection DB;
 
         //建立数据库连接
-        public static void CreateConn()  //更改此处数据库地址即可
+        public  void CreateConn()  //更改此处数据库地址即可
         {
             //124.222.1.19
             string user = "shop";
@@ -26,14 +26,14 @@ namespace WebApi.Models
         }
 
         //关闭数据库连接
-        public static void CloseConn()
+        public  void CloseConn()
         {
             DB.Close();
         }
 
         //查询该管理员是否存在,管理员的role_rank为3
         //测试账号jy,34567,id为2004168
-        public static bool IsUserExist(int UserID, string Password)
+        public  bool IsUserExist(int UserID, string Password)
         {
             int Count;
             CreateConn();
@@ -50,7 +50,7 @@ namespace WebApi.Models
 
         }
         //获取用户列表，每次返回20个,num从0开始
-        public static string getUserList(int num)
+        public  string getUserList(int num)
         
         {
             List<user_info> storage = new List<user_info>();
@@ -76,7 +76,7 @@ namespace WebApi.Models
 
         }
         //获取等待审核的商品,同样采取分批请求的方式,sum从0开始
-        public static string getProduct(int sum)
+        public  string getProduct(int sum)
         {
             List<product_info> storage = new List<product_info>();
             CreateConn();
@@ -112,7 +112,7 @@ namespace WebApi.Models
             return JsonConvert.SerializeObject(storage);
         }
         //商品审核通过
-        public static string agreeProduct(int product_id,int status)
+        public  string agreeProduct(int product_id,int status)
         {
             CreateConn();
             //0代表删除
@@ -149,14 +149,14 @@ namespace WebApi.Models
         }   
 
         //提交前执行一下commit,防止update上锁,目前已设置自动提交
-        public static void commit()
+        public  void commit()
         {
             OracleCommand commit = DB.CreateCommand();
             commit.CommandText = "commit";
             commit.ExecuteNonQuery();
         }
         //请求待审核文章,每次返回20个
-        public static string get_article(int sum)
+        public  string get_article(int sum)
         {
             
             List<article> storage = new List<article>();
@@ -195,7 +195,7 @@ namespace WebApi.Models
         }
 
         //审核文章通过
-        public static string agree_article(string id,int option)
+        public  string agree_article(string id,int option)
         {
             CreateConn();
             //先修改status的状态,将其改为1
@@ -216,7 +216,7 @@ namespace WebApi.Models
             return m.ToString();
         }
         //获取评论
-        public static string getComment(int sum)
+        public  string getComment(int sum)
         {
             List<comment> storage = new List<comment>();
             CreateConn();
@@ -250,7 +250,7 @@ namespace WebApi.Models
             return JsonConvert.SerializeObject(storage);
         }
         //审核评论是否通过
-        public static string agreeComment(string comment_id,int option)
+        public  string agreeComment(string comment_id,int option)
         {
             CreateConn();
             //先修改status的状态,将其改为1
@@ -272,7 +272,7 @@ namespace WebApi.Models
         }
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
-        public static string AddUser(string UserName, string UserPassword)
+        public  string AddUser(string UserName, string UserPassword)
         {
             OracleCommand Insert = DB.CreateCommand();
             Insert.CommandText = "insert into user_info (user_name,password) values(:UserName,:UserPassword)";
@@ -295,7 +295,7 @@ namespace WebApi.Models
         }
 
         //查找个人信息
-        public static User FindUserInfo(string UserID)
+        public  User FindUserInfo(string UserID)
         {
             User U = new User();
 

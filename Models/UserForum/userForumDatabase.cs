@@ -9,10 +9,10 @@ namespace WebApi.Models.UserForum
 {
     public class userForumDatabase
     {
-        public static OracleConnection DB;
+        public  OracleConnection DB;
 
         //建立数据库连接
-        public static void CreateConn()  //更改此处数据库地址即可
+        public  void CreateConn()  //更改此处数据库地址即可
         {
             //124.222.1.19
             string user = "shop";
@@ -25,11 +25,11 @@ namespace WebApi.Models.UserForum
         }
 
         //关闭数据库连接
-        public static void CloseConn()
+        public  void CloseConn()
         {
             DB.Close();
         }
-        public static string get_article(int sum)
+        public  string get_article(int sum)
         {
             List<article> storage = new List<article>();
             CreateConn();
@@ -67,7 +67,7 @@ namespace WebApi.Models.UserForum
             CloseConn();
             return JsonConvert.SerializeObject(storage);
         }
-        public static string push_article(string title,string context,int user_id,int product_id)
+        public  string push_article(string title,string context,int user_id,int product_id)
         {
             CreateConn();
             //先修改status的状态,将其改为1
@@ -86,7 +86,7 @@ namespace WebApi.Models.UserForum
             CloseConn();
             return m.ToString();
         }
-        public static string get_comment(int article_id)
+        public  string get_comment(int article_id)
         {
             List<article_comment> storage = new List<article_comment>();
             CreateConn();
@@ -107,7 +107,7 @@ namespace WebApi.Models.UserForum
             CloseConn();
             return JsonConvert.SerializeObject(storage);
         }
-        public static string push_comment(string context,int user_id,int article_id)
+        public  string push_comment(string context,int user_id,int article_id)
         {
             CreateConn();
             //先修改status的状态,将其改为1

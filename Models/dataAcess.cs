@@ -8,10 +8,10 @@ namespace WebApi.Models
 {
     public class ManageDatabase
     {
-        public static OracleConnection DB;
+        public  OracleConnection DB;
 
     //建立数据库连接
-    public static void CreateConn()  //更改此处数据库地址即可
+    public  void CreateConn()  //更改此处数据库地址即可
     {
       //124.222.1.19
       string user = "shop";
@@ -24,7 +24,7 @@ namespace WebApi.Models
     }
 
     //关闭数据库连接
-    public static void CloseConn()
+    public  void CloseConn()
     {
       DB.Close();
     }
@@ -33,7 +33,7 @@ namespace WebApi.Models
 
         //在MUser表中查询用户、密码是否错误(登录时使用)
         //密码或用户名错误返回false；密码和用户名正确返回true
-        public static bool IsUserExist(int UserID, string Password)
+        public  bool IsUserExist(int UserID, string Password)
         {
             int Count;
             CreateConn();
@@ -52,7 +52,7 @@ namespace WebApi.Models
 
         //向MUser表中增加一个新用户(注册)
         //添加成功返回UserID，添加失败返回“0”
-        public static user_result AddUser(string UserName, string UserPassword)
+        public  user_result AddUser(string UserName, string UserPassword)
         {
             string now = DateTime.Now.ToString();   //获取当前时间
             //假如存在该用户名,返回空
@@ -84,7 +84,7 @@ namespace WebApi.Models
             CloseConn();
             return result;
         }
-        public static user_result get_user(int user_id)
+        public  user_result get_user(int user_id)
         {
             CreateConn();
             OracleCommand find = DB.CreateCommand();
@@ -103,7 +103,7 @@ namespace WebApi.Models
             return result;
         }
         //查找该用户名是否存在
-        public static bool FindUserInfo(string user_name)
+        public  bool FindUserInfo(string user_name)
         {
             CreateConn();
             OracleCommand Search = DB.CreateCommand();

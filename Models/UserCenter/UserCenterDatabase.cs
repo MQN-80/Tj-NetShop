@@ -11,10 +11,10 @@ namespace WebApi.Models.UserCenter
 {
     public class UserCenterDatabase
     {
-        private static OracleConnection DB;
+        private  OracleConnection DB;
         
         // 连接到数据库
-        private static void CreateConnection()
+        private  void CreateConnection()
         {
             //124.222.1.19
             var user = "shop";
@@ -26,12 +26,12 @@ namespace WebApi.Models.UserCenter
             DB.Open();
         }
 
-        private static void CloseConnection()
+        private  void CloseConnection()
         {
             DB.Close();
         }
 
-        public static string GetUserInfo(int userID)
+        public  string GetUserInfo(int userID)
         {
             var storage = new List<UserInfo>();
             CreateConnection();
@@ -54,7 +54,7 @@ namespace WebApi.Models.UserCenter
             return JsonConvert.SerializeObject(storage);
         }
 
-        public static string UpdateUserInfo(int userID, string userName, string userDetail)
+        public  string UpdateUserInfo(int userID, string userName, string userDetail)
         {
             if (is_user(userID, userName)) 
                 return "no";
@@ -69,7 +69,7 @@ namespace WebApi.Models.UserCenter
             CloseConnection();
             return rowsAffected.ToString();
         }
-        public static bool is_user(int userid,string user_name)
+        public  bool is_user(int userid,string user_name)
         {
             CreateConnection();
             var find = DB.CreateCommand();
@@ -83,7 +83,7 @@ namespace WebApi.Models.UserCenter
             else
                 return false;
         }
-        public static string GetUserRoleRank(int userID)
+        public  string GetUserRoleRank(int userID)
         {
             CreateConnection();
             var find = DB.CreateCommand();
@@ -107,7 +107,7 @@ namespace WebApi.Models.UserCenter
             return JsonConvert.SerializeObject(user);
         }
 
-        public static string GetOrderHistory(int userID)
+        public  string GetOrderHistory(int userID)
         {
             var storage = new List<OrderHistory>();
             CreateConnection();
