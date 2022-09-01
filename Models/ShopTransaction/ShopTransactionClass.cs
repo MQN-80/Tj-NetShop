@@ -21,6 +21,7 @@ namespace WebApi.Models.ShopTransaction
    */
   public class Deal_record
   {
+    public string id { get; set; }
     public string Trade_id { get; set; }
     public string Product_id { get; set; }
     public string Ord_price { get; set; }
@@ -107,8 +108,9 @@ namespace WebApi.Models.ShopTransaction
      */
     public class User_Trolley
   {
-    public string id { get; set; }
-    public string Img { get; set; }
+    public string product_id { get; set; }
+    public string Trolley_id { get; set; }
+    public string imgPath { get; set; }
     public int Price { get; set; }
     public string Name { get; set; }
     public string Product_num { get; set; }

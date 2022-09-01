@@ -110,18 +110,19 @@ namespace WebApi.Models.ShopTransaction
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
 
-            Search.CommandText = "select Trade_id,Product_id,Ord_price,Start_time,Status " +
-                                 "from deal_record where User_id=:UserID";
-            Search.Parameters.Add(new OracleParameter(":UserID", UserID));
-            OracleDataReader Ord = Search.ExecuteReader();
-            while (Ord.Read())
-            {
-                Deal_record deal_record = new Deal_record();
-                deal_record.Trade_id = Ord.GetValue(0).ToString();
-                deal_record.Product_id = Ord.GetValue(1).ToString();
-                deal_record.Ord_price = Ord.GetValue(2).ToString();
-                deal_record.Start_time = Ord.GetValue(3).ToString();
-                deal_record.Status = Ord.GetValue(4).ToString();
+      Search.CommandText = "select id,Trade_id,Product_id,Ord_price,Start_time,Status " +
+                           "from deal_record where User_id=:UserID";
+      Search.Parameters.Add(new OracleParameter(":UserID", UserID));
+      OracleDataReader Ord = Search.ExecuteReader();
+      while (Ord.Read())
+      {
+        Deal_record deal_record = new Deal_record();
+        deal_record.id = Ord.GetValue(0).ToString();
+        deal_record.Trade_id = Ord.GetValue(1).ToString();
+        deal_record.Product_id = Ord.GetValue(2).ToString();
+        deal_record.Ord_price = Ord.GetValue(3).ToString();
+        deal_record.Start_time = Ord.GetValue(4).ToString();
+        deal_record.Status = Ord.GetValue(5).ToString();
 
                 storage.Add(deal_record);
             }
@@ -557,67 +558,83 @@ namespace WebApi.Models.ShopTransaction
             return "OK";
         }
 
-        /*
-         *交易primer plus
-         */
-        public string GoodsTransactionPrimerPlus(string Trade_id)
-        {
-            CreateConn();
-            string Consumer_UserID = "";
-            string Business_UserID = "";
-            string Product_id = "";
-            string shop_id = "";
-            int Credits_change = 0;
-            string Status = "1";
+    /*
+     *交易primer plus
+     */
+    public string GoodsTransactionPrimerPlus(string Trade_id)
+    {
+      CreateConn();
+      int Consumer_UserID = 0;
+      string user_id = "";
+      int Business_UserID = 0;
+      string Product_id = "";
+      string shop_id = "";
+      int Credits_change = 0;
+      string Status = "1";
 
-            //用Trade_id查询
-            var SearchTradeId = DB.CreateCommand();
-            SearchTradeId.CommandText = "select user_id,product_id,ord_price " +
-                "from deal_record " +
-                "where Trade_id = :Trade_id ";
-            SearchTradeId.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
-            OracleDataReader OrdTradeid = SearchTradeId.ExecuteReader();
-            while (OrdTradeid.Read())
-            {
-                Consumer_UserID = OrdTradeid.GetValue(0).ToString();
-                Product_id = OrdTradeid.GetValue(1).ToString();
-                Credits_change = int.Parse(OrdTradeid.GetValue(2).ToString());
-            }
+      //用Trade_id查询
+      var SearchTradeId = DB.CreateCommand();
+      SearchTradeId.CommandText = "select user_id,product_id,ord_price " +
+          "from deal_record " +
+          "where id = :Trade_id ";
+      SearchTradeId.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
+      OracleDataReader OrdTradeid = SearchTradeId.ExecuteReader();
+      while (OrdTradeid.Read())
+      {
+        user_id = OrdTradeid.GetValue(0).ToString();//32位
+        Product_id = OrdTradeid.GetValue(1).ToString();
+        Credits_change = int.Parse(OrdTradeid.GetValue(2).ToString());
+      }
 
-            //通过product_id查询shop_id
-            var SearchproductId = DB.CreateCommand();
-            SearchproductId.CommandText = "select shop_id " +
-                "from shop_product " +
-                "where Product_id = :Product_id ";
-            SearchproductId.Parameters.Add(new OracleParameter(":Product_id", Product_id));
-            OracleDataReader OrdproductId = SearchproductId.ExecuteReader();
-            while (OrdproductId.Read())
-            {
-                shop_id = OrdproductId.GetValue(0).ToString();
-            }
+      //通过product_id查询shop_id(商家的32位id)
+      var SearchproductId = DB.CreateCommand();
+      SearchproductId.CommandText = "select shop_id " +
+          "from shop_product " +
+          "where Product_id =（select product_id from product_information where id=:Product_id) ";
+      SearchproductId.Parameters.Add(new OracleParameter(":Product_id", Product_id));
+      OracleDataReader OrdproductId = SearchproductId.ExecuteReader();
+      while (OrdproductId.Read())
+      {
+        shop_id = OrdproductId.GetValue(0).ToString();
+      }
 
-            //通过shop_id查询商家的userid
-            var SearchShopId = DB.CreateCommand();
-            SearchShopId.CommandText = "select user_id " +
-                "from user_info " +
-                "where id = :shop_id ";
-            SearchShopId.Parameters.Add(new OracleParameter(":shop_id", shop_id));
-            OracleDataReader OrdShopId = SearchShopId.ExecuteReader();
-            while (OrdShopId.Read())
-            {
-                Business_UserID = OrdShopId.GetValue(0).ToString();
-            }
+      //通过shop_id查询商家的userid
+      var SearchShopId = DB.CreateCommand();
+      SearchShopId.CommandText = "select user_id " +
+          "from user_info " +
+          "where id = :shop_id ";
+      SearchShopId.Parameters.Add(new OracleParameter(":shop_id", shop_id));
+      OracleDataReader OrdShopId = SearchShopId.ExecuteReader();
+      while (OrdShopId.Read())
+      {
+        Business_UserID = int.Parse(OrdShopId.GetValue(0).ToString());//10位的
+      }
 
-            //先查用户积分数量
-            OracleCommand SearchConsumer = DB.CreateCommand();
-            SearchConsumer.CommandText = "select Credits from User_credits where User_id=:Consumer_UserID";
-            SearchConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID", Consumer_UserID));
-            OracleDataReader OrdConsumer = SearchConsumer.ExecuteReader();
-            int Consumer_Credits = 0;
-            while (OrdConsumer.Read())
-            {
-                Consumer_Credits = Convert.ToInt32(OrdConsumer.GetValue(0));
-            }
+      //通过user_id查询用户的userid
+      var SearchUserId = DB.CreateCommand();
+      SearchUserId.CommandText = "select user_id " +
+          "from user_info " +
+          "where id = :user_id ";
+      SearchUserId.Parameters.Add(new OracleParameter(":user_id", user_id));
+      OracleDataReader OrdUserId = SearchUserId.ExecuteReader();
+      while (OrdUserId.Read())
+      {
+        Consumer_UserID = int.Parse(OrdUserId.GetValue(0).ToString());//10位的
+      }
+
+
+
+
+      //先查用户积分数量
+      OracleCommand SearchConsumer = DB.CreateCommand();
+      SearchConsumer.CommandText = "select Credits from User_credits where User_id=:Consumer_UserID";
+      SearchConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID", Consumer_UserID));
+      OracleDataReader OrdConsumer = SearchConsumer.ExecuteReader();
+      int Consumer_Credits = 0;
+      while (OrdConsumer.Read())
+      {
+        Consumer_Credits = Convert.ToInt32(OrdConsumer.GetValue(0));
+      }
 
             //然后查商家积分数量
             OracleCommand SearchBusiness = DB.CreateCommand();
@@ -633,99 +650,106 @@ namespace WebApi.Models.ShopTransaction
             string Consumer_Status = "";
             string Business_Status = "";
 
-            OracleCommand editConsumer = DB.CreateCommand();
-            OracleCommand editBusiness = DB.CreateCommand();
-            if (Status == "1") //“1”为商品正常交易，用户扣除积分，商家增加积分
-            {
-                Consumer_Status = "0";
-                Business_Status = "1";
-                //检查用户扣除积分后是否小于零
-                if ((Consumer_Credits - Credits_change) < 0)
-                {
-                    return "error";
-                }
-                else
-                {
-                    Consumer_Credits -= Credits_change;
-                    Business_Credits += Credits_change;
-                }
-            }
-            else if (Status == "0") //“0”为商品退款，用户增加积分，商家扣除积分
-            {
-                Consumer_Status = "1";
-                Business_Status = "0";
-                //检查商家扣除积分后是否小于零
-                if ((Business_Credits - Credits_change) < 0)
-                {
-                    return "error";
-                }
-                else
-                {
-                    Consumer_Credits += Credits_change;
-                    Business_Credits -= Credits_change;
-                }
-            }
-            else
-            {
-                return "error";
-            }
+      OracleCommand editConsumer = DB.CreateCommand();
+      OracleCommand editBusiness = DB.CreateCommand();
+      if (Status == "1") //“1”为商品正常交易，用户扣除积分，商家增加积分
+      {
+        Consumer_Status = "0";
+        Business_Status = "1";
+        //检查用户扣除积分后是否小于零
+        if ((Consumer_Credits - Credits_change) < 0)
+        {
+          return "积分不足";
+        }
+        else
+        {
+          Consumer_Credits -= Credits_change;
+          Business_Credits += Credits_change;
+        }
+      }
+      else if (Status == "0") //“0”为商品退款，用户增加积分，商家扣除积分
+      {
+        Consumer_Status = "1";
+        Business_Status = "0";
+        //检查商家扣除积分后是否小于零
+        if ((Business_Credits - Credits_change) < 0)
+        {
+          return "积分不足";
+        }
+        else
+        {
+          Consumer_Credits += Credits_change;
+          Business_Credits -= Credits_change;
+        }
+      }
+      else
+      {
+        return "error";
+      }
 
-            string Create_time = DateTime.Now.ToString();
-            OracleCommand InsertConsumer = DB.CreateCommand();
-            OracleCommand InsertBusiness = DB.CreateCommand();
+      string Create_time = DateTime.Now.ToString();
+      OracleCommand InsertConsumer = DB.CreateCommand();
+      OracleCommand InsertBusiness = DB.CreateCommand();
+      var updateDeal = DB.CreateCommand();
 
-            //开始一个事务
-            OracleCommand updateRecord = DB.CreateCommand();
-            //开始一个事务
-            OracleTransaction txn = DB.BeginTransaction(IsolationLevel.ReadCommitted);
-            try
-            {
-                //更新User_credits表
-                editConsumer.CommandText = "update User_credits set Credits=:Consumer_Credits where User_id=:Consumer_UserID";
-                editConsumer.Parameters.Add(new OracleParameter(":Consumer_Credits", Consumer_Credits));
-                editConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID", Consumer_UserID));
-                editBusiness.CommandText = "update User_credits set Credits=:Business_Credits where User_id=:Business_UserID";
-                editBusiness.Parameters.Add(new OracleParameter(":Business_Credits", Business_Credits));
-                editBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID));
+      //开始一个事务
+      OracleCommand updateRecord = DB.CreateCommand();
+      OracleTransaction txn = DB.BeginTransaction(IsolationLevel.ReadCommitted);
+      try
+      {
+        //更新User_credits表
+        editConsumer.CommandText = "update User_credits set Credits=:Consumer_Credits where User_id=:Consumer_UserID";
+        editConsumer.Parameters.Add(new OracleParameter(":Consumer_Credits", Consumer_Credits));
+        editConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID", Consumer_UserID));
+        editBusiness.CommandText = "update User_credits set Credits=:Business_Credits where User_id=:Business_UserID";
+        editBusiness.Parameters.Add(new OracleParameter(":Business_Credits", Business_Credits));
+        editBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID));
 
-                //插入credits_record表
-                InsertConsumer.CommandText =
-                  "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
-                  "values(:Consumer_UserID,deal_seq.nextval,:Credits_change,:Consumer_Status,:Create_time)";
-                InsertConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID", Consumer_UserID));
-                InsertConsumer.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
-                InsertConsumer.Parameters.Add(new OracleParameter(":Consumer_Status", Consumer_Status));
-                InsertConsumer.Parameters.Add(new OracleParameter(":Create_time", Create_time));
-                InsertBusiness.CommandText =
-                  "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
-                  "values(:Business_UserID,deal_seq.nextval,:Credits_change,:Business_Status,:Create_time)";
-                InsertBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID));
-                InsertBusiness.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
-                InsertBusiness.Parameters.Add(new OracleParameter(":Business_Status", Business_Status));
-                InsertBusiness.Parameters.Add(new OracleParameter(":Create_time", Create_time));
+        //插入credits_record表
+        InsertConsumer.CommandText =
+          "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
+          "values(:user_id,deal_seq.nextval,:Credits_change,:Consumer_Status,:Create_time)";
+        InsertConsumer.Parameters.Add(new OracleParameter(":user_id", user_id));
+        InsertConsumer.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
+        InsertConsumer.Parameters.Add(new OracleParameter(":Consumer_Status", Consumer_Status));
+        InsertConsumer.Parameters.Add(new OracleParameter(":Create_time", Create_time));
+        InsertBusiness.CommandText =
+          "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
+          "values(:shop_id,deal_seq.nextval,:Credits_change,:Business_Status,:Create_time)";
+        InsertBusiness.Parameters.Add(new OracleParameter(":shop_id", shop_id));
+        InsertBusiness.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
+        InsertBusiness.Parameters.Add(new OracleParameter(":Business_Status", Business_Status));
+        InsertBusiness.Parameters.Add(new OracleParameter(":Create_time", Create_time));
 
-                editConsumer.ExecuteNonQuery();
-                editBusiness.ExecuteNonQuery();
-                InsertConsumer.ExecuteNonQuery();
-                InsertBusiness.ExecuteNonQuery();
+        updateDeal.CommandText = "update deal_record set Status = 1 where id =:Trade_id";
+        InsertBusiness.Parameters.Add(new OracleParameter(":trade_id", Trade_id));
 
-                txn.Commit();
-            }
-            catch (Exception e)
-            {
-                // 打印错误信息
-                Console.WriteLine("e.Message = " + e.Message);
-                // 回滚事务
-                txn.Rollback();
-            }
+
+        editConsumer.ExecuteNonQuery();
+        editBusiness.ExecuteNonQuery();
+        InsertConsumer.ExecuteNonQuery();
+        InsertBusiness.ExecuteNonQuery();
+        updateDeal.ExecuteNonQuery();
+        
+        txn.Commit();
+        return "ok";
+
+      }
+      catch (Exception e)
+      {
+        // 打印错误信息
+        Console.WriteLine("e.Message = " + e.Message);
+        // 回滚事务
+        txn.Rollback();
+      }
 
             //释放事务的资源
             txn.Dispose();
 
 
-            CloseConn();
-            return "ok";
-        }
+      CloseConn();
+      return "error";
+    }
 
         /*
        * 查询商户id和姓名
@@ -811,29 +835,30 @@ namespace WebApi.Models.ShopTransaction
             return result;
         }
 
-        /*
-         * 返回购物车
-         */
-        public string GetTrolley(string user_id)
-        {
-            CreateConn();
-            List<User_Trolley> storage = new List<User_Trolley>();
-            OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select a.id,b.img,b.price,b.name,a.product_num " +
-                "from shopping_trolley a,product_information b " +
-                "where a.user_id=:user_id and a.product_id=b.id";
-            Search.Parameters.Add(new OracleParameter(":user_id", user_id));
-            OracleDataReader Ord = Search.ExecuteReader();
-            while (Ord.Read())
-            {
-                User_Trolley user_Trolley = new User_Trolley();
-                user_Trolley.id = Ord.GetValue(0).ToString();
-                user_Trolley.Img = Ord.GetValue(1).ToString();
-                user_Trolley.Price = int.Parse(Ord.GetValue(2).ToString());
-                user_Trolley.Name = Ord.GetValue(3).ToString();
-                user_Trolley.Product_num = Ord.GetValue(4).ToString();
-                storage.Add(user_Trolley);
-            }
+    /*
+     * 返回购物车
+     */
+    public string GetTrolley(string user_id)
+    {
+      CreateConn();
+      List<User_Trolley> storage = new List<User_Trolley>();
+      OracleCommand Search = DB.CreateCommand();
+      Search.CommandText = "select b.id,a.id,b.price,b.name,a.product_num " +
+          "from shopping_trolley a,product_information b " +
+          "where a.user_id=:user_id and a.product_id=b.id";
+      Search.Parameters.Add(new OracleParameter(":user_id", user_id));
+      OracleDataReader Ord = Search.ExecuteReader();
+      while (Ord.Read())
+      {
+        User_Trolley user_Trolley = new User_Trolley();
+        user_Trolley.product_id = Ord.GetValue(0).ToString();
+        user_Trolley.Trolley_id = Ord.GetValue(1).ToString();
+        user_Trolley.imgPath = "http://106.12.131.109:8083/product/" + user_Trolley.product_id + ".jpg";
+        user_Trolley.Price = int.Parse(Ord.GetValue(2).ToString());
+        user_Trolley.Name = Ord.GetValue(3).ToString();
+        user_Trolley.Product_num = Ord.GetValue(4).ToString();
+        storage.Add(user_Trolley);
+      }
 
             //以字符串形式返回
             CloseConn();
