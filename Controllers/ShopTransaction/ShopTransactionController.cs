@@ -192,4 +192,21 @@ namespace WebApi.Controllers.ShopTransaction
        return shopTransactionModel.findProductType(product_type);
     }
     }
+
+    [Route("/ShopTransaction/clear_trolley")]
+    [HttpDelete]
+    public string clear_trolley(int user_id)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.ClearTrolley(user_id);
+    }
+
+    [Route("/ShopTransaction/delete_trolley")]
+    [HttpDelete]
+    public string delete_trolley(int id)
+    {
+      ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+      return shopTransactionModel.DeleteTrolley(id);
+    }
+  }
 }

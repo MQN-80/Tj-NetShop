@@ -127,6 +127,19 @@ namespace WebApi.Models.ShopTransaction
             ShopTransactionDatabase shopt = new ShopTransactionDatabase();
             return shopt.IsCollect(id, user_id);
     }
+
+    public string ClearTrolley(int user_id)
+    {
+      ShopTransactionDatabase shopt = new ShopTransactionDatabase();
+      return shopt.ClearTrolley(user_id);
+    }
+
+    public string DeleteTrolley(int id)
+    {
+      ShopTransactionDatabase shopt = new ShopTransactionDatabase();
+      return shopt.DeleteTrolley(id);
+    }
+  }
     public string findProductType(string type_name)
    {
        ShopTransactionDatabase shopt = new ShopTransactionDatabase();

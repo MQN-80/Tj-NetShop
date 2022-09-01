@@ -107,6 +107,7 @@ namespace WebApi.Models.ShopTransaction
      */
     public class User_Trolley
   {
+    public string id { get; set; }
     public string Img { get; set; }
     public int Price { get; set; }
     public string Name { get; set; }
