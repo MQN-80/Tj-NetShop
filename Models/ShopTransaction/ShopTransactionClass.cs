@@ -64,6 +64,7 @@ namespace WebApi.Models.ShopTransaction
     public string status { get; set; }
     public string price { get; set; }
     public string create_time { get; set; }
+    public string discount { get; set; }
   }
 
   /*

@@ -79,7 +79,7 @@ namespace WebApi.Models.ShopTransaction
       OracleCommand Insert = DB.CreateCommand();
       string start_time = DateTime.Now.ToString();
       Insert.CommandText = "insert into deal_record (Trade_id,Product_id,Ord_price,User_id,start_time,status) " +
-                           "values(deal_seq.nextval,:Product_id,:Ord_price,:User_id,:start_time,1)";
+                           "values(deal_seq.nextval,:Product_id,:Ord_price,:User_id,:start_time,0)";
       Insert.Parameters.Add(new OracleParameter(":Product_id", Product_id));
       Insert.Parameters.Add(new OracleParameter(":Ord_price", Ord_price));
       Insert.Parameters.Add(new OracleParameter(":UserID", UserID));
@@ -416,9 +416,9 @@ namespace WebApi.Models.ShopTransaction
       var Search = DB.CreateCommand();
       try
       {
-        Search.CommandText = "select id,name,type_id,product_id,des,surplus,status,price,create_time " +
+        Search.CommandText = "select id,name,type_id,product_id,des,surplus,status,price,create_time,discount " +
           "from product_information " +
-          "where name like CONCAT(CONCAT('%',:product_name),'%') ";
+          "where name like CONCAT(CONCAT('%',:product_name),'%')";
         Search.Parameters.Add(new OracleParameter(":product_name", product_name));
         OracleDataReader Ord = Search.ExecuteReader();
         while (Ord.Read())
@@ -434,6 +434,7 @@ namespace WebApi.Models.ShopTransaction
           product_information.status = Ord.GetValue(6).ToString();
           product_information.price = Ord.GetValue(7).ToString();
           product_information.create_time = Ord.GetValue(8).ToString();
+          product_information.discount = Ord.GetValue(9).ToString();
           storage.Add(product_information);
         }
       }
@@ -672,7 +673,8 @@ namespace WebApi.Models.ShopTransaction
       string Create_time = DateTime.Now.ToString();
       OracleCommand InsertConsumer = DB.CreateCommand();
       OracleCommand InsertBusiness = DB.CreateCommand();
-      //开始一个事务
+      OracleCommand updateRecord = DB.CreateCommand();
+            //开始一个事务
       OracleTransaction txn = DB.BeginTransaction(IsolationLevel.ReadCommitted);
       try
       {
@@ -699,7 +701,10 @@ namespace WebApi.Models.ShopTransaction
         InsertBusiness.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
         InsertBusiness.Parameters.Add(new OracleParameter(":Business_Status", Business_Status));
         InsertBusiness.Parameters.Add(new OracleParameter(":Create_time", Create_time));
-
+        //更新交易记录表
+        updateRecord.CommandText = "update deal_record set status=1 where Trade_id = :Trade_id";    
+        updateRecord.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
+        updateRecord.ExecuteNonQuery();
         editConsumer.ExecuteNonQuery();
         editBusiness.ExecuteNonQuery();
         InsertConsumer.ExecuteNonQuery();

@@ -79,22 +79,26 @@ namespace WebApi
             });
 
             #endregion
+            services.AddMvc();
             services.AddCors(options =>
             {
                 options.AddPolicy(CORS1,
                 builder => builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin());
             });
 
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors(CORS1);
+
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(CORS1);
             #region 身份验证
             app.UseAuthentication();
             #endregion

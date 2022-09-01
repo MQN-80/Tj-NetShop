@@ -32,7 +32,7 @@ namespace WebApi.Models.MallPage
             DB.Close();
         }
         // 随机返回四个商品,好像没什么问题,新增数据之后再试一下
-        public static string GetFourRandomProduct()
+        public string GetFourRandomProduct()
         {
             List<Product_info> storage = new List<Product_info>();
             CreateConn();
@@ -54,7 +54,7 @@ namespace WebApi.Models.MallPage
             return JsonConvert.SerializeObject(storage);
         }
         //返回最近的四个商品
-        public static string GetFourCollectedProduct()
+        public  string GetFourCollectedProduct()
         {
             List<Product_info> storage = new List<Product_info>();
 
@@ -77,7 +77,7 @@ namespace WebApi.Models.MallPage
             return JsonConvert.SerializeObject(storage);
         }
         //返回四个打折商品
-        public static string GetFourDiscountProduct()
+        public string GetFourDiscountProduct()
         {
             List<Product_info> storage = new List<Product_info>();
             //找到随机的四个打折商品的product_id
@@ -100,7 +100,7 @@ namespace WebApi.Models.MallPage
             return JsonConvert.SerializeObject(storage);
         }
         //返回随机一家店铺的多个商品
-        public static string GetRandomShopProduct()
+        public string GetRandomShopProduct()
         {
             List<Product_info> storage = new List<Product_info>();
             CreateConn();

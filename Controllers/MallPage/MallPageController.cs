@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using WebApi.Models.MallPage;
 
 namespace WebApi.Controllers.MallPage
 {
-    public class MallPageController
+    public class MallPageController : Controller
     {
         /*
          * 返回四个随机商品

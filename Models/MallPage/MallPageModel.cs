@@ -9,19 +9,23 @@ namespace WebApi.Models.MallPage
     {
         public string Get_4_Random_Product()
         {
-            return MallPageDatabase.GetFourRandomProduct();
+            MallPageDatabase mall = new MallPageDatabase();
+            return mall.GetFourRandomProduct();
         }
         public string  Get_4_Collected_Product()
         {
-            return MallPageDatabase.GetFourCollectedProduct();
+            MallPageDatabase mall = new MallPageDatabase();
+            return mall.GetFourCollectedProduct();
         }
         public string Get_4_Discount_Product()
         {
-            return MallPageDatabase.GetFourDiscountProduct();
+            MallPageDatabase mall = new MallPageDatabase();
+            return mall.GetFourDiscountProduct();
         }
         public string Get_Random_Shop_Product()
         {
-            return MallPageDatabase.GetRandomShopProduct();
+            MallPageDatabase mall = new MallPageDatabase();
+            return mall.GetRandomShopProduct();
         }
      }
 }

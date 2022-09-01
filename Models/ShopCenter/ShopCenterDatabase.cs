@@ -104,14 +104,17 @@ namespace WebApi.Models.ShopCenter
             CreateConn();
 
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select name, price from product_information natural join shop_product where shop_id = :shopUserId";
+            Search.CommandText = "select a.id,a.name, a.price from product_information a join shop_product b " +
+                " on a.product_id=b.product_id where b.shop_id = :shopUserId";
             Search.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
             OracleDataReader Ord = Search.ExecuteReader();
             while (Ord.Read())
             {
                 product Product = new product();
-                Product.name = Ord.GetValue(0).ToString();
-                Product.price = Ord.GetValue(1).ToString();
+                Product.id = Ord.GetValue(0).ToString();
+                Product.name = Ord.GetValue(1).ToString();
+                Product.price = Ord.GetValue(2).ToString();
+                Product.img = "http://106.12.131.109:8083/product/" + Product.id + ".jpg";
                 storage.Add(Product);
             }
 
