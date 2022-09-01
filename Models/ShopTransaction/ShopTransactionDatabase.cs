@@ -560,7 +560,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *交易primer plus
      */
-    public static string GoodsTransactionPrimerPlus(string Trade_id, string trolley_id)
+    public static string GoodsTransactionPrimerPlus(string Trade_id)
     {
       CreateConn();
       string Consumer_UserID = "";
@@ -673,7 +673,6 @@ namespace WebApi.Models.ShopTransaction
       string Create_time = DateTime.Now.ToString();
       OracleCommand InsertConsumer = DB.CreateCommand();
       OracleCommand InsertBusiness = DB.CreateCommand();
-      var Delete = DB.CreateCommand();
       
       //开始一个事务
       OracleCommand updateRecord = DB.CreateCommand();
@@ -705,20 +704,10 @@ namespace WebApi.Models.ShopTransaction
         InsertBusiness.Parameters.Add(new OracleParameter(":Business_Status", Business_Status));
         InsertBusiness.Parameters.Add(new OracleParameter(":Create_time", Create_time));
 
-        //删除购物车记录
-        Delete.CommandText = "delete from shopping_trolley where id = :trolley_id";
-        Delete.Parameters.Add(new OracleParameter(":trolley_id", trolley_id));
-
-
-        //更新交易记录表
-        updateRecord.CommandText = "update deal_record set status=1 where Trade_id = :Trade_id";    
-        updateRecord.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
-        updateRecord.ExecuteNonQuery();
         editConsumer.ExecuteNonQuery();
         editBusiness.ExecuteNonQuery();
         InsertConsumer.ExecuteNonQuery();
         InsertBusiness.ExecuteNonQuery();
-        Delete.ExecuteNonQuery();
 
         txn.Commit();
       }
@@ -850,7 +839,62 @@ namespace WebApi.Models.ShopTransaction
 
     }
 
+    /*
+     *添加收藏夹
+     *添加成功返回购物车id，添加失败返回“0”
+     */
+    public static string AddCollect(int user_id, string product_id, int price)
+    {
+      CreateConn();
+      OracleCommand Insert = DB.CreateCommand();
+      string create_time = DateTime.Now.ToString();
+      Insert.CommandText = "insert into product_collect (user_id,product_id,product_price,create_time) " +
+                           "values(:user_id,:product_id,:price,:create_time)";
+      Insert.Parameters.Add(new OracleParameter(":user_id", user_id));
+      Insert.Parameters.Add(new OracleParameter(":product_id", product_id));
+      Insert.Parameters.Add(new OracleParameter(":price", price));
+      Insert.Parameters.Add(new OracleParameter(":create_time", create_time));
+      Insert.ExecuteNonQuery();
+
+      OracleCommand find = DB.CreateCommand();
+
+      find.CommandText = "select id from product_collect where " +
+        "create_time=:create_time ";
+      find.Parameters.Add(new OracleParameter(":create_time", create_time));
 
 
+      OracleDataReader Ord = find.ExecuteReader();
+      string result = "0";
+      while (Ord.Read())
+      {
+        result = Ord.GetValue(0).ToString();
+      }
+
+      CloseConn();
+      return result;
+    }
+
+    /*
+     *判断是否是收藏商品
+     */
+    public static string IsCollect(string id,int user_id)
+    {
+      string result = "0";
+      int count = 0;
+      var find = DB.CreateCommand();
+      find.CommandText = "select count(*) from product_collect where id=:id and user_id=:user_id ";
+      find.Parameters.Add(new OracleParameter(":id", id));
+      find.Parameters.Add(new OracleParameter(":user_id", user_id));
+      OracleDataReader Ord = find.ExecuteReader();
+      while (Ord.Read())
+      {
+        count = int.Parse(Ord.GetValue(0).ToString());
+      }
+
+      if (count > 0)
+        result = "1";
+
+      return result;
+    }
   }
 }

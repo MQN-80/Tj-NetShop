@@ -92,10 +92,9 @@ namespace WebApi.Models.ShopTransaction
             return shopt.EditDeliveryAddress(id, addr, phone_number, name, add_default);
     }
 
-    public string GoodsTransactionPrimerPlus(string Trade_id,string trolley_id)
+    public string GoodsTransactionPrimerPlus(string Trade_id)
     {
-            ShopTransactionDatabase shopt = new ShopTransactionDatabase();
-            return shopt.GoodsTransactionPrimerPlus(Trade_id, trolley_id);
+      return ShopTransactionDatabase.GoodsTransactionPrimerPlus(Trade_id);
     }
 
     public string GetGoodsUserInfo(string id)
@@ -114,6 +113,16 @@ namespace WebApi.Models.ShopTransaction
     {
             ShopTransactionDatabase shopt = new ShopTransactionDatabase();
             return shopt.GetTrolley(user_id);
+    }
+
+    public string AddCollect(int user_id, string product_id, int price)
+    {
+      return ShopTransactionDatabase.AddCollect(user_id, product_id, price);
+    }
+
+    public string IsCollect(string id, int user_id)
+    {
+      return ShopTransactionDatabase.IsCollect(id, user_id);
     }
   }
  
