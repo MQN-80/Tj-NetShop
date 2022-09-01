@@ -560,7 +560,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *交易primer plus
      */
-    public static string GoodsTransactionPrimerPlus(string Trade_id)
+    public static string GoodsTransactionPrimerPlus(string Trade_id, string trolley_id)
     {
       CreateConn();
       string Consumer_UserID = "";
@@ -673,6 +673,9 @@ namespace WebApi.Models.ShopTransaction
       string Create_time = DateTime.Now.ToString();
       OracleCommand InsertConsumer = DB.CreateCommand();
       OracleCommand InsertBusiness = DB.CreateCommand();
+      var Delete = DB.CreateCommand();
+      
+      //开始一个事务
       OracleCommand updateRecord = DB.CreateCommand();
             //开始一个事务
       OracleTransaction txn = DB.BeginTransaction(IsolationLevel.ReadCommitted);
@@ -701,6 +704,12 @@ namespace WebApi.Models.ShopTransaction
         InsertBusiness.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
         InsertBusiness.Parameters.Add(new OracleParameter(":Business_Status", Business_Status));
         InsertBusiness.Parameters.Add(new OracleParameter(":Create_time", Create_time));
+
+        //删除购物车记录
+        Delete.CommandText = "delete from shopping_trolley where id = :trolley_id";
+        Delete.Parameters.Add(new OracleParameter(":trolley_id", trolley_id));
+
+
         //更新交易记录表
         updateRecord.CommandText = "update deal_record set status=1 where Trade_id = :Trade_id";    
         updateRecord.Parameters.Add(new OracleParameter(":Trade_id", Trade_id));
@@ -709,6 +718,7 @@ namespace WebApi.Models.ShopTransaction
         editBusiness.ExecuteNonQuery();
         InsertConsumer.ExecuteNonQuery();
         InsertBusiness.ExecuteNonQuery();
+        Delete.ExecuteNonQuery();
 
         txn.Commit();
       }
@@ -723,8 +733,124 @@ namespace WebApi.Models.ShopTransaction
       //释放事务的资源
       txn.Dispose();
 
+
       CloseConn();
       return "ok";
     }
+
+    /*
+   * 查询商户id和姓名
+   */
+    public static string GetGoodsUserInfo(string id)
+    {
+      CreateConn();
+
+      OracleCommand SearchProductId = DB.CreateCommand();
+      string Product_id = "";
+      SearchProductId.CommandText = "select product_id from product_information where id=:id";
+      SearchProductId.Parameters.Add(new OracleParameter(":id", id));
+      OracleDataReader OrdProductId = SearchProductId.ExecuteReader();
+      while (OrdProductId.Read())
+      {
+        Product_id = OrdProductId.GetValue(0).ToString();
+      }
+
+
+      OracleCommand SearchShopId = DB.CreateCommand();
+      string Bussiness_id = "";
+      SearchShopId.CommandText = "select shop_id from shop_product where Product_id=:Product_id";
+      SearchShopId.Parameters.Add(new OracleParameter(":Product_id", Product_id));
+      OracleDataReader OrdShopId = SearchShopId.ExecuteReader();
+      while (OrdShopId.Read())
+      {
+        Bussiness_id = OrdShopId.GetValue(0).ToString();
+      }
+
+
+      List<Goods_UserInfo> storage = new List<Goods_UserInfo>();
+      OracleCommand SearchUserInfo = DB.CreateCommand();
+      SearchUserInfo.CommandText = "select user_id,user_name from user_info where id=:id";
+      SearchUserInfo.Parameters.Add(new OracleParameter(":id", Bussiness_id));
+      OracleDataReader OrdUserInfo = SearchUserInfo.ExecuteReader();
+      while (OrdUserInfo.Read())
+      {
+        Goods_UserInfo goods_UserInfo = new Goods_UserInfo();
+        goods_UserInfo.User_id = OrdUserInfo.GetValue(0).ToString();
+        goods_UserInfo.User_name = OrdUserInfo.GetValue(1).ToString();
+        storage.Add(goods_UserInfo);
+      }
+
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+
+    }
+
+    /*
+     * 购物车增加
+     * 添加成功返回购物车id，添加失败返回“0”
+     */
+    public static string Addtrolley(int User_id, string Product_id, int Product_num)
+    {
+      CreateConn();
+      OracleCommand Insert = DB.CreateCommand();
+      Insert.CommandText = "insert into shopping_trolley (Product_id,Product_num,User_id,state) " +
+                           "values(:Product_id,:Product_num,:User_id,0)";
+      Insert.Parameters.Add(new OracleParameter(":Product_id", Product_id));
+      Insert.Parameters.Add(new OracleParameter(":Product_num", Product_num));
+      Insert.Parameters.Add(new OracleParameter(":User_id", User_id));
+      Insert.ExecuteNonQuery();
+
+      OracleCommand find = DB.CreateCommand();
+
+      find.CommandText = "select id from shopping_trolley where " +
+        "Product_id=:Product_id,Product_num=:Product_num,User_id=:User_id ";
+      find.Parameters.Add(new OracleParameter(":Product_id", Product_id));
+      find.Parameters.Add(new OracleParameter(":Product_num", Product_num));
+      find.Parameters.Add(new OracleParameter(":User_id", User_id));
+
+
+      OracleDataReader Ord = find.ExecuteReader();
+      string result = "0";
+      while (Ord.Read())
+      {
+        result = Ord.GetValue(0).ToString();
+      }
+
+      CloseConn();
+      return result;
+    }
+
+    /*
+     * 返回购物车
+     */
+    public static string GetTrolley(string user_id)
+    {
+      CreateConn();
+      List<User_Trolley> storage = new List<User_Trolley>();
+      OracleCommand Search = DB.CreateCommand();
+      Search.CommandText = "select b.img,b.price,b.name,a.product_num " +
+          "from shopping_trolley a,product_information b " +
+          "where a.user_id=:user_id and a.product_id=b.id";
+      Search.Parameters.Add(new OracleParameter(":user_id", user_id));
+      OracleDataReader Ord = Search.ExecuteReader();
+      while (Ord.Read())
+      {
+        User_Trolley user_Trolley = new User_Trolley();
+        user_Trolley.Img = Ord.GetValue(0).ToString();
+        user_Trolley.Price = int.Parse(Ord.GetValue(1).ToString());
+        user_Trolley.Name = Ord.GetValue(2).ToString();
+        user_Trolley.Product_num = Ord.GetValue(3).ToString();
+        storage.Add(user_Trolley);
+      }
+
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+
+    }
+
+
+
   }
 }

@@ -78,7 +78,7 @@ namespace WebApi.Models
             }
             OracleCommand credit = DB.CreateCommand();
             credit.CommandText = "insert into user_credits (user_id,credits)" +
-                "values ((select id from user_info where user_name=:username),0)";
+                "values ((select user_id from user_info where user_name=:username),0)";
             credit.Parameters.Add(new OracleParameter(":username", UserName));
             credit.ExecuteNonQuery();
             CloseConn();

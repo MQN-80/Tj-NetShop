@@ -78,9 +78,24 @@ namespace WebApi.Models.ShopTransaction
       return ShopTransactionDatabase.EditDeliveryAddress(id, addr, phone_number, name, add_default);
     }
 
-    public string GoodsTransactionPrimerPlus(string Trade_id)
+    public string GoodsTransactionPrimerPlus(string Trade_id,string trolley_id)
     {
-      return ShopTransactionDatabase.GoodsTransactionPrimerPlus(Trade_id);
+      return ShopTransactionDatabase.GoodsTransactionPrimerPlus(Trade_id, trolley_id);
+    }
+
+    public string GetGoodsUserInfo(string id)
+    {
+      return ShopTransactionDatabase.GetGoodsUserInfo(id);
+    }
+
+    public string Addtrolley(int User_id, string Product_id, int Product_num)
+    {
+      return ShopTransactionDatabase.Addtrolley(User_id, Product_id, Product_num);
+    }
+    
+    public string GetTrolley(string user_id)
+    {
+      return ShopTransactionDatabase.GetTrolley(user_id);
     }
   }
  
