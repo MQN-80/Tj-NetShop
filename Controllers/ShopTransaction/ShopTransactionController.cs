@@ -183,5 +183,13 @@ namespace WebApi.Controllers.ShopTransaction
       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
       return shopTransactionModel.IsCollect(id, user_id);
     }
-  }
+    //根据商品类别查找商品
+    [Route("/ShopTransaction/search_product_type")]
+    [HttpGet]
+    public string search_product_type(string product_type)
+    {
+       ShopTransactionModel shopTransactionModel = new ShopTransactionModel();
+       return shopTransactionModel.findProductType(product_type);
+    }
+    }
 }

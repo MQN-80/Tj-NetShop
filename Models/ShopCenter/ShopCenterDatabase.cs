@@ -9,10 +9,10 @@ namespace WebApi.Models.ShopCenter
 {
     public class ShopCenterDatabase
     {
-        public  OracleConnection DB;
+        public OracleConnection DB;
 
-         //建立数据库连接
-        public  void CreateConn()  //更改此处数据库地址即可
+        //建立数据库连接
+        public void CreateConn()  //更改此处数据库地址即可
         {
             //124.222.1.19
             string user = "shop";
@@ -23,12 +23,12 @@ namespace WebApi.Models.ShopCenter
             DB = new OracleConnection(conStringUser);
             DB.Open();
         }
-         //关闭数据库连接
-        public  void CloseConn()
+        //关闭数据库连接
+        public void CloseConn()
         {
             DB.Close();
         }
-        public  string getProduct(string id)
+        public string getProduct(string id)
         {
             CreateConn();
             OracleCommand Search = DB.CreateCommand();
@@ -52,7 +52,7 @@ namespace WebApi.Models.ShopCenter
             return JsonConvert.SerializeObject(product_info);
         }
         // 随机返回四个商品
-        public  string GetFourRandomProduct()
+        public string GetFourRandomProduct()
         {
             List<Product_info> storage = new List<Product_info>();
             CreateConn();
@@ -75,7 +75,7 @@ namespace WebApi.Models.ShopCenter
         }
 
         //返回店铺信息
-        public  string getShopInfo(string shopUserId)
+        public string getShopInfo(string shopUserId)
         {
             List<user> storage = new List<user>();
             CreateConn();
@@ -98,7 +98,7 @@ namespace WebApi.Models.ShopCenter
         }
 
         //返回店铺商品
-        public  string getShopProduct(string shopUserId)
+        public string getShopProduct(string shopUserId)
         {
             List<product> storage = new List<product>();
             CreateConn();
@@ -124,7 +124,7 @@ namespace WebApi.Models.ShopCenter
         }
 
         //关注店铺
-        public  string followShop(int userId, string shopUserId)
+        public string followShop(int userId, string shopUserId)
         {
             CreateConn();
 
@@ -139,11 +139,11 @@ namespace WebApi.Models.ShopCenter
 
             //失败返回0
             CloseConn();
-            return result.ToString();
+            return createTime;
         }
 
         //取消关注店铺
-        public  string cancelFollowShop(int userId, string shopUserId)
+        public string cancelFollowShop(int userId, string shopUserId)
         {
             CreateConn();
 
@@ -157,7 +157,7 @@ namespace WebApi.Models.ShopCenter
             CloseConn();
             return result.ToString();
         }
-        public  string is_follow(int userid,string shopid)
+        public string is_follow(int userid, string shopid)
         {
             CreateConn();
             OracleCommand find = DB.CreateCommand();
@@ -171,7 +171,7 @@ namespace WebApi.Models.ShopCenter
                 return "0";
         }
         //发布商品
-        public  string postProduct(string shopUserId, string productName, string productType, string productDes, int price)
+        public string postProduct(string shopUserId, string productName, string productType, string productDes, int price)
         {
             CreateConn();
 
@@ -194,7 +194,7 @@ namespace WebApi.Models.ShopCenter
             }
 
             OracleCommand Search = DB.CreateCommand();
-            Search.CommandText = "select product_id,id from product_information where create_time = :createTime and name=:productName";      
+            Search.CommandText = "select product_id,id from product_information where create_time = :createTime and name=:productName";
             Search.Parameters.Add(new OracleParameter(":createTime", createTime));
             Search.Parameters.Add(new OracleParameter(":productName", productName));
             OracleDataReader Ord = Search.ExecuteReader();
@@ -203,7 +203,7 @@ namespace WebApi.Models.ShopCenter
             while (Ord.Read())
             {
                 result2 = Ord.GetValue(0).ToString();
-                id= Ord.GetValue(1).ToString();
+                id = Ord.GetValue(1).ToString();
             }
 
             if (result2 == "0")
@@ -229,37 +229,37 @@ namespace WebApi.Models.ShopCenter
 
             //成功返回商品id
             CloseConn();
-            return result2.ToString();
+            return id;
         }
 
-    //删除发布商品
-    public  string deleteProduct(int productId, string shopUserId)
-    {
-      CreateConn();
+        //删除发布商品
+        public string deleteProduct(int productId, string shopUserId)
+        {
+            CreateConn();
 
-      OracleCommand Delete1 = DB.CreateCommand();
-      Delete1.CommandText = "delete from product_information where product_id = :productId";
-      Delete1.Parameters.Add(new OracleParameter(":productId", productId));
-      int result1 = Delete1.ExecuteNonQuery();
+            OracleCommand Delete1 = DB.CreateCommand();
+            Delete1.CommandText = "delete from product_information where product_id = :productId";
+            Delete1.Parameters.Add(new OracleParameter(":productId", productId));
+            int result1 = Delete1.ExecuteNonQuery();
 
-      if (result1 == 0)
-      {
-        //失败返回0
-        CloseConn();
-        return result1.ToString();
-      }
+            if (result1 == 0)
+            {
+                //失败返回0
+                CloseConn();
+                return result1.ToString();
+            }
 
-      OracleCommand Delete2 = DB.CreateCommand();
-      Delete2.CommandText = "delete from shop_product where product_id = :productId and shop_id = :shopUserId";
-      Delete2.Parameters.Add(new OracleParameter(":productId", productId));
-      Delete2.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
-      int result2 = Delete2.ExecuteNonQuery();
+            OracleCommand Delete2 = DB.CreateCommand();
+            Delete2.CommandText = "delete from shop_product where product_id = :productId and shop_id = :shopUserId";
+            Delete2.Parameters.Add(new OracleParameter(":productId", productId));
+            Delete2.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
+            int result2 = Delete2.ExecuteNonQuery();
 
-      //失败返回0
-      CloseConn();
-      return result2.ToString();
-    }
-    public string deleteCollect(string id, int user_id)
+            //失败返回0
+            CloseConn();
+            return result2.ToString();
+        }
+        public string deleteCollect(string id, int user_id)
         {
             CreateConn();
             var find = DB.CreateCommand();
@@ -270,6 +270,7 @@ namespace WebApi.Models.ShopCenter
             CloseConn();
             return count.ToString();
         }
+
     }
 
 }

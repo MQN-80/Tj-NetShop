@@ -859,7 +859,7 @@ namespace WebApi.Models.ShopTransaction
 
       OracleCommand find = DB.CreateCommand();
 
-      find.CommandText = "select id from product_collect where " +
+      find.CommandText = "select create_time from product_collect where " +
         "create_time=:create_time ";
       find.Parameters.Add(new OracleParameter(":create_time", create_time));
 
@@ -872,7 +872,7 @@ namespace WebApi.Models.ShopTransaction
       }
 
       CloseConn();
-      return result;
+      return create_time;
     }
 
     /*
@@ -893,5 +893,43 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return result;
     }
-  }
+        public string SearchTypeInfo(string product_type)
+        {
+            List<Product_information> storage = new List<Product_information>();
+            CreateConn();
+            var Search = DB.CreateCommand();
+            try
+            {
+                Search.CommandText = "select id,name,type_id,product_id,des,surplus,status,price,create_time,discount " +
+                  "from product_information " +
+                  "where type_id like CONCAT(CONCAT('%',:product_type),'%')";
+                Search.Parameters.Add(new OracleParameter(":product_type", product_type));
+                OracleDataReader Ord = Search.ExecuteReader();
+                while (Ord.Read())
+                {
+                    Product_information product_information = new Product_information();
+                    product_information.id = Ord.GetValue(0).ToString();
+                    product_information.name = Ord.GetValue(1).ToString();
+                    product_information.img = "http://106.12.131.109:8083/product/" + product_information.id + ".jpg";
+                    product_information.type_id = Ord.GetValue(2).ToString();
+                    product_information.product_id = Ord.GetValue(3).ToString();
+                    product_information.des = Ord.GetValue(4).ToString();
+                    product_information.surplus = Ord.GetValue(5).ToString();
+                    product_information.status = Ord.GetValue(6).ToString();
+                    product_information.price = Ord.GetValue(7).ToString();
+                    product_information.create_time = Ord.GetValue(8).ToString();
+                    product_information.discount = Ord.GetValue(9).ToString();
+                    storage.Add(product_information);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: " + e.Message + "\n in SearchProductInfo");
+                throw e;
+            }
+            //以字符串形式返回
+            CloseConn();
+            return JsonConvert.SerializeObject(storage);
+        }
+    }
 }

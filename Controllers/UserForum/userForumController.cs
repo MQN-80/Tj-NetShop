@@ -24,7 +24,7 @@ namespace WebApi.Controllers.UserForum
         //增加新文章
         [Route("/userForum/push_article")]
         [HttpPost]
-        public string push_article(string title, string context, int user_id, int product_id)
+        public string push_article(string title, string context, int user_id, string product_id)
         {
             userForum forum = new userForum();
             return forum.push_article(title, context, user_id, product_id);
@@ -44,6 +44,20 @@ namespace WebApi.Controllers.UserForum
         {
             userForum forum = new userForum();
             return forum.push_comment(context,user_id,article_id);
+        }
+        [Route("/userForum/get_userArticle")]
+        [HttpPost]
+        public string get_userArticle(int user_id)
+        {
+            userForum forum = new userForum();
+            return forum.get_userArticle(user_id);
+        }
+        [Route("/userForum/delete_article")]
+        [HttpPost]
+        public string deleteArticle(int article_id)
+        {
+            userForum forum = new userForum();
+            return forum.deleteArticle(article_id);
         }
     }
 }

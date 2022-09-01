@@ -67,7 +67,7 @@ namespace WebApi.Models.UserForum
             CloseConn();
             return JsonConvert.SerializeObject(storage);
         }
-        public  string push_article(string title,string context,int user_id,int product_id)
+        public  string push_article(string title,string context,int user_id,string product_id)
         {
             CreateConn();
             //先修改status的状态,将其改为1
@@ -119,6 +119,42 @@ namespace WebApi.Models.UserForum
             edit.Parameters.Add(new OracleParameter(":user_id", user_id));
             edit.Parameters.Add(new OracleParameter(":context", context));
             edit.Parameters.Add(new OracleParameter(":timeNow", timenow));
+            edit.Parameters.Add(new OracleParameter(":article_id", article_id));
+            int m = edit.ExecuteNonQuery();
+            CloseConn();
+            return m.ToString();
+        }
+        public string get_userArticle(int user_id)
+        {
+            List<article> storage = new List<article>();
+            CreateConn();
+
+            OracleCommand get_list = DB.CreateCommand();
+            get_list.CommandText = "select a.id,a.article_title,a.article_context,(select user_name from user_info where user_id=:user_id),a.create_time,a.product_id,a.article_id from article a " +
+                "where a.status=1 and a.user_id=:user_id";
+            get_list.Parameters.Add(new OracleParameter(":user_id", user_id));
+            OracleDataReader Ord = get_list.ExecuteReader();
+            while (Ord.Read())
+            {
+                article mid = new article();
+                mid.id = Ord.GetValue(0).ToString();
+                mid.article_title = Ord.GetValue(1).ToString();
+                mid.article_context = Ord.GetValue(2).ToString();
+                mid.user_name = Ord.GetValue(3).ToString();
+                mid.create_time = Ord.GetValue(4).ToString();
+                mid.product_id = Ord.GetValue(5).ToString();
+                mid.article_id = Ord.GetValue(6).ToString();
+                storage.Add(mid);
+            }
+            CloseConn();
+            return JsonConvert.SerializeObject(storage);
+        }
+        public string deleteArticle(int article_id)
+        {
+            CreateConn();
+            //先修改status的状态,将其改为1
+            OracleCommand edit = DB.CreateCommand();
+            edit.CommandText = "delete from article where article_id=:article_id";
             edit.Parameters.Add(new OracleParameter(":article_id", article_id));
             int m = edit.ExecuteNonQuery();
             CloseConn();

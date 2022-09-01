@@ -14,7 +14,7 @@ namespace WebApi.Models.UserForum
                 return "请求非法";
             return forum.get_article(num);
         }
-        public string push_article(string title, string context, int user_id, int product_id)
+        public string push_article(string title, string context, int user_id, string product_id)
         {
             userForumDatabase forum = new userForumDatabase();
             return forum.push_article(title, context, user_id, product_id);
@@ -28,6 +28,16 @@ namespace WebApi.Models.UserForum
         {
             userForumDatabase forum = new userForumDatabase();
             return forum.push_comment(context, user_id, article_id);
+        }
+        public string get_userArticle(int user_id)
+        {
+            userForumDatabase forum = new userForumDatabase();
+            return forum.get_userArticle(user_id);
+        }
+        public string deleteArticle(int article_id)
+        {
+            userForumDatabase forum = new userForumDatabase();
+            return forum.deleteArticle(article_id);
         }
     }
 }
