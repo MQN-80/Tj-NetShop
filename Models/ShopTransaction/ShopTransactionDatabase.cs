@@ -11,12 +11,12 @@ namespace WebApi.Models.ShopTransaction
 {
   public class ShopTransactionDatabase
   {
-    public static OracleConnection DB;
+    public  OracleConnection DB;
 
     /*
      * 建立数据库连接
      */
-    public static void CreateConn() //更改此处数据库地址即可
+    public  void CreateConn() //更改此处数据库地址即可
     {
       //124.222.1.19
       string user = "shop";
@@ -33,7 +33,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 关闭数据库连接
      */
-    public static void CloseConn()
+    public  void CloseConn()
     {
       DB.Close();
     }
@@ -41,7 +41,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 返回收货地址
      */
-    public static string GetDeliveryAddress(int UserID)
+    public  string GetDeliveryAddress(int UserID)
     {
       List<Delivery_address> storage = new List<Delivery_address>();
       CreateConn();
@@ -73,7 +73,7 @@ namespace WebApi.Models.ShopTransaction
      * 创建订单信息
      * 添加成功返回订单id，添加失败返回“0”
      */
-    public static string AddDealRecord(string Product_id, string Ord_price, int UserID)
+    public string AddDealRecord(string Product_id, string Ord_price, int UserID)
     {
       CreateConn();
       OracleCommand Insert = DB.CreateCommand();
@@ -104,7 +104,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 返回订单信息
      */
-    public static string GetDealRecord(int UserID)
+    public  string GetDealRecord(int UserID)
     {
       List<Deal_record> storage = new List<Deal_record>();
       CreateConn();
@@ -134,7 +134,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 修改订单信息
      */
-    public static string ModifyDealRecord(string Trade_id)
+    public  string ModifyDealRecord(string Trade_id)
     {
       CreateConn();
       //先修改status的状态,将其改为1
@@ -150,7 +150,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 拉取用户积分
      */
-    public static string GetUserCredits(string UserID)
+    public  string GetUserCredits(string UserID)
     {
       List<User_credits> storage = new List<User_credits>();
       CreateConn();
@@ -175,7 +175,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *修改用户积分
      */
-    public static string ModifyCreditsRecord(string UserID, string Trade_id, int Credits_change, string Status)
+    public  string ModifyCreditsRecord(string UserID, string Trade_id, int Credits_change, string Status)
     {
       CreateConn();
       //先查用户积分数量
@@ -239,7 +239,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *交易
      */
-    public static string GoodsTransaction(string Consumer_UserID, string Business_UserID,
+    public string GoodsTransaction(string Consumer_UserID, string Business_UserID,
       int Credits_change, string Status)
     {
       CreateConn();
@@ -362,7 +362,7 @@ namespace WebApi.Models.ShopTransaction
      *返回积分记录
      *From lyp, 前端说要一个返回积分记录的接口，我就直接在里面写了
      */
-    public static string GetCreditRecord(string userID)
+    public string GetCreditRecord(string userID)
     {
       var storage = new List<Credits_record>();
       CreateConn();
@@ -409,7 +409,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *查找商品
      */
-    public static string SearchProductInfo(string product_name)
+    public string SearchProductInfo(string product_name)
     {
       List<Product_information> storage = new List<Product_information>();
       CreateConn();
@@ -451,7 +451,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *用户收藏夹连表查询
      */
-    public static string SearchUserCollect(int UserID)
+    public string SearchUserCollect(int UserID)
     {
       List<User_collect> Storage = new List<User_collect>();
       CreateConn();
@@ -480,7 +480,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *用户收藏店铺连表查询
      */
-    public static string SearchUserCollectShop(int UserID)
+    public  string SearchUserCollectShop(int UserID)
     {
       List<User_collectShop> Storage = new List<User_collectShop>();
       CreateConn();
@@ -509,7 +509,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 添加收货地址
      */
-    public static string AddDeliveryAddress(int user_id, string addr, string phone_number, string name, int add_default)
+    public string AddDeliveryAddress(int user_id, string addr, string phone_number, string name, int add_default)
     {
       CreateConn();
       var Insert = DB.CreateCommand();
@@ -528,7 +528,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 删除收货地址
      */
-    public static string DeleteDeliveryAddress(string id)
+    public string DeleteDeliveryAddress(string id)
     {
       CreateConn();
       var Delete = DB.CreateCommand();
@@ -542,7 +542,7 @@ namespace WebApi.Models.ShopTransaction
     /*
     * 修改收货地址
     */
-    public static string EditDeliveryAddress(string id, string addr, string phone_number, string name, int add_default)
+    public  string EditDeliveryAddress(string id, string addr, string phone_number, string name, int add_default)
     {
       CreateConn();
       var edit = DB.CreateCommand();
@@ -560,7 +560,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *交易primer plus
      */
-    public static string GoodsTransactionPrimerPlus(string Trade_id)
+    public  string GoodsTransactionPrimerPlus(string Trade_id)
     {
       CreateConn();
       string Consumer_UserID = "";
@@ -730,7 +730,7 @@ namespace WebApi.Models.ShopTransaction
     /*
    * 查询商户id和姓名
    */
-    public static string GetGoodsUserInfo(string id)
+    public string GetGoodsUserInfo(string id)
     {
       CreateConn();
 
@@ -779,7 +779,7 @@ namespace WebApi.Models.ShopTransaction
      * 购物车增加
      * 添加成功返回购物车id，添加失败返回“0”
      */
-    public static string Addtrolley(int User_id, string Product_id, int Product_num)
+    public string Addtrolley(int User_id, string Product_id, int Product_num)
     {
       CreateConn();
       OracleCommand Insert = DB.CreateCommand();
@@ -813,7 +813,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 返回购物车
      */
-    public static string GetTrolley(string user_id)
+    public  string GetTrolley(string user_id)
     {
       CreateConn();
       List<User_Trolley> storage = new List<User_Trolley>();
@@ -843,7 +843,7 @@ namespace WebApi.Models.ShopTransaction
      *添加收藏夹
      *添加成功返回购物车id，添加失败返回“0”
      */
-    public static string AddCollect(int user_id, string product_id, int price)
+    public  string AddCollect(int user_id, string product_id, int price)
     {
       CreateConn();
       OracleCommand Insert = DB.CreateCommand();
@@ -877,7 +877,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *判断是否是收藏商品
      */
-    public static string IsCollect(string id,int user_id)
+    public  string IsCollect(string id,int user_id)
     {
       string result = "0";
       int count = 0;
