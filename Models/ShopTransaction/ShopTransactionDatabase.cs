@@ -110,18 +110,19 @@ namespace WebApi.Models.ShopTransaction
       CreateConn();
       OracleCommand Search = DB.CreateCommand();
 
-      Search.CommandText = "select Trade_id,Product_id,Ord_price,Start_time,Status " +
+      Search.CommandText = "select id,Trade_id,Product_id,Ord_price,Start_time,Status " +
                            "from deal_record where User_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
       {
         Deal_record deal_record = new Deal_record();
-        deal_record.Trade_id = Ord.GetValue(0).ToString();
-        deal_record.Product_id = Ord.GetValue(1).ToString();
-        deal_record.Ord_price = Ord.GetValue(2).ToString();
-        deal_record.Start_time = Ord.GetValue(3).ToString();
-        deal_record.Status = Ord.GetValue(4).ToString();
+        deal_record.id = Ord.GetValue(0).ToString();
+        deal_record.Trade_id = Ord.GetValue(1).ToString();
+        deal_record.Product_id = Ord.GetValue(2).ToString();
+        deal_record.Ord_price = Ord.GetValue(3).ToString();
+        deal_record.Start_time = Ord.GetValue(4).ToString();
+        deal_record.Status = Ord.GetValue(5).ToString();
 
         storage.Add(deal_record);
       }
@@ -560,7 +561,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *交易primer plus
      */
-    public  string GoodsTransactionPrimerPlus(string Trade_id)
+    public string GoodsTransactionPrimerPlus(string Trade_id)
     {
       CreateConn();
       string Consumer_UserID = "";
@@ -673,7 +674,8 @@ namespace WebApi.Models.ShopTransaction
       string Create_time = DateTime.Now.ToString();
       OracleCommand InsertConsumer = DB.CreateCommand();
       OracleCommand InsertBusiness = DB.CreateCommand();
-      
+      var updateDeal = DB.CreateCommand();
+
       //开始一个事务
       OracleCommand updateRecord = DB.CreateCommand();
             //开始一个事务
@@ -704,10 +706,15 @@ namespace WebApi.Models.ShopTransaction
         InsertBusiness.Parameters.Add(new OracleParameter(":Business_Status", Business_Status));
         InsertBusiness.Parameters.Add(new OracleParameter(":Create_time", Create_time));
 
+        updateDeal.CommandText = "update deal_record set Status = 1 where id =:Trade_id";
+        InsertBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID));
+
+
         editConsumer.ExecuteNonQuery();
         editBusiness.ExecuteNonQuery();
         InsertConsumer.ExecuteNonQuery();
         InsertBusiness.ExecuteNonQuery();
+        updateDeal.ExecuteNonQuery();
 
         txn.Commit();
       }
@@ -819,7 +826,7 @@ namespace WebApi.Models.ShopTransaction
       CreateConn();
       List<User_Trolley> storage = new List<User_Trolley>();
       OracleCommand Search = DB.CreateCommand();
-      Search.CommandText = "select a.id,b.img,b.price,b.name,a.product_num " +
+      Search.CommandText = "select b.id,a.id,b.price,b.name,a.product_num " +
           "from shopping_trolley a,product_information b " +
           "where a.user_id=:user_id and a.product_id=b.id";
       Search.Parameters.Add(new OracleParameter(":user_id", user_id));
@@ -827,8 +834,9 @@ namespace WebApi.Models.ShopTransaction
       while (Ord.Read())
       {
         User_Trolley user_Trolley = new User_Trolley();
-        user_Trolley.id = Ord.GetValue(0).ToString();
-        user_Trolley.Img = Ord.GetValue(1).ToString();
+        user_Trolley.product_id = Ord.GetValue(0).ToString();
+        user_Trolley.Trolley_id = Ord.GetValue(1).ToString();
+        user_Trolley.imgPath = "http://106.12.131.109:8083/product/" + user_Trolley.product_id + ".jpg";
         user_Trolley.Price = int.Parse(Ord.GetValue(2).ToString());
         user_Trolley.Name = Ord.GetValue(3).ToString();
         user_Trolley.Product_num = Ord.GetValue(4).ToString();
