@@ -88,6 +88,13 @@ namespace WebApi.Controllers.ShopCenter
             ShopCenterModel shopCenterModel = new ShopCenterModel();
             return shopCenterModel.delete_product(productId, shopUserId);
         }
-       
+        //删除商品收藏
+        [Route("/ShopCenter/delete_collect")]
+        [HttpDelete]
+        public string delete_collect(string product_id,int user_id)
+        {
+            ShopCenterModel shopCenterModel = new ShopCenterModel();
+            return shopCenterModel.delete_collect(product_id, user_id);
+        }
     }
 }

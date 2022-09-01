@@ -458,7 +458,7 @@ namespace WebApi.Models.ShopTransaction
       var Search = DB.CreateCommand();
       Search.CommandText = "select a.name,a.id,b.create_time,a.price,b.product_price " +
           "from product_information a,product_collect b " +
-          "where a.product_id=b.product_id and b.user_id=:UserID";
+          "where a.id=b.product_id and b.user_id=:UserID";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
@@ -766,6 +766,7 @@ namespace WebApi.Models.ShopTransaction
         Goods_UserInfo goods_UserInfo = new Goods_UserInfo();
         goods_UserInfo.User_id = OrdUserInfo.GetValue(0).ToString();
         goods_UserInfo.User_name = OrdUserInfo.GetValue(1).ToString();
+        goods_UserInfo.id = Bussiness_id;
         storage.Add(goods_UserInfo);
       }
 
@@ -843,7 +844,7 @@ namespace WebApi.Models.ShopTransaction
      *添加收藏夹
      *添加成功返回购物车id，添加失败返回“0”
      */
-    public  string AddCollect(int user_id, string product_id, int price)
+    public string AddCollect(int user_id, string product_id, int price)
     {
       CreateConn();
       OracleCommand Insert = DB.CreateCommand();
@@ -880,20 +881,16 @@ namespace WebApi.Models.ShopTransaction
     public  string IsCollect(string id,int user_id)
     {
       string result = "0";
-      int count = 0;
+      CreateConn();
       var find = DB.CreateCommand();
-      find.CommandText = "select count(*) from product_collect where id=:id and user_id=:user_id ";
+      find.CommandText = "select count(*) from product_collect where product_id=:id and user_id=:user_id ";
       find.Parameters.Add(new OracleParameter(":id", id));
       find.Parameters.Add(new OracleParameter(":user_id", user_id));
-      OracleDataReader Ord = find.ExecuteReader();
-      while (Ord.Read())
-      {
-        count = int.Parse(Ord.GetValue(0).ToString());
-      }
+      int count = Convert.ToInt32(find.ExecuteScalar());
 
       if (count > 0)
         result = "1";
-
+      CloseConn();
       return result;
     }
   }

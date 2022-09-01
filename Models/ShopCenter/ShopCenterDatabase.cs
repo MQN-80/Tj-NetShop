@@ -259,6 +259,17 @@ namespace WebApi.Models.ShopCenter
       CloseConn();
       return result2.ToString();
     }
-  }
+    public string deleteCollect(string id, int user_id)
+        {
+            CreateConn();
+            var find = DB.CreateCommand();
+            find.CommandText = "delete from product_collect where product_id=:id and user_id=:user_id ";
+            find.Parameters.Add(new OracleParameter(":id", id));
+            find.Parameters.Add(new OracleParameter(":user_id", user_id));
+            int count = Convert.ToInt32(find.ExecuteNonQuery());
+            CloseConn();
+            return count.ToString();
+        }
+    }
 
 }
