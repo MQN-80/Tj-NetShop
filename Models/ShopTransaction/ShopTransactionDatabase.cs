@@ -814,12 +814,12 @@ namespace WebApi.Models.ShopTransaction
     /*
      * 返回购物车
      */
-    public  string GetTrolley(string user_id)
+    public string GetTrolley(string user_id)
     {
       CreateConn();
       List<User_Trolley> storage = new List<User_Trolley>();
       OracleCommand Search = DB.CreateCommand();
-      Search.CommandText = "select b.img,b.price,b.name,a.product_num " +
+      Search.CommandText = "select a.id,b.img,b.price,b.name,a.product_num " +
           "from shopping_trolley a,product_information b " +
           "where a.user_id=:user_id and a.product_id=b.id";
       Search.Parameters.Add(new OracleParameter(":user_id", user_id));
@@ -827,10 +827,11 @@ namespace WebApi.Models.ShopTransaction
       while (Ord.Read())
       {
         User_Trolley user_Trolley = new User_Trolley();
-        user_Trolley.Img = Ord.GetValue(0).ToString();
-        user_Trolley.Price = int.Parse(Ord.GetValue(1).ToString());
-        user_Trolley.Name = Ord.GetValue(2).ToString();
-        user_Trolley.Product_num = Ord.GetValue(3).ToString();
+        user_Trolley.id = Ord.GetValue(0).ToString();
+        user_Trolley.Img = Ord.GetValue(1).ToString();
+        user_Trolley.Price = int.Parse(Ord.GetValue(2).ToString());
+        user_Trolley.Name = Ord.GetValue(3).ToString();
+        user_Trolley.Product_num = Ord.GetValue(4).ToString();
         storage.Add(user_Trolley);
       }
 
@@ -878,7 +879,7 @@ namespace WebApi.Models.ShopTransaction
     /*
      *判断是否是收藏商品
      */
-    public  string IsCollect(string id,int user_id)
+    public string IsCollect(string id,int user_id)
     {
       string result = "0";
       CreateConn();
@@ -893,5 +894,35 @@ namespace WebApi.Models.ShopTransaction
       CloseConn();
       return result;
     }
+
+    /*
+     * 清空购物车
+     */
+    public string ClearTrolley(int user_id)
+    {
+      CreateConn();
+      var Delete = DB.CreateCommand();
+      Delete.CommandText = "delete from shopping_trolley where user_id = :user_id";
+      Delete.Parameters.Add(new OracleParameter(":user_id", user_id));
+      Delete.ExecuteNonQuery();
+
+      return "OK";
+    }
+
+    /*
+     * 删除购物车
+     */
+    public string DeleteTrolley(int id)
+    {
+      CreateConn();
+      var Delete = DB.CreateCommand();
+      Delete.CommandText = "delete from shopping_trolley where id = :id";
+      Delete.Parameters.Add(new OracleParameter(":id", id));
+      Delete.ExecuteNonQuery();
+
+      return "OK";
+    }
+
+
   }
 }
