@@ -233,12 +233,12 @@ namespace WebApi.Models.ShopCenter
         }
 
         //删除发布商品
-        public string deleteProduct(int productId, string shopUserId)
+        public string deleteProduct(string productId, string shopUserId)
         {
             CreateConn();
 
             OracleCommand Delete1 = DB.CreateCommand();
-            Delete1.CommandText = "delete from product_information where product_id = :productId";
+            Delete1.CommandText = "delete from product_information where id = :productId";
             Delete1.Parameters.Add(new OracleParameter(":productId", productId));
             int result1 = Delete1.ExecuteNonQuery();
 
@@ -250,7 +250,7 @@ namespace WebApi.Models.ShopCenter
             }
 
             OracleCommand Delete2 = DB.CreateCommand();
-            Delete2.CommandText = "delete from shop_product where product_id = :productId and shop_id = :shopUserId";
+            Delete2.CommandText = "delete from shop_product where product_id = (select product_id from product_information where id=:productId) and shop_id = :shopUserId";
             Delete2.Parameters.Add(new OracleParameter(":productId", productId));
             Delete2.Parameters.Add(new OracleParameter(":shopUserId", shopUserId));
             int result2 = Delete2.ExecuteNonQuery();

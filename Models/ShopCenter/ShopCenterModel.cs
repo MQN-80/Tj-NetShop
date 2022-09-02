@@ -52,7 +52,7 @@ namespace WebApi.Models.ShopCenter
             return shopcenter.postProduct(shopUserId, productName, productType, productDes, price);
         }
 
-        public string delete_product(int productId, string shopUserId)
+        public string delete_product(string productId, string shopUserId)
         {
             ShopCenterDatabase shopcenter = new ShopCenterDatabase();
             return shopcenter.deleteProduct(productId, shopUserId);

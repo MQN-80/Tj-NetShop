@@ -581,7 +581,7 @@ namespace WebApi.Models.ShopTransaction
       OracleDataReader OrdTradeid = SearchTradeId.ExecuteReader();
       while (OrdTradeid.Read())
       {
-        Consumer_UserID = Convert.ToInt32(OrdTradeid.GetValue(0));//10位
+        user_id = OrdTradeid.GetValue(0).ToString();//32位
         Product_id = OrdTradeid.GetValue(1).ToString();
         Credits_change = int.Parse(OrdTradeid.GetValue(2).ToString());
       }
@@ -610,16 +610,16 @@ namespace WebApi.Models.ShopTransaction
         Business_UserID = int.Parse(OrdShopId.GetValue(0).ToString());//10位的
       }
 
-      //通过user_id查询用户的id
+      //通过user_id查询用户的userid
       var SearchUserId = DB.CreateCommand();
-      SearchUserId.CommandText = "select id " +
+      SearchUserId.CommandText = "select user_id " +
           "from user_info " +
-          "where user_id = :user_id ";
-      SearchUserId.Parameters.Add(new OracleParameter(":user_id", Consumer_UserID));
+          "where id = :user_id ";
+      SearchUserId.Parameters.Add(new OracleParameter(":user_id", user_id));
       OracleDataReader OrdUserId = SearchUserId.ExecuteReader();
       while (OrdUserId.Read())
       {
-        user_id = OrdUserId.GetValue(0).ToString();//32位的
+        Consumer_UserID = int.Parse(OrdUserId.GetValue(0).ToString());//10位的
       }
 
 
@@ -659,7 +659,6 @@ namespace WebApi.Models.ShopTransaction
         //检查用户扣除积分后是否小于零
         if ((Consumer_Credits - Credits_change) < 0)
         {
-          //return Consumer_UserID.ToString();
           return "积分不足";
         }
         else
@@ -722,8 +721,8 @@ namespace WebApi.Models.ShopTransaction
         InsertBusiness.Parameters.Add(new OracleParameter(":Business_Status", Business_Status));
         InsertBusiness.Parameters.Add(new OracleParameter(":Create_time", Create_time));
 
-        updateDeal.CommandText = "update deal_record set Status = 1 where id=:Trade_id";
-        updateDeal.Parameters.Add(new OracleParameter(":trade_id", Trade_id));
+        updateDeal.CommandText = "update deal_record set Status = 1 where id =:Trade_id";
+        InsertBusiness.Parameters.Add(new OracleParameter(":trade_id", Trade_id));
 
 
         editConsumer.ExecuteNonQuery();
@@ -745,12 +744,11 @@ namespace WebApi.Models.ShopTransaction
       }
 
             //释放事务的资源
-            txn.Dispose();
+     txn.Dispose();
 
 
       CloseConn();
-      return user_id + "   " + Consumer_UserID + "   " + shop_id + "   " + Business_UserID + " " + Consumer_Credits + "  " + Business_Credits + " " + Credits_change + " " + Trade_id;
-      //return "error";
+      return "error";
     }
 
         /*

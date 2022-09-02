@@ -83,7 +83,7 @@ namespace WebApi.Controllers.ShopCenter
         //删除发布商品
         [Route("/ShopCenter/delete_product")]
         [HttpDelete]
-        public string delete_product(int productId, string shopUserId)
+        public string delete_product(string productId, string shopUserId)
         {
             ShopCenterModel shopCenterModel = new ShopCenterModel();
             return shopCenterModel.delete_product(productId, shopUserId);
