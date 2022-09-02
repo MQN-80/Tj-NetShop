@@ -22,6 +22,7 @@ namespace WebApi.Models.ShopTransaction
   public class Deal_record
   {
     public string id { get; set; }
+    public string Product_name { get; set; }
     public string Trade_id { get; set; }
     public string Product_id { get; set; }
     public string Ord_price { get; set; }
