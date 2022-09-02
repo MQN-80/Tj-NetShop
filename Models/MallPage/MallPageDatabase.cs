@@ -106,7 +106,7 @@ namespace WebApi.Models.MallPage
             CreateConn();
             //找到随机商店
             OracleCommand findShop = DB.CreateCommand();
-            findShop.CommandText = "select * from ( select a.shop_id from shop_product a join product_information b on a.product_id=b.product_id group by a.shop_id having count(*)>=1 ) where rownum=1";
+            findShop.CommandText = "select * from ( select a.shop_id from shop_product a join product_information b on a.product_id=b.product_id group by a.shop_id having count(*)>=2 ) where rownum=1";
             string shop_id = findShop.ExecuteScalar().ToString();
             //return shop_id;
             OracleCommand Search = DB.CreateCommand();

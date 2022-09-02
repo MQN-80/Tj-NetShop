@@ -419,7 +419,7 @@ namespace WebApi.Models.ShopTransaction
             {
                 Search.CommandText = "select id,name,type_id,product_id,des,surplus,status,price,create_time,discount " +
                   "from product_information " +
-                  "where name like CONCAT(CONCAT('%',:product_name),'%')";
+                  "where name like CONCAT(CONCAT('%',:product_name),'%') and status=1";
                 Search.Parameters.Add(new OracleParameter(":product_name", product_name));
                 OracleDataReader Ord = Search.ExecuteReader();
                 while (Ord.Read())
@@ -565,10 +565,10 @@ namespace WebApi.Models.ShopTransaction
     {
       CreateConn();
       int Consumer_UserID = 0;
-      string user_id = "";
-      int Business_UserID = 0;
-      string Product_id = "";
-      string shop_id = "";
+      string user_id_32 = "";
+      int Business_UserID_10 = 0;
+      string Product_id_32 = "";
+      string shop_id_32 = "";
       int Credits_change = 0;
       string Status = "1";
 
@@ -581,21 +581,21 @@ namespace WebApi.Models.ShopTransaction
       OracleDataReader OrdTradeid = SearchTradeId.ExecuteReader();
       while (OrdTradeid.Read())
       {
-        user_id = OrdTradeid.GetValue(0).ToString();//32位
-        Product_id = OrdTradeid.GetValue(1).ToString();
-        Credits_change = int.Parse(OrdTradeid.GetValue(2).ToString());
+        user_id_32 = OrdTradeid.GetValue(0).ToString();//32位没问题
+        Product_id_32 = OrdTradeid.GetValue(1).ToString();
+        Credits_change = Convert.ToInt32(OrdTradeid.GetValue(2));
       }
 
       //通过product_id查询shop_id(商家的32位id)
       var SearchproductId = DB.CreateCommand();
       SearchproductId.CommandText = "select shop_id " +
           "from shop_product " +
-          "where Product_id =（select product_id from product_information where id=:Product_id) ";
-      SearchproductId.Parameters.Add(new OracleParameter(":Product_id", Product_id));
+          "where Product_id =(select product_id from product_information where id=:Product_id) ";
+      SearchproductId.Parameters.Add(new OracleParameter(":Product_id", Product_id_32));
       OracleDataReader OrdproductId = SearchproductId.ExecuteReader();
       while (OrdproductId.Read())
       {
-        shop_id = OrdproductId.GetValue(0).ToString();
+        shop_id_32 = OrdproductId.GetValue(0).ToString();
       }
 
       //通过shop_id查询商家的userid
@@ -603,23 +603,23 @@ namespace WebApi.Models.ShopTransaction
       SearchShopId.CommandText = "select user_id " +
           "from user_info " +
           "where id = :shop_id ";
-      SearchShopId.Parameters.Add(new OracleParameter(":shop_id", shop_id));
+      SearchShopId.Parameters.Add(new OracleParameter(":shop_id", shop_id_32));
       OracleDataReader OrdShopId = SearchShopId.ExecuteReader();
       while (OrdShopId.Read())
       {
-        Business_UserID = int.Parse(OrdShopId.GetValue(0).ToString());//10位的
+        Business_UserID_10 = Convert.ToInt32(OrdShopId.GetValue(0));//10位的
       }
 
-      //通过user_id查询用户的userid
+      //通过user_id查询用户的userid，此处错误此处user_id已经是number 10
       var SearchUserId = DB.CreateCommand();
       SearchUserId.CommandText = "select user_id " +
           "from user_info " +
           "where id = :user_id ";
-      SearchUserId.Parameters.Add(new OracleParameter(":user_id", user_id));
+      SearchUserId.Parameters.Add(new OracleParameter(":user_id", user_id_32));
       OracleDataReader OrdUserId = SearchUserId.ExecuteReader();
       while (OrdUserId.Read())
       {
-        Consumer_UserID = int.Parse(OrdUserId.GetValue(0).ToString());//10位的
+        Consumer_UserID = Convert.ToInt32(OrdUserId.GetValue(0));//10位的
       }
 
 
@@ -627,10 +627,10 @@ namespace WebApi.Models.ShopTransaction
 
       //先查用户积分数量
       OracleCommand SearchConsumer = DB.CreateCommand();
-      SearchConsumer.CommandText = "select Credits from User_credits where User_id=:Consumer_UserID";
-      SearchConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID", Consumer_UserID));
+      SearchConsumer.CommandText = "select Credits from User_credits where User_id=:user_id";
+      SearchConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID",user_id_32));
       OracleDataReader OrdConsumer = SearchConsumer.ExecuteReader();
-      int Consumer_Credits = 0;
+      int Consumer_Credits = 1;
       while (OrdConsumer.Read())
       {
         Consumer_Credits = Convert.ToInt32(OrdConsumer.GetValue(0));
@@ -639,7 +639,7 @@ namespace WebApi.Models.ShopTransaction
             //然后查商家积分数量
             OracleCommand SearchBusiness = DB.CreateCommand();
             SearchBusiness.CommandText = "select Credits from User_credits where User_id=:Business_UserID";
-            SearchBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID));
+            SearchBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID_10));
             OracleDataReader OrdBusiness = SearchBusiness.ExecuteReader();
             int Business_Credits = 0;
             while (OrdBusiness.Read())
@@ -656,10 +656,10 @@ namespace WebApi.Models.ShopTransaction
       {
         Consumer_Status = "0";
         Business_Status = "1";
-        //检查用户扣除积分后是否小于零
+        //检查购买者扣除积分后是否小于零
         if ((Consumer_Credits - Credits_change) < 0)
         {
-          return "积分不足";
+          return user_id_32.ToString();
         }
         else
         {
@@ -703,26 +703,26 @@ namespace WebApi.Models.ShopTransaction
         editConsumer.Parameters.Add(new OracleParameter(":Consumer_UserID", Consumer_UserID));
         editBusiness.CommandText = "update User_credits set Credits=:Business_Credits where User_id=:Business_UserID";
         editBusiness.Parameters.Add(new OracleParameter(":Business_Credits", Business_Credits));
-        editBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID));
+        editBusiness.Parameters.Add(new OracleParameter(":Business_UserID", Business_UserID_10));
 
         //插入credits_record表
         InsertConsumer.CommandText =
           "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
           "values(:user_id,deal_seq.nextval,:Credits_change,:Consumer_Status,:Create_time)";
-        InsertConsumer.Parameters.Add(new OracleParameter(":user_id", user_id));
+        InsertConsumer.Parameters.Add(new OracleParameter(":user_id", user_id_32));
         InsertConsumer.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
         InsertConsumer.Parameters.Add(new OracleParameter(":Consumer_Status", Consumer_Status));
         InsertConsumer.Parameters.Add(new OracleParameter(":Create_time", Create_time));
         InsertBusiness.CommandText =
           "insert into credits_record (user_id,trade_id,credits_change,status,create_time) " +
           "values(:shop_id,deal_seq.nextval,:Credits_change,:Business_Status,:Create_time)";
-        InsertBusiness.Parameters.Add(new OracleParameter(":shop_id", shop_id));
+        InsertBusiness.Parameters.Add(new OracleParameter(":shop_id", shop_id_32));
         InsertBusiness.Parameters.Add(new OracleParameter(":Credits_change", Credits_change));
         InsertBusiness.Parameters.Add(new OracleParameter(":Business_Status", Business_Status));
         InsertBusiness.Parameters.Add(new OracleParameter(":Create_time", Create_time));
 
         updateDeal.CommandText = "update deal_record set Status = 1 where id =:Trade_id";
-        InsertBusiness.Parameters.Add(new OracleParameter(":trade_id", Trade_id));
+        updateDeal.Parameters.Add(new OracleParameter(":trade_id", Trade_id));
 
 
         editConsumer.ExecuteNonQuery();
