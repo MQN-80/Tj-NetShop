@@ -101,12 +101,13 @@ namespace WebApi.Models.ShopTransaction
     public string User_name { get; set; }
 
     public string id { get; set; }
-  }
+    }
 
-  /*
-   *返回购物车
-   */
-  public class User_Trolley
+
+    /*
+     *返回购物车
+     */
+    public class User_Trolley
   {
     public string product_id { get; set; }
     public string Trolley_id { get; set; }
