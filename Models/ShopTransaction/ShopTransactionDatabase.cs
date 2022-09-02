@@ -101,17 +101,18 @@ namespace WebApi.Models.ShopTransaction
             return result;
         }
 
-        /*
-         * 返回订单信息
-         */
-        public string GetDealRecord(int UserID)
-        {
-            List<Deal_record> storage = new List<Deal_record>();
-            CreateConn();
-            OracleCommand Search = DB.CreateCommand();
+    /*
+     * 返回订单信息
+     */
+    public string GetDealRecord(int UserID)
+    {
+      List<Deal_record> storage = new List<Deal_record>();
+      CreateConn();
+      OracleCommand Search = DB.CreateCommand();
 
-      Search.CommandText = "select id,Trade_id,Product_id,Ord_price,Start_time,Status " +
-                           "from deal_record where User_id=:UserID";
+      Search.CommandText = "select a.id,a.Trade_id,a.Product_id,a.Ord_price,a.Start_time,a.Status,b.name " +
+                           "from deal_record a,product_information b " +
+                           "where a.User_id=:UserID and a.product_id=b.id ";
       Search.Parameters.Add(new OracleParameter(":UserID", UserID));
       OracleDataReader Ord = Search.ExecuteReader();
       while (Ord.Read())
@@ -123,19 +124,18 @@ namespace WebApi.Models.ShopTransaction
         deal_record.Ord_price = Ord.GetValue(3).ToString();
         deal_record.Start_time = Ord.GetValue(4).ToString();
         deal_record.Status = Ord.GetValue(5).ToString();
+        deal_record.Product_name = Ord.GetValue(6).ToString();
+        storage.Add(deal_record);
+      }
+      //以字符串形式返回
+      CloseConn();
+      return JsonConvert.SerializeObject(storage);
+    }
 
-                storage.Add(deal_record);
-            }
-
-            //以字符串形式返回
-            CloseConn();
-            return JsonConvert.SerializeObject(storage);
-        }
-
-        /*
-         * 修改订单信息
-         */
-        public string ModifyDealRecord(string Trade_id)
+    /*
+     * 修改订单信息
+     */
+    public string ModifyDealRecord(string Trade_id)
         {
             CreateConn();
             //先修改status的状态,将其改为1
